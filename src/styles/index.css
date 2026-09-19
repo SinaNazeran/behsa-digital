@@ -1,0 +1,390 @@
+@import "tailwindcss";
+@import "./fonts.css";
+
+@theme {
+  /* ════════════════════════════════════════════════════════════════
+     Behsa Digital — Color System v2
+     Built in OKLCH (perceptually uniform lightness), clamped to sRGB.
+     Brand anchors are exact: orange-500 = #FA6400, blue-600 = #0062BD.
+
+     Division of labour, forced by physics rather than taste:
+       · BLUE  carries text, links, structure and the primary data
+         series — it is the only brand colour that reaches 4.5:1 on
+         white (6.03:1).
+       · ORANGE carries action surfaces only. White text on #FA6400 is
+         3.05:1 and fails AA, so filled orange always takes the dark
+         label `--color-on-primary` (5.33:1) instead of being darkened
+         into a muddy brown.
+     Every step below 700 in a ramp is a surface; 700+ is text-safe.
+     ════════════════════════════════════════════════════════════════ */
+  --font-display: "Estedad", "Vazirmatn", sans-serif;
+  --font-body: "Vazirmatn", "Estedad", sans-serif;
+
+  /* ── Brand · orange (action / energy) ── */
+  --color-orange-50:  #fff4f0;
+  --color-orange-100: #ffe9e0;
+  --color-orange-200: #fed3c2;
+  --color-orange-300: #feb89b;
+  --color-orange-400: #fd9264;
+  --color-orange-500: #fa6400;  /* logo colour — untouched */
+  --color-orange-550: #ea6110;  /* darkest orange still ≥4.5:1 with the dark label */
+  --color-orange-600: #d4560d;  /* focus ring: 4.09:1 on white */
+  --color-orange-700: #b04608;  /* first text-safe step: 5.64:1 */
+  --color-orange-800: #8d3605;
+  --color-orange-900: #6b2702;
+  --color-orange-950: #4e1a00;
+
+  /* ── Brand · blue (structure / trust / data) ── */
+  --color-blue-50:  #f2f7ff;
+  --color-blue-100: #e2eefd;
+  --color-blue-200: #c7dffd;
+  --color-blue-300: #a5ccfd;
+  --color-blue-400: #74aff9;
+  --color-blue-500: #3788e7;
+  --color-blue-600: #0062bd;  /* logo colour — untouched. White on it: 6.03:1 */
+  --color-blue-700: #044f98;  /* links: 8.15:1 */
+  --color-blue-800: #023d79;
+  --color-blue-900: #002d5c;
+  --color-blue-950: #002045;
+
+  /* ── Neutral · cool grey, same hue family as the brand blue ──
+     500 and 600 are pinned to the legal thresholds measured against
+     the page ground (#f8fafd), not against white, because the ground
+     is the stricter of the two: 500 = 3.02:1 (control borders),
+     600 = 4.55:1 (the lightest text that is still allowed). */
+  --color-neutral-50:  #f8fafd;
+  --color-neutral-100: #f2f5f8;
+  --color-neutral-200: #e5eaf0;
+  --color-neutral-300: #d3dae2;
+  --color-neutral-400: #b2bcc6;
+  --color-neutral-500: #88929f;
+  --color-neutral-600: #697481;
+  --color-neutral-700: #535f6c;
+  --color-neutral-800: #3c4855;
+  --color-neutral-900: #25313f;
+  --color-neutral-950: #16212e;
+
+  /* ── Status · success ── */
+  --color-green-50:  #f1f9f4;
+  --color-green-100: #e1f2e7;
+  --color-green-200: #c5e6d2;
+  --color-green-300: #a1d8b7;
+  --color-green-400: #6cc393;
+  --color-green-500: #23ac6f;
+  --color-green-600: #0f8f5a;
+  --color-green-700: #0a7649;
+  --color-green-800: #065f3a;
+  --color-green-900: #034a2c;
+  --color-green-950: #01361f;
+
+  /* ── Status · error ── */
+  --color-red-50:  #fff4f2;
+  --color-red-100: #fee7e4;
+  --color-red-200: #fdd0ca;
+  --color-red-300: #fcb4ab;
+  --color-red-400: #f58c81;
+  --color-red-500: #e65f55;
+  --color-red-600: #c6423b;
+  --color-red-700: #a92d28;
+  --color-red-800: #8c1d1b;
+  --color-red-900: #6c1413;
+  --color-red-950: #530d0c;
+
+  /* ── Status · warning ── */
+  --color-amber-50:  #fbf6ef;
+  --color-amber-100: #f7ecde;
+  --color-amber-200: #f0dabe;
+  --color-amber-300: #e9c695;
+  --color-amber-400: #e2ad5f;
+  --color-amber-500: #da9515;
+  --color-amber-600: #ba7f10;
+  --color-amber-700: #96650a;
+  --color-amber-800: #785005;  /* first text-safe step: 7.12:1 */
+  --color-amber-900: #5c3c02;
+  --color-amber-950: #452c01;
+
+  /* ════ Semantic aliases — the API the components actually use ════ */
+
+  /* text */
+  --color-ink:  var(--color-neutral-900);   /* 13.21:1 on white */
+  --color-ink2: var(--color-neutral-700);   /*  6.52:1 */
+  --color-ink3: var(--color-neutral-600);   /*  4.76:1 — the old #7b90a6 was 3.29:1 and failed */
+
+  /* grounds */
+  --color-bg:       var(--color-neutral-50);
+  --color-surface:  #ffffff;
+  --color-line:     var(--color-neutral-300);  /* decorative card edge */
+  --color-linesoft: var(--color-neutral-200);
+  --color-control:  var(--color-neutral-500);  /* form/control borders — 3.02:1, meets 1.4.11 */
+
+  /* action */
+  --color-primary:      var(--color-orange-500);
+  --color-primary-deep: var(--color-orange-550);  /* hover; anything darker breaks the label */
+  --color-primary-soft: var(--color-orange-50);
+  --color-on-primary:   var(--color-neutral-950);  /* the label on filled orange — 5.33:1 */
+  --color-focus:        var(--color-orange-600);   /* 4.09:1 on white, 1.4.11 satisfied */
+  --color-focus-dark:   var(--color-orange-400);   /* 7.34:1 on the dark ground */
+
+  /* structure */
+  --color-steel:    var(--color-blue-700);
+  --color-navy:     var(--color-neutral-950);
+  --color-navy2:    var(--color-neutral-900);
+  --color-navy3:    var(--color-neutral-800);
+  --color-navyline: var(--color-neutral-700);
+
+  /* status — every one of these is text-safe on its own soft ground */
+  --color-accent:      var(--color-green-700);
+  --color-accent-soft: var(--color-green-50);
+  --color-ok:      var(--color-green-700);
+  --color-warn:    var(--color-amber-800);
+  --color-warnbg:  var(--color-amber-50);
+  --color-err:     var(--color-red-700);
+  --color-errbg:   var(--color-red-50);
+  --color-info:    var(--color-blue-700);   /* no dedicated hue: system messages are blue */
+  --color-infobg:  var(--color-blue-50);
+
+  /* ── Data series ──────────────────────────────────────────────
+     Built from the brand pair separated by lightness rather than by
+     adding hues. Verified under protanopia / deuteranopia /
+     tritanopia: minimum pairwise ΔE(OKLab) = 0.162 in the worst case
+     (the previous palette collapsed to 0.049 under deuteranopia).
+     Hard ceiling: four categorical series. Beyond that no colour-only
+     solution survives CVD — use direct labels or dash patterns. */
+  --color-ch-blue:  var(--color-blue-600);     /* series 1 · grid / base load */
+  --color-ch-amber: var(--color-orange-500);   /* series 2 · solar / generation */
+  --color-ch-deep:  var(--color-orange-800);   /* series 3 · diesel / third series */
+  --color-ch-slate: var(--color-neutral-500);  /* baseline / contracted target */
+  /* semantic chart accents — never more than one of these per chart */
+  --color-ch-green: var(--color-green-600);
+  --color-ch-red:   var(--color-red-600);
+
+  --shadow-card: 0 1px 2px rgb(22 33 46 / 0.05), 0 6px 18px rgb(22 33 46 / 0.07);
+  --shadow-lift: 0 2px 4px rgb(22 33 46 / 0.06), 0 16px 36px rgb(22 33 46 / 0.13);
+  --shadow-dark: 0 18px 50px rgb(2 8 16 / 0.5);
+
+  --radius-xs: 5px;
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 16px;
+
+  /* enterprise glass metrics */
+  --glass-blur: 14px;
+  --glass-blur-strong: 22px;
+  --glass-edge: rgb(165 196 235 / 0.16);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* selection uses the orange tint, not the brand orange itself: the
+   dark label on a light tint stays readable over any text colour. */
+::selection { background: var(--color-orange-200); color: var(--color-orange-950); }
+
+/* ── Enterprise glass utilities (Tailwind v4 @utility) ─────────
+   glass-panel  → static translucent surface over dark ambient
+   glass-card   → interactive surface with edge-brighten + lift  */
+@utility glass-panel {
+  background: linear-gradient(155deg, rgb(255 255 255 / 0.08) 0%, rgb(255 255 255 / 0.028) 48%, rgb(120 170 235 / 0.05) 100%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.10), 0 24px 48px -24px rgb(2 8 18 / 0.65);
+}
+
+@utility glass-card {
+  background: linear-gradient(155deg, rgb(255 255 255 / 0.08) 0%, rgb(255 255 255 / 0.028) 48%, rgb(120 170 235 / 0.05) 100%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  border: 1px solid var(--glass-edge);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.10), 0 24px 48px -24px rgb(2 8 18 / 0.65);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    border-color: rgb(165 196 235 / 0.36);
+    transform: translateY(-4px);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.14), 0 30px 60px -22px rgb(2 8 18 / 0.72);
+  }
+}
+
+/* legacy aliases kept for existing sections */
+.glass {
+  background: linear-gradient(155deg, rgb(255 255 255 / 0.08) 0%, rgb(255 255 255 / 0.028) 48%, rgb(120 170 235 / 0.05) 100%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  border: 1px solid rgb(165 196 235 / 0.16);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.10), 0 24px 48px -24px rgb(2 8 18 / 0.65);
+}
+
+.glass-strong {
+  background: linear-gradient(160deg, rgb(16 32 54 / 0.88) 0%, rgb(11 23 40 / 0.82) 100%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgb(165 196 235 / 0.18);
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.09), 0 32px 64px -28px rgb(1 6 14 / 0.8);
+}
+
+.glass-hover { transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+.glass-hover:hover {
+  border-color: rgb(165 196 235 / 0.36);
+  transform: translateY(-4px);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.14), 0 30px 60px -22px rgb(2 8 18 / 0.72);
+}
+
+.glass-inner {
+  background: rgb(12 31 54 / 0.85);
+  border: 1px solid rgb(165 196 235 / 0.10);
+  border-radius: 10px;
+}
+
+.glass-hero {
+  background: linear-gradient(160deg, rgb(10 22 38 / 0.80) 0%, rgb(8 17 30 / 0.62) 55%, rgb(10 22 38 / 0.52) 100%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid rgb(165 196 235 / 0.18);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.10), 0 40px 80px -32px rgb(1 6 14 / 0.9);
+}
+
+/* ── Ambient engineering grid backgrounds ── */
+.grid-light {
+  background-image:
+    linear-gradient(to left, rgb(0 98 189 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(0 98 189 / 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.grid-dark {
+  background-image:
+    linear-gradient(to left, rgb(165 204 253 / 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(165 204 253 / 0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.dots-dark {
+  background-image: radial-gradient(rgb(165 204 253 / 0.16) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* ── Scroll reveal ── */
+.rv { opacity: 0; transform: translateY(26px); transition: opacity 0.7s cubic-bezier(0.2, 0.65, 0.3, 1), transform 0.7s cubic-bezier(0.2, 0.65, 0.3, 1); }
+.rv-l { opacity: 0; transform: translateX(30px); transition: opacity 0.75s ease, transform 0.75s ease; }
+.rv-r { opacity: 0; transform: translateX(-30px); transition: opacity 0.75s ease, transform 0.75s ease; }
+.rv.is-in, .rv-l.is-in, .rv-r.is-in { opacity: 1; transform: none; }
+
+/* ── Keyframes ── */
+@keyframes pulsedot {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(15 143 90 / 0.55); }
+  70% { box-shadow: 0 0 0 7px rgb(15 143 90 / 0); }
+}
+.pulse-dot { animation: pulsedot 2s infinite; }
+
+@keyframes tickerscroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ticker-track { animation: tickerscroll 38s linear infinite; }
+.ticker-track:hover { animation-play-state: paused; }
+
+@keyframes dashdraw { from { stroke-dashoffset: var(--dash, 900); } to { stroke-dashoffset: 0; } }
+.chart-line { stroke-dasharray: var(--dash, 900); animation: dashdraw 2.2s cubic-bezier(0.3, 0.6, 0.3, 1) 0.2s both; }
+
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+.floaty { animation: floaty 7s ease-in-out infinite; }
+
+@keyframes needle { from { transform: rotate(-84deg); } }
+.gauge-needle { transform-origin: 50% 100%; animation: needle 1.6s cubic-bezier(0.3, 0.9, 0.3, 1) both; }
+
+@keyframes barsgrow { from { transform: scaleY(0); } }
+.bar-grow { transform-origin: bottom; animation: barsgrow 0.9s cubic-bezier(0.25, 0.8, 0.3, 1) both; }
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.blink { animation: blink 1.6s ease-in-out infinite; }
+
+@keyframes scanline { 0% { transform: translateY(-100%); } 100% { transform: translateY(430%); } }
+.scanline { animation: scanline 6s linear infinite; }
+
+/* underline slide for nav */
+.nav-link { position: relative; }
+.nav-link::after {
+  content: ""; position: absolute; bottom: -6px; right: 0; left: 0; height: 2px;
+  background: var(--color-primary); transform: scaleX(0); transform-origin: right;
+  transition: transform 0.28s ease;
+}
+.nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
+
+/* ── Browser chrome · scrollbar + native controls aligned to the brand ──
+   Thumb sits in the ink3/steel family (calm, never decorative);
+   Firefox gets the standard thin scrollbar via scrollbar-color. */
+html {
+  color-scheme: light;
+  accent-color: var(--color-blue-600);
+  scrollbar-width: thin;
+  scrollbar-color: rgb(136 146 159 / 0.65) var(--color-bg);
+}
+
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb {
+  background: rgb(136 146 159 / 0.65);
+  border-radius: 999px;
+  border: 3px solid var(--color-bg);
+}
+::-webkit-scrollbar-thumb:hover { background: rgb(83 95 108 / 0.75); }
+::-webkit-scrollbar-thumb:active { background: rgb(60 72 85 / 0.9); }
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* slim variant for inner scroll containers (drawer, chip rows) */
+.scroll-slim { scrollbar-width: thin; scrollbar-color: rgb(136 146 159 / 0.55) transparent; }
+.scroll-slim::-webkit-scrollbar { width: 6px; height: 6px; }
+.scroll-slim::-webkit-scrollbar-track { background: transparent; }
+.scroll-slim::-webkit-scrollbar-thumb { background: rgb(136 146 159 / 0.55); border: none; border-radius: 999px; }
+.scroll-slim::-webkit-scrollbar-thumb:hover { background: rgb(83 95 108 / 0.7); }
+
+.fa-num { font-feature-settings: "tnum"; }
+
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; border-radius: 4px; }
+.on-dark :focus-visible { outline-color: var(--color-focus-dark); }
+
+/* ambient glow fields — slow industrial drift */
+@keyframes glowdrift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-3.5%, 3%, 0) scale(1.1); }
+}
+.glow-a { animation: glowdrift 16s ease-in-out infinite; }
+.glow-b { animation: glowdrift 20s ease-in-out infinite reverse; }
+
+/* film-grain texture for industrial depth */
+.noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .rv, .rv-l, .rv-r { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .ticker-track, .floaty, .scanline, .blink, .pulse-dot { animation: none !important; }
+  .chart-line { animation: none !important; stroke-dasharray: none !important; }
+  .bar-grow, .gauge-needle { animation: none !important; }
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+/* ── Header dropdown/mega panel entrance ── */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes nav-panel-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .nav-panel-enter { animation: nav-panel-in 0.18s ease-out both; }
+}
