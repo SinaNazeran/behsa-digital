@@ -216,7 +216,7 @@ function defaultNavigation(): NavSectionView[] {
     intro: s.intro
       ? { title: s.intro.title, description: s.intro.description, cta: { label: s.intro.ctaLabel, href: s.intro.ctaHref } }
       : null,
-    items: s.items.map((i, ii) => ({
+    items: s.items.filter((i) => i.isActive !== false).map((i, ii) => ({
       id: -((si + 1) * 100 + ii + 1),
       title: i.label,
       href: i.href,
@@ -366,7 +366,9 @@ function defaultSection(key: string): SectionView {
     mobileImageUrl: null,
     videoUrl: def.videoUrl ?? "",
     videoEnabled: def.videoEnabled ?? false,
-    isActive: true,
+    /* a band may ship switched off — e.g. one whose copy claims real
+       screenshots, or the reserved proof slot (content-spec.md §8) */
+    isActive: def.isActive ?? true,
     items: (def.items ?? []).map((i, idx) => ({
       id: -(idx + 1),
       title: i.title,

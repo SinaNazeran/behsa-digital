@@ -1,5 +1,6 @@
 import type { IconName } from "@/components/icons";
 import type { NavLens } from "@/db/schema";
+import { CAPABILITY_CATEGORIES, CONTENT_PAGES } from "@/content/capabilities";
 
 /* ════════════════════════════════════════════════════════════════
    Behsa Digital — Information Architecture / Navigation Model
@@ -10,15 +11,20 @@ import type { NavLens } from "@/db/schema";
    1. the view types the navigation components render,
    2. the factory default menu used to seed the database (and as a
       fallback when the table is empty, so the site is never menu-less),
-   3. the capability ⇄ solution cross-links, which are an editorial
-      relationship between product pages, not a menu entry.
+   3. the cross-links between product pages, derived from the `links`
+      declared next to each page's content in content/capabilities.ts.
 
    Slug convention (English, semantic, hierarchical):
      /product/capabilities/<feature>   → feature-oriented (WHAT it does)
+     /reports/<report>                 → the named report (L4)
      /solutions/<outcome>              → outcome-oriented (WHICH problem)
      /industries/<vertical>            → vertical-oriented (HOW applied)
    Why English slugs: stable URLs under a Persian UI, predictable
    transliteration-free routing, and clean analytics segments.
+
+   Rule of record (docs/content-strategy.md §Content Governance):
+   a nav item ships with its page. Nothing is listed here that does
+   not resolve to written content.
    ════════════════════════════════════════════════════════════════ */
 
 export type { NavLens };
@@ -67,9 +73,14 @@ export const isExternalHref = (href: string) => !href.startsWith("/") || href.st
 /** "/solutions/power-quality" → "solutions/power-quality" (landing router key) */
 export const slugOf = (href: string) => href.replace(/^\//, "");
 
-/* Fixed conversion affordances of the header. The contact page is a
-   real route and the panel URL already lives in site settings, so
-   these are wiring, not editor content. */
+/* Fixed conversion affordances of the header. The contact page is a real
+   route and the panel URL already lives in site settings, so these are
+   wiring, not editor content.
+
+   The site has ONE call to action — the product panel. Requested by the
+   business; it supersedes the demo-first recommendation in
+   docs/content-strategy.md §CTA Strategy. The contact page (with its
+   form) remains the route for a visitor who has no panel account. */
 export const NAV_CONTACT = { title: 'تماس با ما', href: '/contact' } as const;
 export const NAV_CTA_LABEL = 'ورود به سامانه';
 
@@ -81,6 +92,7 @@ export type DefaultNavItem = {
   description?: string;
   icon?: IconName;
   newTab?: boolean;
+  isActive?: boolean;
 };
 
 export type DefaultNavSection = DefaultNavItem & {
@@ -98,19 +110,51 @@ export const DEFAULT_NAV: DefaultNavSection[] = [
     lens: "feature",
     intro: {
       title: "معرفی پلتفرم",
-      description: "هستهٔ داده‌محور بهسا: از اتصال کنتور تا گزارش مدیریتی، در یک سامانهٔ یکپارچه.",
+      description: "از اتصال به کنتور تا عددی که می‌شود بر اساس آن تصمیم گرفت.",
       ctaLabel: "آشنایی با پلتفرم",
       ctaHref: "/product/platform",
     },
     items: [
-      { label: "مدیریت انرژی و هزینه", href: "/product/capabilities/energy-cost-management", description: "بهای تمام‌شده، تعرفه و روند هزینه", icon: "rial" },
-      { label: "پایش و تحلیل مصرف", href: "/product/capabilities/consumption-monitoring", description: "دادهٔ لحظه‌ای و پروفایل بار ۱۵ دقیقه‌ای", icon: "monitor" },
-      { label: "هشدارها و مدیریت دیماند", href: "/product/capabilities/demand-management", description: "هشدار آستانه و تحلیل بیشینهٔ مصرف", icon: "demand" },
-      { label: "کیفیت توان", href: "/product/capabilities/power-quality", description: "ولتاژ، هارمونیک و توان راکتیو", icon: "wave" },
-      { label: "پایش سلامت کنتورها", href: "/product/capabilities/meter-health", description: "پایش اتصال، قطعی و صحت دادهٔ کنتور", icon: "realtime" },
-      { label: "تحلیل پیشرفته", href: "/product/capabilities/advanced-analytics", description: "پیش‌بینی مصرف و مدل‌های هوشمند", icon: "forecast" },
-      { label: "انرژی‌های تجدیدپذیر", href: "/product/capabilities/renewable-energy", description: "پایش تولید خورشیدی و راندمان", icon: "sun" },
-      { label: "مدیریت چندسایتی", href: "/product/capabilities/multi-site", description: "داشبورد تجمیعی هلدینگ و مقایسهٔ سایت‌ها", icon: "holding" },
+      { label: "مدیریت انرژی و هزینه", href: "/product/capabilities/energy-cost-management", description: "تحلیل قبض، تعرفه و قدرت قراردادی", icon: "rial" },
+      { label: "پایش و تحلیل مصرف", href: "/product/capabilities/consumption-monitoring", description: "مصرف لحظه‌ای و پروفایل بار ۱۵ دقیقه‌ای", icon: "monitor" },
+      { label: "هشدارها و مدیریت دیماند", href: "/product/capabilities/demand-management", description: "هشدار پیش از رسیدن به قدرت قراردادی", icon: "demand" },
+      { label: "کیفیت توان", href: "/product/capabilities/power-quality", description: "ضریب توان، هارمونیک و بانک خازنی", icon: "wave" },
+      { label: "پایش سلامت کنتورها", href: "/product/capabilities/meter-health", description: "کنتور خاموش، معیوب و مصرف مشکوک", icon: "realtime" },
+      { label: "هوشمندسازی و تحلیل پیشرفته", href: "/product/capabilities/advanced-analytics", description: "پیش‌بینی مصرف و کشف ناهنجاری", icon: "forecast" },
+      { label: "انرژی‌های تجدیدپذیر", href: "/product/capabilities/renewable-energy", description: "پایش تولید خورشیدی و الزام ماده ۱۶", icon: "sun" },
+      /* ships inactive: an unexplained security claim is worse than silence
+         with a reviewer who knows what to ask. Activate once the engineering
+         facts exist (docs/content-spec.md §3.3, placeholder P4). */
+      { label: "امنیت و دادهٔ شما", href: "/product/security", description: "محل نگهداری داده و کنترل دسترسی", icon: "shield", isActive: false },
+    ],
+  },
+  {
+    label: "گزارش‌ها",
+    href: "/reports",
+    kind: "mega",
+    lens: "feature",
+    intro: {
+      title: "هر گزارش، یک تصمیم",
+      description: "گزارش‌ها بر اساس تصمیمی که باید گرفته شود دسته‌بندی شده‌اند، نه بر اساس نوع نمودار.",
+      ctaLabel: "همهٔ گزارش‌ها",
+      ctaHref: "/reports",
+    },
+    items: [
+      { label: "بهینه‌سازی قدرت قراردادی", href: "/reports/contracted-power", description: "قدرت قراردادی شما زیاد است یا کم؟", icon: "contract" },
+      { label: "توان راکتیو جبرانی بانک خازنی", href: "/reports/capacitor-bank-design", description: "ظرفیت، پله‌بندی، فیوز و کابل", icon: "capacitor" },
+      { label: "نمودار ساعتی جبران‌ساز", href: "/reports/capacitor-bank-diagnostic", description: "بانک خازنی موجود درست کار می‌کند؟", icon: "reactive" },
+      { label: "خرید بهینه انرژی ماه جاری", href: "/reports/optimal-purchase", description: "چقدر برق بخریم تا جریمه نشویم؟", icon: "cart" },
+      { label: "ارزیابی سهم انرژی خورشیدی", href: "/reports/solar-share", description: "سهم واقعی خورشید و الزام ماده ۱۶", icon: "sun" },
+      { label: "پروفایل بار و دادهٔ کنتور", href: "/reports/load-profile", description: "پارامترهای الکتریکی در بازهٔ دلخواه", icon: "loadprofile" },
+      { label: "بیشینه مصرف اکتیو", href: "/reports/peak-demand", description: "پیک مصرف دقیقاً کی رخ داده است؟", icon: "peak" },
+      { label: "کنتورهای دارای تجاوز از دیماند", href: "/reports/demand-excess-meters", description: "کدام کنتور، در چه ساعتی", icon: "gauge" },
+      { label: "مقایسه مصرف دو بازه", href: "/reports/consumption-comparison", description: "مصرف نسبت به دورهٔ قبل چه تغییری کرد؟", icon: "compare" },
+      { label: "بهای انرژی مصرفی قبض", href: "/reports/bill-energy-cost", description: "مصرف و هزینه در هر بازه", icon: "rial" },
+      { label: "رویت‌پذیری دادهٔ کنتور", href: "/reports/observability", description: "چه بخشی از داده واقعی است، چه بخشی تخمینی؟", icon: "eye" },
+      { label: "کنتورهای هوشمند", href: "/reports/meter-register", description: "مشخصات کنتورها در جدول و روی نقشه", icon: "pin" },
+      { label: "هشدار کیفیت ولتاژ", href: "/reports/voltage-quality", description: "کدام مشترک به استابلایزر نیاز دارد؟", icon: "voltage" },
+      { label: "سلامت کنتورها", href: "/reports/meter-health", description: "کنتور خاموش، معیوب یا مصرف مشکوک", icon: "alert" },
+      { label: "داشبورد مدیریتی هلدینگ", href: "/reports/holding-dashboard", description: "همهٔ زیرمجموعه‌ها در یک صفحه", icon: "holding" },
     ],
   },
   {
@@ -119,18 +163,18 @@ export const DEFAULT_NAV: DefaultNavSection[] = [
     kind: "mega",
     lens: "outcome",
     intro: {
-      title: "مسئلهٔ کسب‌وکار، نه فقط ابزار",
-      description: "هر راهکار یک اثر مالی مشخص را هدف می‌گیرد و با قابلیت‌های پلتفرم پشتیبانی می‌شود.",
+      title: "مسئلهٔ کسب‌وکار، نه فهرست ابزار",
+      description: "هر راهکار یک قلم هزینه یا یک الزام قانونی مشخص را هدف می‌گیرد.",
       ctaLabel: "مشاهدهٔ راهکارها",
       ctaHref: "/solutions",
     },
     items: [
-      { label: "مدیریت هزینه و مصرف انرژی", href: "/solutions/cost-consumption", description: "کاهش بهای تمام‌شده بدون افت تولید", icon: "save" },
-      { label: "مدیریت دیماند و قدرت قراردادی", href: "/solutions/demand-management", description: "حذف جریمه دیماند و بهینه‌سازی قرارداد", icon: "contract" },
-      { label: "کیفیت توان", href: "/solutions/power-quality", description: "اصلاح ضریب توان و حذف جریمهٔ راکتیو", icon: "capacitor" },
-      { label: "تأمین و خرید انرژی", href: "/solutions/energy-procurement", description: "پیش‌بینی خرید و کاهش ریسک انحراف", icon: "cart" },
-      { label: "هوشمندسازی و تحلیل پیشرفته", href: "/solutions/advanced-intelligence", description: "از دادهٔ خام تا تصمیم خودکار", icon: "tech" },
-      { label: "مدیریت انرژی چندسایتی", href: "/solutions/multi-site", description: "دید تجمیعی و استانداردسازی گزارش هلدینگ", icon: "holding" },
+      { label: "حذف جریمهٔ دیماند", href: "/solutions/demand-management", description: "تنظیم قدرت قراردادی به اندازهٔ نیاز واقعی", icon: "gauge" },
+      { label: "حذف جریمهٔ توان راکتیو", href: "/solutions/power-quality", description: "اصلاح ضریب توان با طراحی درست بانک خازنی", icon: "capacitor" },
+      { label: "خرید برق بدون جریمهٔ انحراف", href: "/solutions/energy-procurement", description: "مقدار بهینهٔ خرید، نه برآورد", icon: "cart" },
+      { label: "مدیریت انرژی چندسایتی", href: "/solutions/multi-site", description: "یک زبان مشترک برای همهٔ زیرمجموعه‌ها", icon: "holding" },
+      { label: "الزام تأمین برق تجدیدپذیر (ماده ۱۶)", href: "/solutions/article-16", description: "سنجش سهم واقعی و کسری تولید", icon: "leaf" },
+      { label: "الزام خرید از بازار (۱۵۰ کیلووات به بالا)", href: "/solutions/market-purchase", description: "برآورد دقیق سهم بازار برق", icon: "chart" },
     ],
   },
   {
@@ -140,18 +184,15 @@ export const DEFAULT_NAV: DefaultNavSection[] = [
     lens: "vertical",
     intro: {
       title: "هر صنعت، الگوی مصرف خودش",
-      description: "پلتفرم با تعرفه، بار و الزامات هر بخش تنظیم می‌شود — نه یک داشبورد عمومی.",
+      description: "الگوی بار، تعرفه و الزامات هر بخش متفاوت است — و گزارش‌هایی که برایش اهمیت دارند هم متفاوت‌اند.",
       ctaLabel: "صنعت خود را پیدا کنید",
       ctaHref: "/industries",
     },
     items: [
-      { label: "صنایع و کارخانه‌ها", href: "/industries/manufacturing", description: "فولاد، سیمان، پتروشیمی و غذایی", icon: "factory" },
-      { label: "هلدینگ‌ها", href: "/industries/holdings", description: "مدیریت تجمیعی زیرمجموعه‌های متعدد", icon: "holding" },
-      { label: "نیروگاه‌ها", href: "/industries/power-plants", description: "پایش تولید و راندمان نیروگاه", icon: "plant" },
-      { label: "انرژی و توزیع", href: "/industries/utilities", description: "خرده‌فروشان برق و شرکت‌های توزیع", icon: "retail" },
-      { label: "کسب‌وکارهای تجاری", href: "/industries/commercial", description: "مجتمع‌ها، بیمارستان‌ها و مراکز داده", icon: "org" },
-      { label: "کشاورزی", href: "/industries/agriculture", description: "پمپاژ، گلخانه و تعرفهٔ کشاورزی", icon: "leaf" },
-      { label: "انرژی خورشیدی", href: "/industries/solar", description: "نیروگاه‌های خورشیدی و سقف صنعتی", icon: "sun" },
+      { label: "صنایع پرمصرف", href: "/industries/heavy-industry", description: "فولاد، سیمان، پتروشیمی، ریخته‌گری و غذایی", icon: "factory" },
+      { label: "هلدینگ‌ها و گروه‌های چندسایتی", href: "/industries/holdings", description: "زیرمجموعه‌های متنوع با گزارش غیرقابل‌مقایسه", icon: "holding" },
+      { label: "مشاوران و طراحان برق", href: "/industries/consultants", description: "طراحی بانک خازنی بدون بازدید میدانی", icon: "consultant" },
+      { label: "خرده‌فروشان و توزیع برق", href: "/industries/electricity-retailers", description: "سلامت کنتورها و پیش‌بینی سبد مشتریان", icon: "retail" },
     ],
   },
   {
@@ -161,11 +202,10 @@ export const DEFAULT_NAV: DefaultNavSection[] = [
     lens: "content",
     items: [
       { label: "مقالات", href: "/articles", description: "تحلیل‌های تخصصی مدیریت انرژی", icon: "doc" },
-      { label: "آموزش‌ها", href: "/resources/training", description: "دوره‌ها و وبینارهای فنی", icon: "precision" },
-      { label: "گزارش‌ها", href: "/resources/reports", description: "گزارش‌های دوره‌ای بازار انرژی", icon: "chart" },
-      { label: "مطالعات موردی", href: "/resources/case-studies", description: "نتایج واقعی پروژه‌های مشتریان", icon: "board" },
-      { label: "ویدئوها", href: "/resources/videos", description: "دمو و آموزش‌های ویدئویی", icon: "play" },
-      { label: "راهنماها", href: "/resources/guides", description: "مستندات استقرار و API", icon: "contract" },
+      /* ships inactive: the route exists so the first real case study has
+         a home, but an empty «نتایج واقعی» page is a promise with nothing
+         behind it (docs/content-audit.md §Navigation Audit). */
+      { label: "مطالعات موردی", href: "/resources/case-studies", description: "نتایج پروژه‌های واقعی", icon: "board", isActive: false },
     ],
   },
   {
@@ -173,30 +213,20 @@ export const DEFAULT_NAV: DefaultNavSection[] = [
     href: "/about",
     kind: "dropdown",
     lens: "company",
-    items: [
-      { label: "درباره بهسا", href: "/about", description: "مأموریت، چشم‌انداز و رویکرد ما", icon: "info" },
-      { label: "تخصص و توانمندی‌ها", href: "/about/expertise", description: "تیم مهندسی برق قدرت و داده", icon: "decision" },
-      { label: "تیم", href: "/about/team", description: "افرادی که بهسا را می‌سازند", icon: "org" },
-    ],
+    items: [],
   },
 ];
 
-/* ── Capability ⇄ solution cross-links (editorial, not menu data) ── */
+/* ── Cross-links — derived, not duplicated ──────────────────────────
+   Each page declares its own related pages next to its content in
+   content/capabilities.ts; this map is just the index the landing
+   router reads, so the two can never drift apart. */
 
-export const CROSS_LINKS: Record<string, { label: string; slug: string }[]> = {
-  "product/capabilities/energy-cost-management": [{ label: "راهکار: مدیریت هزینه و مصرف", slug: "solutions/cost-consumption" }],
-  "product/capabilities/demand-management": [{ label: "راهکار: دیماند و قدرت قراردادی", slug: "solutions/demand-management" }],
-  "product/capabilities/power-quality": [{ label: "راهکار: کیفیت توان", slug: "solutions/power-quality" }],
-  "product/capabilities/advanced-analytics": [{ label: "راهکار: هوشمندسازی", slug: "solutions/advanced-intelligence" }],
-  "product/capabilities/renewable-energy": [{ label: "صنعت: انرژی خورشیدی", slug: "industries/solar" }],
-  "product/capabilities/multi-site": [{ label: "راهکار: مدیریت چندسایتی", slug: "solutions/multi-site" }],
-  "solutions/cost-consumption": [{ label: "قابلیت: مدیریت هزینه", slug: "product/capabilities/energy-cost-management" }],
-  "solutions/demand-management": [{ label: "قابلیت: هشدارها و مدیریت دیماند", slug: "product/capabilities/demand-management" }],
-  "solutions/power-quality": [{ label: "قابلیت: کیفیت توان", slug: "product/capabilities/power-quality" }],
-  "solutions/energy-procurement": [{ label: "قابلیت: تحلیل پیشرفته", slug: "product/capabilities/advanced-analytics" }],
-  "solutions/advanced-intelligence": [{ label: "قابلیت: تحلیل پیشرفته", slug: "product/capabilities/advanced-analytics" }],
-  "solutions/multi-site": [{ label: "قابلیت: چندسایتی", slug: "product/capabilities/multi-site" }],
-};
+export const CROSS_LINKS: Record<string, { label: string; slug: string }[]> = Object.fromEntries(
+  [...CAPABILITY_CATEGORIES, ...CONTENT_PAGES]
+    .filter((c) => c.links && c.links.length > 0)
+    .map((c) => [c.slug, c.links!]),
+);
 
 /** which top-level section owns a route — for the navbar active indicator */
 export function sectionKeyForRoute(route: string, sections: NavSectionView[]): string | null {

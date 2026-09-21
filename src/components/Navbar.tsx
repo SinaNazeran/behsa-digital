@@ -191,15 +191,15 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
             <Icon name="phone" size={15} className="shrink-0 transition-transform duration-200 group-hover:-rotate-6" />
             <span className="hidden md:inline">{NAV_CONTACT.title}</span>
           </SmartLink>
-          {/* persistent conversion action — goes straight to the product panel;
-              external → opens in a new tab so the marketing page stays open */}
+          {/* the site's single call to action — goes straight to the product
+              panel; external → opens in a new tab so the page stays open */}
           <Button
             href={panelUrl}
             target="_blank"
             variant="primary"
             size="md"
             icon="login"
-            ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)"
+            ariaLabel={`${NAV_CTA_LABEL} (باز شدن در پنجره جدید)`}
             className="hidden h-10 px-4 text-[13px] shadow-[0_2px_10px_rgb(250_100_0/0.26)] hover:shadow-[0_4px_14px_rgb(250_100_0/0.36)] sm:inline-flex"
           >
             {NAV_CTA_LABEL}

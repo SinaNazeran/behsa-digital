@@ -3,7 +3,7 @@
    to re-run after editors have changed content. */
 import { sql } from "drizzle-orm";
 import { connect } from "./_db";
-import { ARTICLE_CATS, ARTICLES, CLIENTS, FAQ_ITEMS, TESTIMONIALS } from "./seed-data";
+import { ARTICLE_CATS, ARTICLES, FAQ_ITEMS } from "./seed-data";
 import { parseJalaliLabel } from "../src/lib/format";
 import { DEFAULT_SETTINGS } from "../src/content/defaults";
 import { DEFAULT_NAV } from "../src/content/navigation";
@@ -52,11 +52,10 @@ await db.transaction(async (tx) => {
   const [{ n: faqCount }] = await tx.select({ n: sql<number>`count(*)::int` }).from(schema.faqs);
   if (faqCount === 0) await tx.insert(schema.faqs).values(FAQ_ITEMS.map((f, i) => ({ question: f.q, answer: f.a, sortOrder: i })));
 
-  const [{ n: tCount }] = await tx.select({ n: sql<number>`count(*)::int` }).from(schema.testimonials);
-  if (tCount === 0) await tx.insert(schema.testimonials).values(TESTIMONIALS.map((t, i) => ({ quote: t.quote, name: t.name, org: t.org, sortOrder: i })));
-
-  const [{ n: cCount }] = await tx.select({ n: sql<number>`count(*)::int` }).from(schema.clients);
-  if (cCount === 0) await tx.insert(schema.clients).values(CLIENTS.map((name, i) => ({ name, sortOrder: i })));
+  /* testimonials and clients are deliberately NOT seeded: the site must
+     never ship invented customer names or quotes. Both tables are filled
+     only with real, permission-cleared entries
+     (docs/content-strategy.md §Trust / Proof Strategy). */
 
   /* navigation — only when the menu has never been stored */
   const [{ n: navCount }] = await tx.select({ n: sql<number>`count(*)::int` }).from(schema.navItems);
@@ -73,6 +72,7 @@ await db.transaction(async (tx) => {
         await tx.insert(schema.navItems).values(section.items.map((i, ii) => ({
           parentId: row.id, label: i.label, href: i.href, description: i.description ?? "",
           icon: i.icon ?? "", openInNewTab: i.newTab ?? false, sortOrder: ii,
+          isActive: i.isActive ?? true,
         })));
       }
     }
@@ -89,6 +89,7 @@ await db.transaction(async (tx) => {
       eyebrow: d.eyebrow ?? "", title: d.title ?? "", description: d.description ?? "",
       ctaLabel: d.ctaLabel ?? "", ctaHref: d.ctaHref ?? "",
       videoUrl: d.videoUrl ?? "", videoEnabled: d.videoEnabled ?? false,
+      isActive: d.isActive ?? true,
     });
     if (d.items?.length) {
       await tx.insert(schema.contentItems).values(d.items.map((i, idx) => ({

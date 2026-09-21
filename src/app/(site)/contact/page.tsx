@@ -7,16 +7,20 @@ export function generateMetadata() {
   return buildMetadata({
     path: "/contact",
     title: "تماس با ما",
-    description: "راه‌های ارتباط با بهسا دیجیتال برای مشاوره، دمو و استقرار سامانه پایش و مدیریت مصرف انرژی.",
+    description: "راه‌های ارتباط با بهسا دیجیتال: تلفن، ایمیل، آدرس و فرم تماس — برای مشاوره و استقرار سامانهٔ پایش و مدیریت مصرف انرژی.",
   });
 }
 
-export default async function ContactPage() {
-  const settings = await getSettings();
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ subject?: string }>;
+}) {
+  const [settings, params] = await Promise.all([getSettings(), searchParams]);
   return (
     <>
       <JsonLd data={breadcrumbLd(SITE_URL, [{ label: "خانه", path: "/" }, { label: "تماس با ما", path: "/contact" }])} />
-      <Contact settings={settings} />
+      <Contact settings={settings} subject={(params.subject ?? "").slice(0, 160)} />
     </>
   );
 }

@@ -3,7 +3,7 @@ import { BehsaLogo } from "./BehsaLogo";
 import { Btn } from "./ui";
 import { faNum } from "@/lib/format";
 import type { SiteSettings } from "@/db/schema";
-import { NAV_CONTACT, type NavSectionView } from "@/content/navigation";
+import { NAV_CONTACT, NAV_CTA_LABEL, type NavSectionView } from "@/content/navigation";
 import { SmartLink } from "@/components/SmartLink";
 
 /* ── Footer — 4-column RTL grid ── */
@@ -74,16 +74,16 @@ export function Footer({ settings, sections }: { settings: SiteSettings; section
             </ul>
           </div>
 
-          {/* محصولات و خدمات */}
+          {/* گزارش‌های پرکاربرد — every entry resolves to a written page */}
           <div className="lg:col-span-3">
-            <h3 className="font-display font-bold text-[15px] text-ink mb-5">محصولات و خدمات</h3>
+            <h3 className="font-display font-bold text-[15px] text-ink mb-5">گزارش‌های پرکاربرد</h3>
             <ul className="space-y-3 text-[13.5px]">
               {[
-                { l: "پایش و تحلیل مصرف", p: "/product/capabilities/consumption-monitoring" },
-                { l: "مدیریت و بهینه‌سازی دیماند", p: "/solutions/demand-management" },
-                { l: "کیفیت توان و توان راکتیو", p: "/solutions/power-quality" },
-                { l: "تأمین و خرید بهینه انرژی", p: "/solutions/energy-procurement" },
-                { l: "خدمات مشاوره تخصصی", p: "/services" },
+                { l: "بهینه‌سازی قدرت قراردادی", p: "/reports/contracted-power" },
+                { l: "طراحی بانک خازنی", p: "/reports/capacitor-bank-design" },
+                { l: "خرید بهینه انرژی ماه جاری", p: "/reports/optimal-purchase" },
+                { l: "ارزیابی سهم انرژی خورشیدی", p: "/reports/solar-share" },
+                { l: "الزامات قانونی تأمین برق", p: "/solutions/article-16" },
                 { l: "مقالات و تحلیل‌های انرژی", p: "/articles" },
               ].map((n) => (
                 <li key={n.l}>
@@ -117,7 +117,7 @@ export function Footer({ settings, sections }: { settings: SiteSettings; section
                 <span>{settings.address}</span>
               </li>
             </ul>
-            <Btn href={settings.panelUrl} target="_blank" size="md" className="mt-6 w-full" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">ورود به سامانه</Btn>
+            <Btn href={settings.panelUrl} target="_blank" size="md" className="mt-6 w-full" icon="login" ariaLabel={`${NAV_CTA_LABEL} (باز شدن در پنجره جدید)`}>{NAV_CTA_LABEL}</Btn>
           </div>
         </div>
 
@@ -125,7 +125,7 @@ export function Footer({ settings, sections }: { settings: SiteSettings; section
           <p>© {faNum(year)} {settings.siteName} — کلیه حقوق محفوظ است.</p>
           <p className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-accent pulse-dot" />
-            ساخته‌شده بر پایه داده؛ برای تصمیم‌های بهتر
+            محاسبه، پیش از صدور قبض.
           </p>
         </div>
       </div>

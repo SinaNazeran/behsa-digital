@@ -1,15 +1,16 @@
 import { Icon } from "@/components/icons";
 import { Reveal, PageHero } from "@/components/ui";
+import { LeadForm } from "@/components/LeadForm";
 import type { SiteSettings } from "@/db/schema";
 import { SmartLink } from "@/components/SmartLink";
 
-export default function Contact({ settings }: { settings: SiteSettings }) {
+export default function Contact({ settings, subject = "" }: { settings: SiteSettings; subject?: string }) {
   return (
     <>
       <PageHero
         crumb={[{ label: "خانه", path: "/" }, { label: "تماس با ما" }]}
         title="راه‌های ارتباط با بهسا دیجیتال"
-        lead="برای دریافت مشاوره، استقرار سامانه پایش و مدیریت مصرف انرژی یا ارتباط با واحدهای فنی و بازرگانی، از اطلاعات تماس زیر استفاده کنید."
+        lead="برای مشاوره، استقرار سامانه یا پرسش فنی می‌توانید مستقیماً تماس بگیرید یا فرم زیر را تکمیل کنید."
       />
 
       {/* ── Contact Info Cards Grid ── */}
@@ -183,6 +184,34 @@ export default function Contact({ settings }: { settings: SiteSettings }) {
               </div>
             </Reveal>
           </div>
+        </div>
+      </section>
+
+      {/* ── Form — the only way a visitor without a panel account can
+          start a conversation. Until this shipped, the page offered
+          contact details and nothing else (docs/content-audit.md). */}
+      <section className="relative bg-surface border-b border-line py-16 md:py-20">
+        <div className="absolute inset-0 grid-light" />
+        <div className="relative mx-auto max-w-[840px] px-5 md:px-8">
+          <Reveal>
+            <h2 className="font-display text-[22px] md:text-[26px] font-extrabold text-ink text-center">
+              پیام خود را بفرستید
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-center text-[14px] leading-8 text-ink2">
+              برای مشاوره، استقرار سامانه یا هر پرسش فنی دربارهٔ مجموعهٔ خودتان.
+            </p>
+          </Reveal>
+          <Reveal delay={120}>
+            <div className="mt-9 rounded-m border border-line bg-bg p-6 md:p-8 shadow-card">
+              <LeadForm
+                sourcePath="/contact"
+                subject={subject || "تماس عمومی"}
+                submitLabel="ارسال پیام"
+                phoneDisplay={settings.phoneDisplay}
+                phoneHref={settings.phoneHref}
+              />
+            </div>
+          </Reveal>
         </div>
       </section>
 

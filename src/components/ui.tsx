@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { cn } from "../utils/cn";
 import { Icon, type IconName } from "./icons";
+import { AccentText } from "./AccentText";
 import { SmartLink } from "@/components/SmartLink";
 
 /* ── Scroll reveal ── */
@@ -142,8 +143,11 @@ export function SectionHead({
         <span className={cn("h-px w-8", dark ? "bg-orange-400" : "bg-accent")} />
         <span className={cn("text-[13px] font-bold tracking-tight", dark ? "text-orange-300" : "text-accent")}>{eyebrow}</span>
       </div>
+      {/* the CMS accent marker (*word*) is valid in any editable title,
+          so every heading that renders one must interpret it — otherwise
+          the stars leak into the page as literal text */}
       <h2 id={id} className={cn("font-display font-extrabold text-[26px] md:text-[32px] leading-[1.45] tracking-tight", dark ? "text-white" : "text-ink")}>
-        {title}
+        <AccentText text={title} accentClass={dark ? "text-orange-300" : "text-orange-700"} />
       </h2>
       {lead && <p className={cn("mt-4 text-[15.5px] leading-8", dark ? "text-neutral-400" : "text-ink2")}>{lead}</p>}
     </Reveal>
@@ -228,7 +232,9 @@ export function PageHero({ crumb, title, lead, children }: { crumb: { label: str
         <div className="mt-6 grid gap-10 lg:grid-cols-12 lg:items-end">
           <div className={children ? "lg:col-span-7" : "lg:col-span-10"}>
             <Reveal delay={80}>
-              <h1 className="font-display font-black text-[30px] md:text-[42px] leading-[1.4] tracking-tight text-ink">{title}</h1>
+              <h1 className="font-display font-black text-[30px] md:text-[42px] leading-[1.4] tracking-tight text-ink">
+                <AccentText text={title} />
+              </h1>
               {lead && <p className="mt-5 text-[15.5px] md:text-[16.5px] leading-8 text-ink2 max-w-2xl">{lead}</p>}
             </Reveal>
           </div>

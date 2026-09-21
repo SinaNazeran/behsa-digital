@@ -3,16 +3,37 @@
 import { useState } from "react";
 import { cn } from "@/utils/cn";
 import { Icon } from "@/components/icons";
-import { Reveal, Btn, Badge, SectionHead, AlertCard, CountUp } from "@/components/ui";
-import { AreaLine, DemandBars, PowerGauge, Donut, Spark, SERIES } from "@/components/charts";
+import { Reveal, Btn, Badge, SectionHead } from "@/components/ui";
 import { Hero } from "@/components/hero/Hero";
 import { ArticleCard, type ArticleCardProps } from "@/components/ArticleCard";
-import { KPI_CARDS, ALERTS, DEMAND_BARS, faNum } from "@/content/data";
+import { faNum } from "@/content/data";
 import { SmartLink } from "@/components/SmartLink";
 import { AccentText } from "@/components/AccentText";
-import type { ContentMap, SectionItemView, SectionView } from "@/lib/cms";
+import type { ContentMap, SectionView } from "@/lib/cms";
 
-const MONTHLY = [62, 66, 61, 70, 74, 68, 77, 72, 80, 75, 71, 78, 83, 79, 86, 82, 76, 84, 88, 81, 78, 85, 90, 84, 80, 87, 92, 86, 89, 94];
+/* ════════════════════════════════════════════════════════════════
+   Homepage — the narrative of docs/content-strategy.md:
+
+     1 hero            what this is, and that it needs no hardware
+     2 asset types     who it is for, without naming anyone's brand
+     3 pains           the problem, with its consequence
+     4 regulations     why now
+     5 status quo      why the current approach cannot answer it
+     6 platform        how it works, four steps
+     7 reports         what you actually receive
+     8 dashboard       proof of mechanism (real screenshots only)
+     9 capacitor       the differentiator, shown not claimed
+    10 industries      relevance
+    11 benefits        outcome — capability language, no percentages
+    12 proof           RESERVED: renders only with real testimonials
+    13 articles        depth
+    14 faq             objection handling, before the ask
+    15 cta             conversion
+
+   Every band renders whatever the CMS holds, and a band the editor
+   switched off — or emptied — disappears instead of leaving a headline
+   with nothing under it.
+   ════════════════════════════════════════════════════════════════ */
 
 export type HomeProps = {
   articles: ArticleCardProps[];
@@ -28,26 +49,28 @@ const EMPTY_SECTION: SectionView = {
   imageUrl: null, mobileImageUrl: null, videoUrl: "", videoEnabled: false, isActive: false, items: [],
 };
 
-/* Card counts are never assumed: every band renders whatever the CMS
-   holds, and a band the editor switched off — or emptied — disappears
-   instead of leaving a headline with nothing under it. */
 const ordinal = (i: number) => faNum(String(i + 1).padStart(2, "0"));
 
 export default function Home({ articles, testimonials, faqs, content, panelUrl }: HomeProps) {
   const [tab, setTab] = useState(0);
   const [faq, setFaq] = useState(0);
   const s = (key: string): SectionView => content[key] ?? EMPTY_SECTION;
-  const pains = s("pains"), platform = s("platform"), solutions = s("solutions"), dashboard = s("dashboard");
-  const features = s("features"), industries = s("industries"), benefits = s("benefits");
-  const quotes = s("testimonials"), posts = s("articles"), faqHead = s("faq"), closing = s("cta");
-  const t: SectionItemView | undefined = platform.items[Math.min(tab, platform.items.length - 1)];
+  const pains = s("pains"), regulations = s("regulations"), statusQuo = s("status-quo");
+  const platform = s("platform"), reports = s("reports"), dashboard = s("dashboard");
+  const capacitor = s("capacitor"), industries = s("industries"), benefits = s("benefits");
+  const proof = s("proof"), posts = s("articles"), faqHead = s("faq"), closing = s("cta");
+
+  const t = platform.items[Math.min(tab, Math.max(platform.items.length - 1, 0))];
+  /* screenshots without an uploaded image would make the band's own
+     claim untrue, so the band is gated on real media being present */
+  const shots = dashboard.items.filter((i) => i.imageUrl);
 
   return (
     <>
-      {/* ───────── 1 · HERO (Samsara-pattern, media-backed) ───────── */}
+      {/* ───────── 1 · HERO + 2 · asset types ───────── */}
       <Hero hero={s("hero")} companies={s("companies")} />
 
-      {/* ───────── 2 · Pain points ───────── */}
+      {/* ───────── 3 · Pain points ───────── */}
       {pains.isActive && pains.items.length > 0 && (
       <section className="relative py-20 md:py-24 bg-bg border-t border-line">
         <div className="absolute inset-0 grid-light" />
@@ -56,7 +79,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
             <SectionHead eyebrow={pains.eyebrow} title={pains.title} lead={pains.description} />
             {pains.ctaLabel && (
               <Reveal delay={150} className="shrink-0">
-                <Btn href={pains.ctaHref || "/services"} variant="secondary" icon="arrowL">{pains.ctaLabel}</Btn>
+                <Btn href={pains.ctaHref || "/solutions"} variant="secondary" icon="arrowL">{pains.ctaLabel}</Btn>
               </Reveal>
             )}
           </div>
@@ -81,7 +104,6 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                       <SmartLink
                         href={p.href}
                         className="inline-flex items-center gap-1.5 text-[13px] font-bold text-orange-700 hover:gap-2.5 transition-all"
-                        onClick={p.href.startsWith("#") ? (e) => { e.preventDefault(); document.getElementById(p.href.slice(1))?.scrollIntoView({ behavior: "smooth" }); } : undefined}
                       >
                         {p.tag} <Icon name="arrowL" size={14} sw={2.2} />
                       </SmartLink>
@@ -95,7 +117,79 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
       </section>
       )}
 
-      {/* ───────── 3 · Platform overview — tabs ───────── */}
+      {/* ───────── 4 · Regulatory urgency ─────────
+          Statute text and Behsa's output are visually separated so the
+          band never reads as legal advice. No percentage is published
+          here — see docs/content-spec.md, placeholder P1. */}
+      {regulations.isActive && regulations.items.length > 0 && (
+      <section className="relative py-20 md:py-24 bg-neutral-950 text-white overflow-hidden border-y border-neutral-800">
+        <div className="absolute inset-0 grid-dark opacity-30" />
+        <div className="absolute -top-28 left-[8%] h-[340px] w-[460px] rounded-full bg-green-500/10 blur-3xl glow-a pointer-events-none" />
+        <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
+          <SectionHead eyebrow={regulations.eyebrow} title={regulations.title} lead={regulations.description} dark={true} />
+          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+            {regulations.items.map((r, i) => (
+              <Reveal key={r.id} delay={i * 110}>
+                <article className="h-full flex flex-col rounded-m border border-white/15 bg-white/[0.04] backdrop-blur-sm p-7 md:p-8">
+                  <div className="flex items-start gap-4">
+                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-s bg-green-500/15 border border-green-500/25 text-green-300">
+                      <Icon name={r.icon ?? "leaf"} size={23} />
+                    </span>
+                    <h3 className="font-display font-bold text-[17px] md:text-[18px] leading-8 text-white">{r.title}</h3>
+                  </div>
+                  {r.description && (
+                    <p className="mt-5 text-[14px] leading-8 text-neutral-300">{r.description}</p>
+                  )}
+                  {r.bullets.length > 0 && (
+                    <div className="mt-6 pt-5 border-t border-white/10">
+                      <p className="text-[12px] font-bold text-orange-300">نقش بهسا دیجیتال</p>
+                      <ul className="mt-3 space-y-2.5">
+                        {r.bullets.map((b) => (
+                          <li key={b} className="flex items-start gap-2.5 text-[13.5px] leading-7 text-neutral-200">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-400" />
+                            {b}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {r.tag && r.href && (
+                    <div className="mt-auto pt-6">
+                      <SmartLink href={r.href} className="inline-flex items-center gap-1.5 text-[13px] font-bold text-orange-300 hover:gap-3 transition-all">
+                        {r.tag} <Icon name="arrowL" size={14} sw={2.2} />
+                      </SmartLink>
+                    </div>
+                  )}
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+      )}
+
+      {/* ───────── 5 · Why the status quo fails ─────────
+          Deliberately quiet: it breaks the card-grid rhythm between the
+          dark regulation band and the dark platform band. */}
+      {statusQuo.isActive && statusQuo.items.length > 0 && (
+      <section className="py-16 md:py-20 bg-surface border-b border-line">
+        <div className="mx-auto max-w-[1200px] px-5 md:px-8">
+          <SectionHead eyebrow={statusQuo.eyebrow} title={statusQuo.title} />
+          <div className="mt-10 grid gap-x-10 gap-y-8 md:grid-cols-3">
+            {statusQuo.items.map((q, i) => (
+              <Reveal key={q.id} delay={(i % 3) * 90}>
+                <div className="border-t-2 border-line pt-5">
+                  <h3 className="font-display font-bold text-[15.5px] text-ink">{q.title}</h3>
+                  {q.description && <p className="mt-3 text-[13.5px] leading-7 text-ink2">{q.description}</p>}
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+      )}
+
+      {/* ───────── 6 · How it works — four steps ───────── */}
       {platform.isActive && t && (
       <section className="relative py-20 md:py-24 bg-gradient-to-b from-blue-900 via-blue-800 to-blue-950 text-white overflow-hidden border-y border-blue-700/60">
         <div className="absolute inset-0 grid-dark opacity-35" />
@@ -105,7 +199,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
           <SectionHead eyebrow={platform.eyebrow} title={platform.title} lead={platform.description} dark={true} />
 
           <div className="mt-12 grid gap-6 lg:grid-cols-12">
-            <div className="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-3" role="tablist" aria-label="لایه‌های پلتفرم">
+            <div className="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-3" role="tablist" aria-label="گام‌های کار با سامانه">
               {platform.items.map((p, i) => (
                 <button
                   key={p.id} role="tab" aria-selected={tab === i} onClick={() => setTab(i)}
@@ -125,7 +219,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                   <span>
                     <span className="block font-display font-bold text-[15.5px]">{p.title}</span>
                     <span className={cn("block text-[11.5px] mt-0.5", tab === i ? "text-neutral-500" : "text-blue-200/80")}>
-                      لایه {faNum(i + 1)} از {faNum(platform.items.length)}
+                      گام {faNum(i + 1)} از {faNum(platform.items.length)}
                     </span>
                   </span>
                 </button>
@@ -154,18 +248,9 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                   </ul>
                 </div>
                 <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap gap-3">
-                  <Btn
-                    href={panelUrl}
-                    target="_blank"
-                    size="md"
-                    variant="primary"
-                    icon="login"
-                    ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)"
-                  >
-                    ورود به سامانه
-                  </Btn>
+                  <Btn href={panelUrl} target="_blank" size="md" variant="primary" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">ورود به سامانه</Btn>
                   {platform.ctaLabel && (
-                    <Btn href={platform.ctaHref || "/product"} variant="dark" size="md" icon="arrowL">
+                    <Btn href={platform.ctaHref || "/product/platform"} variant="dark" size="md">
                       {platform.ctaLabel}
                     </Btn>
                   )}
@@ -177,34 +262,40 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
       </section>
       )}
 
-      {/* ───────── 4 · Solutions ───────── */}
-      {solutions.isActive && solutions.items.length > 0 && (
-      <section id="solutions" className="py-20 md:py-24 bg-surface relative border-b border-line">
+      {/* ───────── 7 · Report catalogue (representative subset) ───────── */}
+      {reports.isActive && reports.items.length > 0 && (
+      <section id="reports" className="py-20 md:py-24 bg-surface relative border-b border-line">
         <div className="absolute inset-0 grid-light" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
-          <SectionHead eyebrow={solutions.eyebrow} title={solutions.title} lead={solutions.description} align="center" />
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <SectionHead eyebrow={reports.eyebrow} title={reports.title} lead={reports.description} />
+            {reports.ctaLabel && (
+              <Reveal delay={150} className="shrink-0">
+                <Btn href={reports.ctaHref || "/reports"} variant="secondary" icon="arrowL">{reports.ctaLabel}</Btn>
+              </Reveal>
+            )}
+          </div>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {solutions.items.map((s, i) => (
-              <Reveal key={s.id} delay={(i % 3) * 100}>
-                <article className="group h-full rounded-m border border-line bg-bg p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:bg-surface hover:border-primary/40 flex flex-col justify-between">
+            {reports.items.map((r, i) => (
+              <Reveal key={r.id} delay={(i % 3) * 100}>
+                <SmartLink
+                  href={r.href || "/reports"}
+                  className="group h-full rounded-m border border-line bg-bg p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:bg-surface hover:border-primary/40 flex flex-col justify-between"
+                >
                   <div>
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between gap-3">
                       <span className="inline-flex h-12 w-12 items-center justify-center rounded-s bg-primary-soft text-orange-700 border border-orange-200/50 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary">
-                        <Icon name={s.icon ?? "bolt"} size={23} />
+                        <Icon name={r.icon ?? "board"} size={23} />
                       </span>
-                      {s.tag && <Badge tone="green">{s.tag}</Badge>}
+                      {r.tag && <Badge tone="steel">{r.tag}</Badge>}
                     </div>
-                    <h3 className="mt-5 font-display font-bold text-[17px] text-ink leading-snug">{s.title}</h3>
-                    {s.description && <p className="mt-2.5 text-[13.5px] leading-7 text-ink2">{s.description}</p>}
+                    <h3 className="mt-5 font-display font-bold text-[16px] text-ink leading-7 group-hover:text-orange-700 transition-colors">{r.title}</h3>
+                    {r.description && <p className="mt-2.5 text-[13.5px] leading-7 text-ink2">{r.description}</p>}
                   </div>
-                  {s.href && (
-                    <div className="mt-5 pt-4 border-t border-linesoft">
-                      <SmartLink href={s.href} className="inline-flex items-center gap-1.5 text-[13px] font-bold text-orange-700 hover:gap-2.5 transition-all">
-                        بیشتر بدانید <Icon name="arrowL" size={14} sw={2.2} />
-                      </SmartLink>
-                    </div>
-                  )}
-                </article>
+                  <span className="mt-5 pt-4 border-t border-linesoft inline-flex items-center gap-1.5 text-[13px] font-bold text-orange-700 group-hover:gap-2.5 transition-all">
+                    مشاهدهٔ گزارش <Icon name="arrowL" size={14} sw={2.2} />
+                  </span>
+                </SmartLink>
               </Reveal>
             ))}
           </div>
@@ -212,127 +303,31 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
       </section>
       )}
 
-      {/* ───────── 5 · Dashboard showcase ───────── */}
-      {dashboard.isActive && (
+      {/* ───────── 8 · Inside the system — real screenshots only ─────────
+          Gated on `shots`: the band claims the images come from the real
+          product, so it must not render placeholder art. */}
+      {dashboard.isActive && shots.length > 0 && (
       <section className="relative py-20 md:py-24 bg-neutral-950 text-white overflow-hidden border-y border-neutral-800">
         <div className="absolute inset-0 grid-dark opacity-30" />
         <div className="absolute -top-32 right-[10%] h-[420px] w-[560px] rounded-full bg-blue-600/15 blur-3xl glow-a pointer-events-none" />
-        <div className="absolute -bottom-40 left-[4%] h-[400px] w-[500px] rounded-full bg-orange-500/10 blur-3xl glow-b pointer-events-none" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
-          <div>
-            <SectionHead eyebrow={dashboard.eyebrow} title={dashboard.title} lead={dashboard.description} dark={true} />
-          </div>
-
-          <div className="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {KPI_CARDS.map((k, i) => (
-              <Reveal key={k.label} delay={i * 80}>
-                <div className="rounded-m border border-white/10 bg-neutral-900/90 shadow-dark p-5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/40">
-                  <div className="flex items-center justify-between">
-                    <span className="text-neutral-400"><Icon name={k.icon} size={20} /></span>
-                    <span className={cn("inline-flex items-center gap-1 text-[11.5px] font-bold fa-num px-2 py-0.5 rounded-xs border", k.good ? "text-green-400 bg-green-500/10 border-green-500/20" : "text-red-400 bg-red-500/10 border-red-500/20")}>
-                      <Icon name={k.good ? "check" : "alert"} size={12} sw={2.4} />
-                      {k.delta}
-                      <span className="sr-only">{k.good ? "— وضعیت مطلوب" : "— نیازمند بررسی"}</span>
-                    </span>
-                  </div>
-                  <p className="mt-3 font-display font-black text-[25px] leading-none text-white fa-num">{k.value}</p>
-                  <p className="mt-1.5 text-[11.5px] text-neutral-400">{k.label} <span className="text-neutral-500">({k.unit})</span></p>
-                  <div className="mt-3"><Spark data={k.chart} color={k.good ? "#23AC6F" : "#E65F55"} /></div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          <div className="mt-4 grid gap-4 lg:grid-cols-3">
-            <Reveal className="lg:col-span-2" delay={100}>
-              <div className="h-full rounded-m border border-white/10 bg-neutral-900/90 shadow-dark p-6 backdrop-blur-sm text-white">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display font-bold text-[15.5px] text-white">مصرف ۳۰ روز اخیر</h3>
-                  <span className="flex items-center gap-4 text-[11.5px] text-neutral-400">
-                    <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-blue-500" />مصرف (MWh)</span>
-                  </span>
-                </div>
-                <AreaLine data={MONTHLY} height={230} color="#3788E7" yLabels={["۲۵", "۵۰", "۷۵"]} unit="۹۴ MWh" />
-                <div className="mt-2 flex justify-between text-[11px] text-neutral-400">
-                  <span>امروز</span><span>۳۰ روز پیش</span>
-                </div>
-              </div>
-            </Reveal>
-            <Reveal delay={200}>
-              <div className="h-full rounded-m border border-white/10 bg-neutral-900/90 shadow-dark p-5 backdrop-blur-sm flex flex-col text-white">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display font-bold text-[15.5px] text-white">هشدارها و رویدادها</h3>
-                  <span className="inline-flex items-center gap-1.5 rounded-xs border border-red-500/30 bg-red-500/20 px-2.5 py-1 text-[12px] font-semibold text-red-300">
-                    <Icon name="alert" size={13} sw={2} />
-                    ۴ فعال
-                  </span>
-                </div>
-                <div className="space-y-3 flex-1">
-                  {ALERTS.map((a) => <AlertCard key={a.title} {...a} dark={true} />)}
-                </div>
-              </div>
-            </Reveal>
-          </div>
-
-          <div className="mt-4 grid gap-4 lg:grid-cols-3">
-            <Reveal delay={0}>
-              <div className="h-full rounded-m border border-white/10 bg-neutral-900/90 shadow-dark p-6 backdrop-blur-sm text-white">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-display font-bold text-[15.5px] text-white">دیماند روزانه</h3>
-                  <span className="text-[11.5px] text-amber-400 fa-num font-bold">۱ روز بحرانی</span>
-                </div>
-                <DemandBars data={DEMAND_BARS} labels={["امروز", "۱۴ روز پیش"]} />
-              </div>
-            </Reveal>
-            <Reveal delay={120}>
-              <div className="h-full rounded-m border border-white/10 bg-neutral-900/90 shadow-dark p-6 backdrop-blur-sm flex flex-col text-white">
-                <h3 className="font-display font-bold text-[15.5px] mb-3 text-white">سبد منابع انرژی</h3>
-                <div className="grid grid-cols-2 items-center gap-3 flex-1">
-                  <Donut segments={[{ v: 68, c: SERIES.grid }, { v: 22, c: SERIES.solar }, { v: 10, c: SERIES.deep }]} centerTop="۶۸٪" centerBottom="شبکه سراسری" />
-                  <ul className="space-y-2.5 text-[12px]">
-                    <li className="flex items-center gap-2 text-neutral-300"><span className="h-2.5 w-2.5 rounded-[3px] bg-blue-500" />شبکه سراسری</li>
-                    <li className="flex items-center gap-2 text-neutral-300"><span className="h-2.5 w-2.5 rounded-[3px] bg-orange-500" />نیروگاه خورشیدی</li>
-                    <li className="flex items-center gap-2 text-neutral-300"><span className="h-2.5 w-2.5 rounded-[3px] bg-orange-800" />دیزل‌ژنراتور</li>
-                  </ul>
-                </div>
-                <p className="mt-4 pt-4 border-t border-white/10 text-[12px] text-neutral-400">سهم انرژی پاک این ماه <span className="text-green-400 font-bold fa-num">+۴٫۱٪</span> رشد داشته است.</p>
-              </div>
-            </Reveal>
-            <Reveal delay={240}>
-              <div className="h-full rounded-m border border-white/10 bg-neutral-900/90 shadow-dark p-6 backdrop-blur-sm flex flex-col text-white">
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="font-display font-bold text-[15.5px] text-white">ضریب توان لحظه‌ای</h3>
-                  <span className="inline-flex items-center gap-1.5 rounded-xs border border-green-500/30 bg-green-500/20 px-2.5 py-1 text-[12px] font-semibold text-green-300">
-                    <Icon name="check" size={13} sw={2} />
-                    مجاز
-                  </span>
-                </div>
-                <PowerGauge value={0.94} />
-                <p className="mt-3 text-[12px] leading-6 text-neutral-400">بانک خازنی ۶ پله فعال است؛ جریمه راکتیو این ماه <span className="text-green-400 font-bold">صفر</span> خواهد بود.</p>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-      )}
-
-      {/* ───────── 6 · Features ───────── */}
-      {features.isActive && features.items.length > 0 && (
-      <section className="py-20 md:py-24 bg-surface border-b border-line">
-        <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-          <SectionHead eyebrow={features.eyebrow} title={features.title} lead={features.description} />
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
-            {features.items.map((f, i) => (
-              <Reveal key={f.id} delay={(i % 5) * 70}>
-                <div className="group h-full rounded-m border border-line bg-bg p-5 transition-all duration-300 hover:bg-surface hover:border-primary/40 hover:shadow-lift hover:-translate-y-1 flex flex-col justify-between">
-                  <div>
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-s bg-surface border border-line text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary">
-                      <Icon name={f.icon ?? "bolt"} size={21} />
-                    </span>
-                    <h3 className="mt-4 font-display font-bold text-[14.5px] text-ink leading-6">{f.title}</h3>
-                  </div>
-                  {f.description && <p className="mt-2 text-[12.5px] leading-6 text-ink2">{f.description}</p>}
-                </div>
+          <SectionHead eyebrow={dashboard.eyebrow} title={dashboard.title} lead={dashboard.description} dark={true} />
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {shots.map((shot, i) => (
+              <Reveal key={shot.id} delay={(i % 2) * 110}>
+                <figure className="h-full rounded-m border border-white/15 bg-white/[0.04] p-3 backdrop-blur-sm">
+                  <img
+                    src={shot.imageUrl!}
+                    alt={shot.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full rounded-s border border-white/10 bg-neutral-900 object-cover"
+                  />
+                  <figcaption className="px-3 py-4">
+                    <p className="font-display font-bold text-[15px] text-white">{shot.title}</p>
+                    {shot.description && <p className="mt-2 text-[13px] leading-7 text-neutral-300">{shot.description}</p>}
+                  </figcaption>
+                </figure>
               </Reveal>
             ))}
           </div>
@@ -340,34 +335,93 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
       </section>
       )}
 
-      {/* ───────── 7 · Industries ───────── */}
-      {industries.isActive && industries.items.length > 0 && (
+      {/* ───────── 9 · Capacitor bank design — the differentiator ───────── */}
+      {capacitor.isActive && (
       <section className="py-20 md:py-24 bg-bg relative border-b border-line">
         <div className="absolute inset-0 grid-light" />
-        <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
-          <SectionHead eyebrow={industries.eyebrow} title={industries.title} lead={industries.description} />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {industries.items.map((s, i) => (
-              <Reveal key={s.id} delay={(i % 3) * 90}>
-                <article className="group h-full rounded-m border border-line bg-surface p-6 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-4">
-                      <span className="inline-flex h-13 w-13 shrink-0 items-center justify-center rounded-s bg-blue-50 border border-blue-200/60 text-blue-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary">
-                        <Icon name={s.icon ?? "org"} size={25} />
-                      </span>
-                      <h3 className="font-display font-bold text-[17px] text-ink">{s.title}</h3>
-                    </div>
-                    {s.description && <p className="mt-4 text-[13.5px] leading-7 text-ink2">{s.description}</p>}
-                  </div>
-                </article>
+        <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 grid gap-12 lg:grid-cols-12 lg:items-center">
+          <div className="lg:col-span-5">
+            <SectionHead eyebrow={capacitor.eyebrow} title={capacitor.title} lead={capacitor.description} />
+            {capacitor.ctaLabel && (
+              <Reveal delay={200}>
+                <Btn href={capacitor.ctaHref || "/reports/capacitor-bank-design"} className="mt-8" icon="arrowL">
+                  {capacitor.ctaLabel}
+                </Btn>
               </Reveal>
-            ))}
+            )}
+          </div>
+
+          <div className="lg:col-span-7">
+            {capacitor.imageUrl ? (
+              <Reveal dir="l">
+                <img
+                  src={capacitor.imageUrl}
+                  alt={capacitor.title}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full rounded-m border border-line bg-surface shadow-lift"
+                />
+              </Reveal>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {capacitor.items.map((c, i) => (
+                  <Reveal key={c.id} delay={(i % 2) * 100}>
+                    <div className="h-full rounded-m border border-line bg-surface p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40">
+                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary-soft font-display font-black text-[14px] text-orange-700 fa-num">
+                        {faNum(i + 1)}
+                      </span>
+                      <h3 className="mt-4 font-display font-bold text-[15px] text-ink leading-7">{c.title}</h3>
+                      {c.description && <p className="mt-2.5 text-[13px] leading-7 text-ink2">{c.description}</p>}
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
       )}
 
-      {/* ───────── 8 · Benefits ───────── */}
+      {/* ───────── 10 · Industries ───────── */}
+      {industries.isActive && industries.items.length > 0 && (
+      <section className="py-20 md:py-24 bg-surface relative border-b border-line">
+        <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
+          <SectionHead eyebrow={industries.eyebrow} title={industries.title} lead={industries.description} />
+          <div className="mt-12 grid gap-6 sm:grid-cols-2">
+            {industries.items.map((ind, i) => {
+              const Wrapper = ind.href ? SmartLink : "article";
+              return (
+                <Reveal key={ind.id} delay={(i % 2) * 90}>
+                  <Wrapper
+                    {...(ind.href ? { href: ind.href } : {})}
+                    className="group h-full flex flex-col rounded-m border border-line bg-bg p-6 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="inline-flex h-13 w-13 shrink-0 items-center justify-center rounded-s bg-blue-50 border border-blue-200/60 text-blue-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary">
+                        <Icon name={ind.icon ?? "org"} size={25} />
+                      </span>
+                      <h3 className="font-display font-bold text-[17px] text-ink group-hover:text-orange-700 transition-colors">{ind.title}</h3>
+                    </div>
+                    {ind.description && <p className="mt-4 text-[13.5px] leading-7 text-ink2">{ind.description}</p>}
+                    {ind.href && (
+                      <span className="mt-5 pt-4 border-t border-linesoft inline-flex items-center gap-1.5 text-[13px] font-bold text-orange-700 group-hover:gap-2.5 transition-all">
+                        گزارش‌های این بخش <Icon name="arrowL" size={14} sw={2.2} />
+                      </span>
+                    )}
+                  </Wrapper>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+      )}
+
+      {/* ───────── 11 · Outcomes ─────────
+          The ROI panel that used to sit in the left column («۳۱۲٪ …
+          بر اساس نتایج مستقرسازی‌های ۱۴۰۳») was a fabricated statistic
+          with a fabricated provenance line and has been removed. Its
+          replacement states the measurement method instead of a result. */}
       {benefits.isActive && benefits.items.length > 0 && (
       <section className="relative py-20 md:py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950 text-white overflow-hidden border-y border-blue-700/60">
         <div className="absolute inset-0 grid-dark opacity-35" />
@@ -380,17 +434,13 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                 <SectionHead eyebrow={benefits.eyebrow} title={benefits.title} lead={benefits.description} dark={true} />
                 <Reveal delay={200}>
                   <div className="mt-8 rounded-m border border-white/20 bg-blue-950/70 backdrop-blur-md p-7 shadow-dark">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[13.5px] font-bold text-blue-100">میانگین بازگشت سرمایه</span>
-                      <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/30 bg-green-500/20 px-3 py-1 text-[12px] font-bold text-green-300">
-                        <Icon name="check" size={13} sw={2} />
-                        کمتر از ۶ ماه
-                      </span>
-                    </div>
-                    <p className="mt-4 font-display font-black text-[46px] leading-none text-orange-400">
-                      <CountUp to={312} suffix="٪" />
+                    <p className="flex items-center gap-2.5 font-display font-bold text-[15px] text-white">
+                      <Icon name="precision" size={18} className="text-orange-400" />
+                      اثر مالی را چطور اندازه می‌گیریم؟
                     </p>
-                    <p className="mt-2.5 text-[12.5px] text-blue-200/80">بر اساس نتایج مستقرسازی‌های ۱۴۰۳</p>
+                    <p className="mt-4 text-[13.5px] leading-8 text-blue-100">
+                      مبنای سنجش، قبض دورهٔ پیش از استقرار است. اقلام جریمه‌پذیر پیش و پس از اقدام مقایسه می‌شوند و اثر تغییرات تعرفه از محاسبه کنار گذاشته می‌شود.
+                    </p>
                   </div>
                 </Reveal>
               </div>
@@ -398,14 +448,12 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
             <div className="lg:col-span-8 grid gap-4 sm:grid-cols-2">
               {benefits.items.map((b, i) => (
                 <Reveal key={b.id} delay={(i % 2) * 100}>
-                  <div className="group flex h-full items-start gap-4 rounded-m border border-white/12 bg-white/[0.06] p-6 backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.12] hover:border-white/25 hover:-translate-y-1">
-                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-s bg-white/10 border border-white/15 text-green-400 transition-transform duration-300 group-hover:scale-110">
+                  <div className="h-full rounded-m border border-white/12 bg-white/[0.05] backdrop-blur-sm p-6 transition-colors hover:bg-white/[0.09] hover:border-white/25">
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-s bg-white/10 border border-white/15 text-orange-300">
                       <Icon name={b.icon ?? "check"} size={21} />
                     </span>
-                    <div>
-                      <h3 className="font-display font-bold text-[16px] text-white">{b.title}</h3>
-                      {b.description && <p className="mt-2 text-[13.5px] leading-7 text-blue-100">{b.description}</p>}
-                    </div>
+                    <h3 className="mt-4 font-display font-bold text-[15.5px] text-white leading-7">{b.title}</h3>
+                    {b.description && <p className="mt-2.5 text-[13px] leading-7 text-blue-100/90">{b.description}</p>}
                   </div>
                 </Reveal>
               ))}
@@ -415,30 +463,28 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
       </section>
       )}
 
-      {/* ───────── 9 · Testimonials ───────── */}
-      {quotes.isActive && testimonials.length > 0 && (
+      {/* ───────── 12 · Proof — reserved ─────────
+          Renders only when real, permission-cleared testimonials exist.
+          The band ships inactive and the testimonials table ships empty:
+          empty beats fabricated (docs/content-strategy.md). */}
+      {proof.isActive && testimonials.length > 0 && (
       <section className="relative py-20 md:py-24 bg-surface text-ink overflow-hidden border-b border-line">
         <div className="absolute inset-0 grid-light" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_90%_10%,rgb(0_98_189/0.07),transparent_65%)] pointer-events-none" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
-          <SectionHead eyebrow={quotes.eyebrow} title={quotes.title} lead={quotes.description} />
+          <SectionHead eyebrow={proof.eyebrow} title={proof.title} lead={proof.description} />
           <div className="mt-12 grid gap-6 lg:grid-cols-2">
-            {testimonials.map((t, i) => (
-              <Reveal key={`${t.name}-${i}`} delay={i * 120} dir={i % 2 ? "l" : "r"}>
+            {testimonials.map((q, i) => (
+              <Reveal key={`${q.name}-${i}`} delay={i * 120} dir={i % 2 ? "l" : "r"}>
                 <figure className="relative h-full flex flex-col justify-between rounded-m border border-line bg-bg p-8 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40">
-                  <svg viewBox="0 0 40 32" className="absolute top-7 left-8 w-9 h-auto text-blue-600/10 pointer-events-none" fill="currentColor" aria-hidden="true">
-                    <path d="M0 32V19.2C0 8 6.4 1.3 16.6 0l1.9 5.4c-5.7 1.6-8.7 5-9.2 9.4h7.7V32H0Zm23 0V19.2C23 8 29.4 1.3 39.6 0l1.9 5.4c-5.7 1.6-8.7 5-9.2 9.4H40V32H23Z" transform="scale(-1,1) translate(-41,0)" />
-                  </svg>
-                  <blockquote className="text-[16px] leading-8 text-ink font-medium">«{t.quote}»</blockquote>
+                  <blockquote className="text-[16px] leading-8 text-ink font-medium">«{q.quote}»</blockquote>
                   <figcaption className="mt-6 flex flex-wrap items-center gap-4 pt-5 border-t border-linesoft">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-display font-extrabold text-[17px]">
-                      {t.name.charAt(0)}
+                      {q.name.charAt(0)}
                     </span>
                     <span className="flex-1 min-w-[140px]">
-                      <span className="block text-[14.5px] font-bold text-ink">{t.name}</span>
-                      <span className="block text-[12.5px] text-ink3 mt-0.5">{t.org}</span>
+                      <span className="block text-[14.5px] font-bold text-ink">{q.name}</span>
+                      <span className="block text-[12.5px] text-ink3 mt-0.5">{q.org}</span>
                     </span>
-                    <Badge tone="green" icon="check">نتیجه تأییدشده</Badge>
                   </figcaption>
                 </figure>
               </Reveal>
@@ -448,7 +494,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
       </section>
       )}
 
-      {/* ───────── 10 · Articles preview ───────── */}
+      {/* ───────── 13 · Articles preview ───────── */}
       {posts.isActive && articles.length > 0 && (
       <section className="relative py-20 md:py-24 bg-bg border-b border-line">
         <div className="absolute inset-0 grid-light" />
@@ -472,7 +518,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
       </section>
       )}
 
-      {/* ───────── 11 · FAQ ───────── */}
+      {/* ───────── 14 · FAQ — objections, before the ask ───────── */}
       {faqHead.isActive && faqs.length > 0 && (
       <section className="py-20 md:py-24 bg-surface border-b border-line">
         <div className="mx-auto max-w-[1200px] px-5 md:px-8">
@@ -486,7 +532,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                       <Icon name="consultant" size={23} />
                     </span>
                     <p className="mt-4 font-display font-bold text-[16.5px] text-ink">پاسخ خود را پیدا نکردید؟</p>
-                    <p className="mt-2.5 text-[13.5px] leading-7 text-ink2">سؤال فنی یا شرایط خاص مجموعه‌تان را بپرسید؛ کارشناسان ما کمتر از ۲۴ ساعت کاری پاسخ می‌دهند.</p>
+                    <p className="mt-2.5 text-[13.5px] leading-7 text-ink2">سؤال فنی یا شرایط خاص مجموعه‌تان را بپرسید؛ در ساعات کاری پاسخ می‌دهیم.</p>
                     <Btn href="/contact" variant="secondary" size="sm" className="mt-5" icon="arrowL">تماس با ما</Btn>
                   </div>
                 </Reveal>
@@ -544,10 +590,8 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
       </section>
       )}
 
-      {/* ───────── 12 · Final CTA ───────── */}
-      {/* The closing band is blue, not a full-bleed orange: white on #fa6400
-          is 3.05:1, and a page-wide orange field competes with the very button
-          it is meant to frame. Orange stays on the button alone. */}
+      {/* ───────── 15 · Final CTA ─────────
+          One call to action site-wide: the product panel. */}
       {closing.isActive && (
       <section className="relative overflow-hidden bg-gradient-to-l from-blue-900 via-blue-800 to-blue-900 text-white border-t border-blue-700/50">
         <div className="absolute inset-0 opacity-[0.14]" style={{ backgroundImage: "linear-gradient(to left, rgb(255 255 255 / 0.5) 1px, transparent 1px), linear-gradient(to bottom, rgb(255 255 255 / 0.5) 1px, transparent 1px)", backgroundSize: "44px 44px" }} />
@@ -579,7 +623,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                       target={external ? "_blank" : undefined}
                       size="lg"
                       variant={i === 0 ? "primary" : "dark"}
-                      icon={i === 0 ? "login" : undefined}
+                      icon={i === 0 ? "arrowL" : undefined}
                       ariaLabel={external ? `${b.title} (باز شدن در پنجره جدید)` : undefined}
                     >
                       {b.title}
@@ -595,5 +639,3 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
     </>
   );
 }
-
-/* shared article card (used in home + articles page) */

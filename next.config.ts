@@ -28,6 +28,21 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/products", destination: "/product", permanent: true },
+      /* /services was retired: it described the same product as /product and
+         /solutions under a third set of names. Its consulting content moved
+         into the solution pages (docs/content-spec.md §9). The URL has
+         equity, so it redirects rather than 404s. */
+      { source: "/services", destination: "/product", permanent: true },
+      /* the demo page was removed at the business's request; the site has
+         one CTA, the panel. Any link already in the wild lands on contact. */
+      { source: "/demo", destination: "/contact", permanent: true },
+      { source: "/resources/training", destination: "/articles", permanent: true },
+      { source: "/resources/reports", destination: "/reports", permanent: true },
+      { source: "/resources/videos", destination: "/articles", permanent: true },
+      { source: "/resources/guides", destination: "/product/platform", permanent: true },
+      { source: "/about/expertise", destination: "/about", permanent: true },
+      { source: "/about/team", destination: "/about", permanent: true },
+      { source: "/product/capabilities/multi-site", destination: "/solutions/multi-site", permanent: true },
       { source: "/index.html", destination: "/", permanent: true },
       { source: "/resources/articles", destination: "/articles", permanent: true },
       { source: "/about/about", destination: "/about", permanent: true },

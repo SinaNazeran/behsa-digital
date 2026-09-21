@@ -1,31 +1,15 @@
 import { Icon } from "@/components/icons";
-import { Reveal, Btn, SectionHead, PageHero, Marquee, CountUp } from "@/components/ui";
+import { Reveal, Btn, SectionHead, PageHero } from "@/components/ui";
 import { DIFFERENTIATORS, FLOW_STEPS } from "@/content/data";
 
-export default function About({ clients }: { clients: string[] }) {
+export default function About() {
   return (
     <>
       <PageHero
         crumb={[{ label: "خانه", path: "/" }, { label: "درباره ما" }]}
         title="درباره بهسا دیجیتال"
-        lead="بهسا دیجیتال از یک سؤال ساده شروع شد: چرا صنایع بابت انرژی‌ای که می‌توانستند مدیریتش کنند، جریمه می‌شوند؟ پاسخ ما، پلتفرمی است که داده مصرف را به تصمیم مالی تبدیل می‌کند."
+        lead="بهسا دیجیتال از یک مشاهدهٔ ساده شروع شد: بخش بزرگی از هزینهٔ برق صنایع، جریمه‌ای است که اگر به‌موقع دیده شود قابل پیشگیری است — و دادهٔ لازم برای دیدنش، از قبل در کنتور هوشمند وجود دارد."
       >
-        <Reveal dir="l" delay={150}>
-          <div className="rounded-m border border-line bg-surface p-5 shadow-lift space-y-3">
-            {[
-              { icon: "data" as const, l: "نقطه داده پردازش‌شده در روز", v: "۲٫۴ میلیون" },
-              { icon: "realtime" as const, l: "کنتور هوشمند متصل", v: "+۱٬۸۰۰" },
-              { icon: "save" as const, l: "صرفه‌جویی ایجادشده برای مشتریان", v: "۱۸۰ میلیارد ریال" },
-            ].map((r) => (
-              <div key={r.l} className="flex items-center justify-between rounded-s border border-line bg-bg px-4 py-3">
-                <span className="flex items-center gap-3 text-[13px] font-semibold text-ink2">
-                  <span className="text-accent"><Icon name={r.icon} size={19} /></span>{r.l}
-                </span>
-                <span className="font-display font-extrabold text-[15.5px] text-ink fa-num">{r.v}</span>
-              </div>
-            ))}
-          </div>
-        </Reveal>
       </PageHero>
 
       {/* ── Mission & Vision ── */}
@@ -75,12 +59,6 @@ export default function About({ clients }: { clients: string[] }) {
                   title="چرا بهسا دیجیتال؟"
                   lead="پنج چیزی که ما را از یک نرم‌افزار گزارش‌گیریِ صرف جدا می‌کند."
                 />
-                <Reveal delay={200}>
-                  <div className="mt-8 flex items-center gap-4 rounded-m border border-line bg-bg p-5">
-                    <span className="font-display font-black text-[40px] leading-none text-orange-700"><CountUp to={9} /></span>
-                    <p className="text-[13.5px] font-semibold text-ink2">سال تجربه متمرکز در مدیریت انرژی صنعتی</p>
-                  </div>
-                </Reveal>
               </div>
             </div>
             <div className="lg:col-span-8">
@@ -113,7 +91,7 @@ export default function About({ clients }: { clients: string[] }) {
           <SectionHead
             eyebrow="رویکرد ما"
             title="مسیری که هر داده در بهسا طی می‌کند"
-            lead="در خوانش راست‌به‌چپ؛ هر مرحله، خوراک مرحله بعد را تولید می‌کند و مسیر از داده به صرفه‌جویی می‌رسد."
+            lead="در خوانش راست‌به‌چپ؛ هر مرحله خوراک مرحلهٔ بعد را تولید می‌کند."
             align="center"
           />
           <div className="mt-14 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-0">
@@ -136,19 +114,9 @@ export default function About({ clients }: { clients: string[] }) {
           </div>
           <Reveal delay={300}>
             <p className="mt-12 text-center text-[13.5px] text-ink2 max-w-2xl mx-auto leading-7">
-              خروجی نهایی این زنجیره، یک عدد است: <span className="text-accent font-bold">ریالِ صرفه‌جویی‌شده در هر ماه.</span>
+              خروجی نهایی این زنجیره یک توصیهٔ کلی نیست؛ یک عدد مشخص است: <span className="text-accent font-bold">قدرت قراردادی، ظرفیت خازن، یا مقدار خرید برق.</span>
             </p>
           </Reveal>
-        </div>
-      </section>
-
-      {/* ── Trust ── */}
-      <section className="py-16 md:py-20 bg-bg">
-        <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-          <Reveal>
-            <p className="text-center text-[12.5px] font-bold text-ink3 mb-8">مورد اعتماد مجموعه‌های پیشرو در صنعت و انرژی</p>
-          </Reveal>
-          <Marquee items={clients} />
         </div>
       </section>
 
@@ -161,8 +129,8 @@ export default function About({ clients }: { clients: string[] }) {
               با ما درباره مدیریت انرژی <span className="text-orange-700">مجموعه خود</span> صحبت کنید.
             </h2>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <Btn href="/contact?subject=خدمات مشاوره تخصصی" size="lg" icon="arrowL">شروع گفتگو و مشاوره</Btn>
-              <Btn href="/services" size="lg" variant="secondary">خدمات مشاوره</Btn>
+              <Btn href="/contact" size="lg" icon="arrowL">تماس با ما</Btn>
+              <Btn href="/product/platform" size="lg" variant="secondary">آشنایی با پلتفرم</Btn>
             </div>
           </Reveal>
         </div>

@@ -150,14 +150,14 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
 
         {/* sticky platform CTA at the drawer's base */}
         <div className="space-y-2.5 border-t border-linesoft bg-bg p-5">
-          {/* same global CTA as the desktop header — panel, in a new tab */}
+          {/* same single CTA as the desktop header — panel, in a new tab */}
           <Button
             href={panelUrl}
             target="_blank"
             variant="primary"
             className="w-full"
             icon="login"
-            ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)"
+            ariaLabel={`${NAV_CTA_LABEL} (باز شدن در پنجره جدید)`}
             onClick={onClose}
           >
             {NAV_CTA_LABEL}

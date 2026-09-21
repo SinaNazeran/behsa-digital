@@ -6,7 +6,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const GROUPS: { title: string; items: { href: string; label: string; adminOnly?: boolean }[] }[] = [
-  { title: "", items: [{ href: "/admin", label: "داشبورد" }] },
+  { title: "", items: [{ href: "/admin", label: "داشبورد" }, { href: "/admin/leads", label: "درخواست‌ها" }] },
   {
     title: "صفحه اصلی و منو",
     items: [

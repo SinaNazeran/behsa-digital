@@ -11,7 +11,6 @@ export const metadata = { title: "سئوی صفحات" };
 
 const CORE = [
   { path: "/", title: "صفحه اصلی" },
-  { path: "/services", title: "خدمات" },
   { path: "/articles", title: "مقالات (فهرست)" },
   { path: "/about", title: "درباره ما" },
   { path: "/contact", title: "تماس با ما" },

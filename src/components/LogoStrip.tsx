@@ -2,9 +2,13 @@ import { Icon } from "./icons";
 import type { SectionItemView } from "@/lib/cms";
 
 /* ── Audience marquee · lives at the base of the hero, over the same media ──
-   Companies come from the CMS (Admin → مخاطبان بهسا): name, an icon from
-   the built-in set, or an uploaded logo. The duplicated half is hidden
-   from assistive tech, and the loop works with any number of entries. */
+   Entries come from the CMS (Admin → انواع مصرف‌کننده): a name and an icon
+   from the built-in set. They describe consumer TYPES, not companies —
+   the admin exposes no logo upload here, because Behsa has no permission
+   to display customer brands (docs/content-strategy.md §Trust / Proof).
+   The `imageUrl` branch stays for rows created before that change.
+   The duplicated half is hidden from assistive tech, and the loop works
+   with any number of entries. */
 
 export function LogoStrip({ title, items }: { title: string; items: SectionItemView[] }) {
   if (items.length === 0) return null;
