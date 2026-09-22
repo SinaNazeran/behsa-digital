@@ -280,6 +280,22 @@ body {
 .rv-r { opacity: 0; transform: translateX(-30px); transition: opacity 0.75s ease, transform 0.75s ease; }
 .rv.is-in, .rv-l.is-in, .rv-r.is-in { opacity: 1; transform: none; }
 
+/* ── Above-the-fold reveal ──
+   The same motion as .rv, expressed as an animation that runs on load rather
+   than a transition an observer has to switch on. Content in the first
+   viewport is on screen by definition, so waiting to be observed bought
+   nothing and cost everything: the hero headline sat at opacity 0 until
+   ~180KB of JavaScript had downloaded, parsed and hydrated. As an animation
+   it needs no JavaScript at all and starts at first paint.
+   The from-state lives only in the keyframe, so `animation: none` under
+   reduced motion leaves the element plainly visible. */
+@keyframes rv-in { from { opacity: 0; transform: translateY(26px); } }
+@keyframes rv-in-l { from { opacity: 0; transform: translateX(30px); } }
+@keyframes rv-in-r { from { opacity: 0; transform: translateX(-30px); } }
+.rv-now { animation: rv-in 0.7s cubic-bezier(0.2, 0.65, 0.3, 1) both; }
+.rv-now-l { animation: rv-in-l 0.75s ease both; }
+.rv-now-r { animation: rv-in-r 0.75s ease both; }
+
 /* ── Keyframes ── */
 @keyframes pulsedot {
   0%, 100% { box-shadow: 0 0 0 0 rgb(15 143 90 / 0.55); }
@@ -407,6 +423,7 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .rv, .rv-l, .rv-r { opacity: 1 !important; transform: none !important; transition: none !important; }
+  [class^="rv-now"] { animation: none !important; }
   .ticker-track, .floaty, .scanline, .blink, .pulse-dot { animation: none !important; }
   .chart-line { animation: none !important; stroke-dasharray: none !important; }
   .bar-grow, .gauge-needle { animation: none !important; }

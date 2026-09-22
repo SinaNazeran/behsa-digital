@@ -65,7 +65,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     // scrolling for in-page anchors.
     // https://nextjs.org/docs/messages/missing-data-scroll-behavior
     <html lang="fa" dir="rtl" suppressHydrationWarning data-scroll-behavior="smooth">
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {/* Nothing will ever add .is-in without JavaScript, so every
+            scroll-revealed section below the hero would stay at opacity 0
+            forever. Above the fold this is already moot — RevealOnLoad is a
+            pure CSS animation — but the rest of the page should still be
+            readable when the bundle is blocked or never arrives.
+
+            It sits first inside <body>, not in <html>: only <head> and <body>
+            may be children of <html>, and React does not hoist <noscript> the
+            way it hoists <link> or a precedence-tagged <style>, so putting it
+            there produced invalid markup and a hydration mismatch. First in
+            <body> means the rule is parsed before any .rv element it governs. */}
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html: "<style>.rv,.rv-l,.rv-r{opacity:1;transform:none}</style>",
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

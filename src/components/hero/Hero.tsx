@@ -1,6 +1,7 @@
 import { MediaLayer, HERO_FALLBACK_IMAGE } from "./MediaLayer";
 import { Button } from "../ui/Button";
 import { Reveal } from "../ui";
+import { RevealOnLoad } from "../RevealOnLoad";
 import { AccentText } from "../AccentText";
 import { LogoStrip } from "../LogoStrip";
 import type { SectionView } from "@/lib/cms";
@@ -27,7 +28,7 @@ export function Hero({ hero, companies }: { hero: SectionView; companies: Sectio
       {/* ── centered statement ── */}
       <div className="relative z-20 mx-auto flex min-h-[100vh] supports-[height:1svh]:min-h-[100svh] max-w-[1080px] flex-col items-center justify-center px-5 pt-[clamp(88px,14vh,168px)] pb-[clamp(64px,10vh,120px)] text-center md:px-8 [@media(max-height:560px)]:pt-20 [@media(max-height:560px)]:pb-12">
         {hero.eyebrow && (
-          <Reveal>
+          <RevealOnLoad>
             {/* Luminous enterprise IoT telemetry badge — maximum WCAG contrast with frosted glass isolation */}
             <p className="mb-6 flex items-center justify-center gap-3 [@media(max-height:560px)]:hidden">
               <span className="h-px w-8 bg-gradient-to-l from-primary/70 to-transparent" aria-hidden="true" />
@@ -40,11 +41,11 @@ export function Hero({ hero, companies }: { hero: SectionView; companies: Sectio
               </span>
               <span className="h-px w-8 bg-gradient-to-r from-primary/70 to-transparent" aria-hidden="true" />
             </p>
-          </Reveal>
+          </RevealOnLoad>
         )}
 
         {hero.title && (
-          <Reveal delay={90}>
+          <RevealOnLoad delay={90}>
             {/* high-contrast white headline with dual-layer optical occlusion shadow */}
             <h1 className="font-display font-black leading-[1.4] tracking-tight text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.85)] [text-shadow:0_4px_24px_rgba(0,0,0,0.6)] [@media(max-height:560px)]:leading-[1.25]">
               <AccentText
@@ -53,19 +54,19 @@ export function Hero({ hero, companies }: { hero: SectionView; companies: Sectio
                 accentClass="text-primary drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] [text-shadow:0_0_24px_rgba(250,100,0,0.65),0_0_48px_rgba(250,100,0,0.3)]"
               />
             </h1>
-          </Reveal>
+          </RevealOnLoad>
         )}
 
         {hero.description && (
-          <Reveal delay={170}>
+          <RevealOnLoad delay={170}>
             <p className="relative mx-auto mt-[clamp(16px,2.5vh,24px)] max-w-2xl text-[15.5px] font-medium leading-8 text-neutral-100/95 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] [text-shadow:0_2px_14px_rgba(0,0,0,0.55)] md:text-[17.5px] md:leading-9 [@media(max-height:560px)]:mt-3 [@media(max-height:560px)]:max-w-xl [@media(max-height:560px)]:text-[13.5px] [@media(max-height:560px)]:leading-6">
               {hero.description}
             </p>
-          </Reveal>
+          </RevealOnLoad>
         )}
 
         {buttons.length > 0 && (
-          <Reveal delay={250}>
+          <RevealOnLoad delay={250}>
             <div className="mt-[clamp(24px,4vh,40px)] flex flex-wrap items-center justify-center gap-4 [@media(max-height:560px)]:mt-5 [@media(max-height:560px)]:gap-3">
               {buttons.map((b, i) => {
                 const external = !b.href.startsWith("/");
@@ -84,7 +85,7 @@ export function Hero({ hero, companies }: { hero: SectionView; companies: Sectio
                 );
               })}
             </div>
-          </Reveal>
+          </RevealOnLoad>
         )}
       </div>
 
