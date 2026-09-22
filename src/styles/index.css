@@ -294,6 +294,39 @@ body {
 @keyframes dashdraw { from { stroke-dashoffset: var(--dash, 900); } to { stroke-dashoffset: 0; } }
 .chart-line { stroke-dasharray: var(--dash, 900); animation: dashdraw 2.2s cubic-bezier(0.3, 0.6, 0.3, 1) 0.2s both; }
 
+/* ── Brand logo entrance · AnimatedBehsaLogo ──────────────────────
+   This sequence was a GSAP timeline. It plays once on mount and reacts
+   to nothing, so it had no business pulling ~33KB gzip of animation
+   engine onto every page. These timings are now the only source of
+   truth for it:
+
+     0.00s  Persian body wipes in, right → left      1.80s
+     1.83s  Persian dot pops                         0.40s
+     2.38s  BEHSA wipes in, B→A, 0.10s apart         0.80s each   (ends 3.58s)
+
+   Easings are the CSS equivalents of the GSAP ones they replace —
+   power2.inOut → easeInOutCubic, power2.out → easeOutCubic,
+   power1.inOut → easeInOutQuad.
+
+   Every mask path carries its own stroke-dasharray/dashoffset as an SVG
+   attribute, so one keyframe drives all six wipes: the implicit `from`
+   of `logo-draw` is whatever that attribute says. --logo-s scales the
+   whole sequence and is set by the component's durationScale prop. */
+@keyframes logo-draw { to { stroke-dashoffset: 0; } }
+@keyframes logo-dot-in {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.logo-anim { --logo-s: 1; }
+.logo-anim .logo-fa-reveal-path { animation: logo-draw calc(1.8s * var(--logo-s)) cubic-bezier(0.65, 0, 0.35, 1) both; }
+.logo-anim .logo-fa-dot { animation: logo-dot-in calc(0.4s * var(--logo-s)) cubic-bezier(0.33, 1, 0.68, 1) calc(1.83s * var(--logo-s)) both; }
+.logo-anim .logo-en-reveal-b { animation: logo-draw calc(0.8s * var(--logo-s)) cubic-bezier(0.45, 0, 0.55, 1) calc(2.38s * var(--logo-s)) both; }
+.logo-anim .logo-en-reveal-e { animation: logo-draw calc(0.8s * var(--logo-s)) cubic-bezier(0.45, 0, 0.55, 1) calc(2.48s * var(--logo-s)) both; }
+.logo-anim .logo-en-reveal-h { animation: logo-draw calc(0.8s * var(--logo-s)) cubic-bezier(0.45, 0, 0.55, 1) calc(2.58s * var(--logo-s)) both; }
+.logo-anim .logo-en-reveal-s { animation: logo-draw calc(0.8s * var(--logo-s)) cubic-bezier(0.45, 0, 0.55, 1) calc(2.68s * var(--logo-s)) both; }
+.logo-anim .logo-en-reveal-a { animation: logo-draw calc(0.8s * var(--logo-s)) cubic-bezier(0.45, 0, 0.55, 1) calc(2.78s * var(--logo-s)) both; }
+
 @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
 .floaty { animation: floaty 7s ease-in-out infinite; }
 
@@ -377,6 +410,14 @@ html {
   .ticker-track, .floaty, .scanline, .blink, .pulse-dot { animation: none !important; }
   .chart-line { animation: none !important; stroke-dasharray: none !important; }
   .bar-grow, .gauge-needle { animation: none !important; }
+  /* not `animation: none` — the logo's animationend is what drops its reveal
+     masks, so it has to run and finish, just instantly. The blanket
+     animation-duration rule below cannot do this alone: it never zeroes the
+     delays, which would stagger the logo in over 2.8s. */
+  .logo-anim :is(.logo-fa-reveal-path, .logo-fa-dot, [class*="logo-en-reveal-"]) {
+    animation-duration: 1ms !important;
+    animation-delay: 0s !important;
+  }
   * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
 

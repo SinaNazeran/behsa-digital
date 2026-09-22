@@ -1,18 +1,11 @@
 "use client";
 
-import React, { useId, useRef, useState } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import {
   BRAND_COLORS,
   LOGO_PATHS,
   REVEAL_PATHS,
 } from "./logo-paths";
-
-// Register GSAP plugins safely on client
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(useGSAP);
-}
 
 export interface AnimatedBehsaLogoProps {
   /**
@@ -43,17 +36,10 @@ export interface AnimatedBehsaLogoProps {
   ariaHidden?: boolean;
 }
 
-/**
- * Centralized, easy-to-edit timing configuration (in seconds).
- */
-export const BEHSA_LOGO_TIMING = {
-  persianDuration: 1.8,
-  dotsDuration: 0.4,
-  dotStagger: 0.08,
-  pauseAfterPersian: 0.15,
-  englishLetterDuration: 0.8,
-  englishStagger: 0.1,
-} as const;
+/* The entrance sequence — order, durations, delays and easings — lives in
+   `.logo-anim` in src/styles/index.css. It is plain CSS: nothing here
+   schedules it, and the only thing this component still does at runtime is
+   drop the reveal masks once it has finished (see `masked` below). */
 
 // Deterministic reveal path lengths to eliminate forced synchronous SVG reflows on mount
 const REVEAL_LENGTHS = {
@@ -72,7 +58,6 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
   ariaLabel = "لوگوی رسمی بهسا دیجیتال",
   ariaHidden = false,
 }) => {
-  const containerRef = useRef<SVGSVGElement>(null);
   const uniqueId = useId().replace(/:/g, "_");
 
   // Mask IDs scoped to this component instance
@@ -86,164 +71,51 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
   const scale = durationScale <= 0 ? 0 : Math.max(0.05, durationScale);
   const shouldAnimate = autoplay && scale > 0;
 
-  // Track mask state in React so that re-renders (e.g. scroll state in Navbar) never re-attach masks
-  const [isMasked, setIsMasked] = useState(shouldAnimate);
+  /* The masks exist only to wipe the artwork in. Once the last letter has
+     drawn we drop them, so the finished logo is plain, unmasked vector —
+     crisper, and cheaper to repaint on every Navbar scroll re-render. This
+     is what the old GSAP onComplete did, and it is the only reason this is
+     still a client component. Reduced motion collapses the sequence to 1ms
+     (index.css), so the same handler fires and the logo simply appears. */
+  const [masked, setMasked] = useState(shouldAnimate);
+  const svgRef = useRef<SVGSVGElement>(null);
 
-  useGSAP(
-    () => {
-      if (!containerRef.current) return;
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!shouldAnimate || !svg?.getAnimations) return;
+    /* Asking the animations when they finish, rather than listening for
+       animationend, because by the time this effect runs they may already
+       be over and the event long gone: prefers-reduced-motion collapses the
+       whole sequence to 1ms (index.css), and a slow device can hydrate
+       later than the 3.58s it normally takes. Either way the masks have to
+       come off — a logo stuck behind its own reveal mask renders soft and
+       repaints on every Navbar scroll update. */
+    let live = true;
+    Promise.all(svg.getAnimations({ subtree: true }).map((a) => a.finished))
+      .then(() => live && setMasked(false))
+      .catch(() => {}); /* an animation cancelled mid-flight — nothing to do */
+    return () => { live = false; };
+  }, [shouldAnimate]);
 
-      const svg = containerRef.current;
-
-      const faBodyGroup = svg.querySelector<SVGGElement>(".logo-fa-body");
-      const faDot = svg.querySelector<SVGCircleElement>(".logo-fa-dot");
-      const faRevealPath = svg.querySelector<SVGPathElement>(".logo-fa-reveal-path");
-
-      const letterGroups = {
-        b: svg.querySelector<SVGGElement>(".logo-en-b"),
-        e: svg.querySelector<SVGGElement>(".logo-en-e"),
-        h: svg.querySelector<SVGGElement>(".logo-en-h"),
-        s: svg.querySelector<SVGGElement>(".logo-en-s"),
-        a: svg.querySelector<SVGGElement>(".logo-en-a"),
-      };
-
-      const letterRevealPaths = {
-        b: svg.querySelector<SVGPathElement>(".logo-en-reveal-b"),
-        e: svg.querySelector<SVGPathElement>(".logo-en-reveal-e"),
-        h: svg.querySelector<SVGPathElement>(".logo-en-reveal-h"),
-        s: svg.querySelector<SVGPathElement>(".logo-en-reveal-s"),
-        a: svg.querySelector<SVGPathElement>(".logo-en-reveal-a"),
-      };
-
-      const removeAllMasks = () => {
-        faBodyGroup?.removeAttribute("mask");
-        Object.values(letterGroups).forEach((g) => g?.removeAttribute("mask"));
-        setIsMasked(false);
-      };
-
-      // Check prefers-reduced-motion safely on client
-      const prefersReduced =
-        typeof window !== "undefined" &&
-        window.matchMedia &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      // If autoplay is disabled, duration is zero, or user prefers reduced motion: show static logo immediately
-      if (!shouldAnimate || prefersReduced) {
-        removeAllMasks();
-        if (faDot) {
-          gsap.set(faDot, { opacity: 1, scale: 1 });
-        }
-        return;
-      }
-
-      // Ensure masks are attached at the start of animation
-      faBodyGroup?.setAttribute("mask", `url(#${maskFaBodyId})`);
-      letterGroups.b?.setAttribute("mask", `url(#${maskEnBId})`);
-      letterGroups.e?.setAttribute("mask", `url(#${maskEnEId})`);
-      letterGroups.h?.setAttribute("mask", `url(#${maskEnHId})`);
-      letterGroups.s?.setAttribute("mask", `url(#${maskEnSId})`);
-      letterGroups.a?.setAttribute("mask", `url(#${maskEnAId})`);
-
-      // Initialize Persian reveal path stroke using deterministic length
-      if (faRevealPath) {
-        gsap.set(faRevealPath, {
-          strokeDasharray: REVEAL_LENGTHS.faBody,
-          strokeDashoffset: REVEAL_LENGTHS.faBody,
-        });
-      }
-
-      // Initialize dot: hidden until Persian body completes.
-      // Uses transformBox: fill-box and transformOrigin: center for cross-browser Safari/Chromium parity.
-      if (faDot) {
-        gsap.set(faDot, {
-          opacity: 0,
-          scale: 0,
-          transformBox: "fill-box",
-          transformOrigin: "center center",
-        });
-      }
-
-      // Initialize English letter reveal strokes using deterministic lengths
-      (["b", "e", "h", "s", "a"] as const).forEach((key) => {
-        const path = letterRevealPaths[key];
-        if (path) {
-          const len = REVEAL_LENGTHS[`en${key.toUpperCase()}` as keyof typeof REVEAL_LENGTHS];
-          gsap.set(path, {
-            strokeDasharray: len,
-            strokeDashoffset: len,
-          });
-        }
-      });
-
-      // Master animation timeline (plays once, no loop, no reverse)
-      const tl = gsap.timeline({
-        onComplete: () => {
-          // Final static state: remove all masks so vector rendering is 100% crisp and unmasked
-          removeAllMasks();
-        },
-      });
-
-      // Phase 1: Persian word "بهسا" body reveal (strictly RIGHT -> LEFT)
-      if (faRevealPath) {
-        tl.to(faRevealPath, {
-          strokeDashoffset: 0,
-          duration: BEHSA_LOGO_TIMING.persianDuration * scale,
-          ease: "power2.inOut",
-        });
-      }
-
-      // Phase 2: Persian dot reveals separately only AFTER the body completes
-      if (faDot) {
-        tl.to(
-          faDot,
-          {
-            opacity: 1,
-            scale: 1,
-            duration: BEHSA_LOGO_TIMING.dotsDuration * scale,
-            ease: "power2.out",
-          },
-          "+=0.03"
-        );
-      }
-
-      // Phase 3: Short pause between Persian and English sections
-      tl.to({}, { duration: BEHSA_LOGO_TIMING.pauseAfterPersian * scale });
-
-      // Phase 4: English "BEHSA" reveal (strictly LEFT -> RIGHT in order B -> E -> H -> S -> A)
-      const letterOrder = ["b", "e", "h", "s", "a"] as const;
-      letterOrder.forEach((key, index) => {
-        const path = letterRevealPaths[key];
-        if (path) {
-          tl.to(
-            path,
-            {
-              strokeDashoffset: 0,
-              duration: BEHSA_LOGO_TIMING.englishLetterDuration * scale,
-              ease: "power1.inOut",
-            },
-            index === 0 ? undefined : `<${BEHSA_LOGO_TIMING.englishStagger * scale}`
-          );
-        }
-      });
-    },
-    { scope: containerRef, dependencies: [shouldAnimate, scale] }
-  );
+  const mask = (id: string) => (masked ? `url(#${id})` : undefined);
 
   return (
     <svg
-      ref={containerRef}
+      ref={svgRef}
       viewBox="0 0 888 664"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       role={ariaHidden ? undefined : "img"}
       aria-label={ariaHidden ? undefined : ariaLabel}
       aria-hidden={ariaHidden ? true : undefined}
-      className={`select-none overflow-visible ${className}`}
+      className={`select-none overflow-visible ${shouldAnimate ? "logo-anim " : ""}${className}`}
       style={{
         transform: "translateZ(0)",
-        willChange: isMasked ? "transform" : "auto",
+        willChange: masked ? "transform" : "auto",
         contain: "paint layout",
-      }}
+        /* durationScale scales every step of the CSS sequence at once */
+        ...(scale === 1 ? null : { "--logo-s": scale }),
+      } as React.CSSProperties}
       preserveAspectRatio="xMidYMid meet"
     >
       <defs>
@@ -331,7 +203,7 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
           - Persian dot: Circle positioned underneath the fold
          ════════════════════════════════════════════════════════════ */}
       <g className="logo-fa">
-        <g className="logo-fa-body" mask={isMasked ? `url(#${maskFaBodyId})` : undefined}>
+        <g className="logo-fa-body" mask={mask(maskFaBodyId)}>
           <path
             d={LOGO_PATHS.faBody.d}
             transform={LOGO_PATHS.faBody.transform}
@@ -358,14 +230,14 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
           - Letters E, H, S, A: Orange (#FA6400)
          ════════════════════════════════════════════════════════════ */}
       <g className="logo-en">
-        <g className="logo-en-b" mask={isMasked ? `url(#${maskEnBId})` : undefined}>
+        <g className="logo-en-b" mask={mask(maskEnBId)}>
           <path
             d={LOGO_PATHS.enB.d}
             transform={LOGO_PATHS.enB.transform}
             fill={BRAND_COLORS.blue}
           />
         </g>
-        <g className="logo-en-e" mask={isMasked ? `url(#${maskEnEId})` : undefined}>
+        <g className="logo-en-e" mask={mask(maskEnEId)}>
           {LOGO_PATHS.enE.map((item, idx) => (
             <path
               key={idx}
@@ -375,7 +247,7 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
             />
           ))}
         </g>
-        <g className="logo-en-h" mask={isMasked ? `url(#${maskEnHId})` : undefined}>
+        <g className="logo-en-h" mask={mask(maskEnHId)}>
           {LOGO_PATHS.enH.map((item, idx) => (
             <path
               key={idx}
@@ -385,7 +257,7 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
             />
           ))}
         </g>
-        <g className="logo-en-s" mask={isMasked ? `url(#${maskEnSId})` : undefined}>
+        <g className="logo-en-s" mask={mask(maskEnSId)}>
           {LOGO_PATHS.enS.map((item, idx) => (
             <path
               key={idx}
@@ -395,7 +267,7 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
             />
           ))}
         </g>
-        <g className="logo-en-a" mask={isMasked ? `url(#${maskEnAId})` : undefined}>
+        <g className="logo-en-a" mask={mask(maskEnAId)}>
           <path
             d={LOGO_PATHS.enA.d}
             transform={LOGO_PATHS.enA.transform}

@@ -4,10 +4,14 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { getNavigation, getSettings } from "@/lib/cms";
 import { SITE_URL } from "@/lib/seo";
 
-/* Public pages render per request; the data underneath is cached in
-   lib/cms.ts and invalidated from the admin, so edits are instant and
-   `next build` never needs a database connection. */
-export const dynamic = "force-dynamic";
+/* Public pages are prerendered and revalidated on a one-hour floor. The
+   admin already expires them on every edit (updateTag + revalidatePath in
+   _actions/helpers.ts), so edits stay instant; the hour is only a backstop.
+   Rendering per request cost ~55ms of CPU and, worse, sent
+   `Cache-Control: private, no-store`, which put every page view through
+   the origin. Routes that read cookies or searchParams (/contact,
+   /articles/[slug]) still opt themselves out and render dynamically. */
+export const revalidate = 3600;
 
 /* Old Vite URLs were hash-based (/#/about). The hash never reaches the
    server, so this tiny inline script forwards them before paint. */

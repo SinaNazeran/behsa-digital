@@ -31,6 +31,22 @@ export const TAGS = {
 
 const HOUR = 3600;
 
+/* `next build` runs with no database (the Dockerfile builds before any
+   DATABASE_URL exists), and the public pages are prerendered. During the
+   build only, a failed read falls back to the same factory defaults an
+   un-seeded install renders, and the first request after deploy revalidates
+   it with real data. At runtime the error still propagates — ISR keeps
+   serving the last good HTML while it retries, which is the honest
+   behaviour; silently serving defaults would hide a real outage. */
+async function orDefault<T>(query: () => PromiseLike<T>, fallback: () => T): Promise<T> {
+  try {
+    return await query();
+  } catch (e) {
+    if (process.env.NEXT_PHASE !== "phase-production-build") throw e;
+    return fallback();
+  }
+}
+
 /* ── Types handed to UI components (serialisable) ── */
 
 export type ArticleView = {
@@ -96,12 +112,12 @@ const publishedWhere = () =>
 
 export const getPublishedArticles = unstable_cache(
   async (): Promise<ArticleView[]> => {
-    const rows = await db
+    const rows = await orDefault(() => db
       .select({ a: schema.articles, c: schema.categories })
       .from(schema.articles)
       .leftJoin(schema.categories, eq(schema.articles.categoryId, schema.categories.id))
       .where(publishedWhere())
-      .orderBy(desc(schema.articles.publishedAt));
+      .orderBy(desc(schema.articles.publishedAt)), () => []);
     return rows.map((r) => toView({ ...r.a, category: r.c }));
   },
   ["published-articles"],
@@ -134,7 +150,7 @@ export async function getArticleForPreview(slug: string): Promise<ArticleView | 
 }
 
 export const getCategories = unstable_cache(
-  async () => db.select().from(schema.categories).orderBy(asc(schema.categories.sortOrder), asc(schema.categories.id)),
+  async () => orDefault(() => db.select().from(schema.categories).orderBy(asc(schema.categories.sortOrder), asc(schema.categories.id)), () => []),
   ["categories"],
   { tags: [TAGS.categories], revalidate: HOUR },
 );
@@ -143,7 +159,7 @@ export const getCategories = unstable_cache(
 
 export const getFaqs = unstable_cache(
   async () =>
-    (await db.select().from(schema.faqs).where(eq(schema.faqs.isPublished, true)).orderBy(asc(schema.faqs.sortOrder), asc(schema.faqs.id)))
+    (await orDefault(() => db.select().from(schema.faqs).where(eq(schema.faqs.isPublished, true)).orderBy(asc(schema.faqs.sortOrder), asc(schema.faqs.id)), () => []))
       .map((f) => ({ q: f.question, a: f.answer })),
   ["faqs"],
   { tags: [TAGS.faqs], revalidate: HOUR },
@@ -151,7 +167,7 @@ export const getFaqs = unstable_cache(
 
 export const getTestimonials = unstable_cache(
   async () =>
-    (await db.select().from(schema.testimonials).where(eq(schema.testimonials.isPublished, true)).orderBy(asc(schema.testimonials.sortOrder), asc(schema.testimonials.id)))
+    (await orDefault(() => db.select().from(schema.testimonials).where(eq(schema.testimonials.isPublished, true)).orderBy(asc(schema.testimonials.sortOrder), asc(schema.testimonials.id)), () => []))
       .map((t) => ({ quote: t.quote, name: t.name, org: t.org })),
   ["testimonials"],
   { tags: [TAGS.testimonials], revalidate: HOUR },
@@ -159,7 +175,7 @@ export const getTestimonials = unstable_cache(
 
 export const getClients = unstable_cache(
   async () =>
-    (await db.select().from(schema.clients).where(eq(schema.clients.isPublished, true)).orderBy(asc(schema.clients.sortOrder), asc(schema.clients.id)))
+    (await orDefault(() => db.select().from(schema.clients).where(eq(schema.clients.isPublished, true)).orderBy(asc(schema.clients.sortOrder), asc(schema.clients.id)), () => []))
       .map((c) => c.name),
   ["clients"],
   { tags: [TAGS.clients], revalidate: HOUR },
@@ -169,7 +185,7 @@ export const getClients = unstable_cache(
 
 export const getSettings = unstable_cache(
   async (): Promise<SiteSettings> => {
-    const [row] = await db.select().from(schema.siteSettings).where(eq(schema.siteSettings.key, "site")).limit(1);
+    const [row] = await orDefault(() => db.select().from(schema.siteSettings).where(eq(schema.siteSettings.key, "site")).limit(1), () => []);
     const value = row?.value ?? DEFAULT_SETTINGS;
     /* empty fields fall back to defaults so the site never renders blanks */
     const merged = { ...DEFAULT_SETTINGS };
@@ -186,7 +202,7 @@ export const getSettings = unstable_cache(
 /* ── Page SEO overrides ── */
 
 export const getAllPageSeo = unstable_cache(
-  async () => db.select().from(schema.pageSeo),
+  async () => orDefault(() => db.select().from(schema.pageSeo), () => []),
   ["page-seo"],
   { tags: [TAGS.seo], revalidate: HOUR },
 );
@@ -229,11 +245,11 @@ function defaultNavigation(): NavSectionView[] {
 
 export const getNavigation = unstable_cache(
   async (): Promise<NavSectionView[]> => {
-    const rows = await db
+    const rows = await orDefault(() => db
       .select()
       .from(schema.navItems)
       .where(eq(schema.navItems.isActive, true))
-      .orderBy(asc(schema.navItems.sortOrder), asc(schema.navItems.id));
+      .orderBy(asc(schema.navItems.sortOrder), asc(schema.navItems.id)), () => []);
     const tops = rows.filter((r) => r.parentId === null);
     if (tops.length === 0) return defaultNavigation();
 
@@ -392,10 +408,10 @@ function defaultSection(key: string): SectionView {
 export const getContent = unstable_cache(
   async (): Promise<ContentMap> => {
     const [sections, items] = await Promise.all([
-      db.select().from(schema.contentSections),
-      db.select().from(schema.contentItems)
+      orDefault(() => db.select().from(schema.contentSections), () => []),
+      orDefault(() => db.select().from(schema.contentItems)
         .where(eq(schema.contentItems.isActive, true))
-        .orderBy(asc(schema.contentItems.sortOrder), asc(schema.contentItems.id)),
+        .orderBy(asc(schema.contentItems.sortOrder), asc(schema.contentItems.id)), () => []),
     ]);
 
     const map: ContentMap = {};
