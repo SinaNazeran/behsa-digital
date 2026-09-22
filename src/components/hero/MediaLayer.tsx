@@ -55,8 +55,14 @@ function useSaveData(): boolean {
   return save;
 }
 
+/* Starts false deliberately. This flag decides whether the <video> is in the
+   markup at all, and the server cannot know the viewport — so starting true
+   meant every phone was served a desktop-only 1.6MB download in its HTML,
+   began fetching it, and had React throw the element away on hydration.
+   Starting false costs desktop one hydration tick before the footage mounts,
+   by which time the poster is already painted. */
 function useIsDesktop(): boolean {
-  const [desktop, setDesktop] = useState(true);
+  const [desktop, setDesktop] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
     setDesktop(mq.matches);
@@ -86,10 +92,15 @@ export function MediaLayer({
   const shouldSuppressVideo = respectReducedMotion ? reduced : false;
   const canUseVideo = Boolean(videoSrc) && desktop && !shouldSuppressVideo && !saveData && !failed;
 
-  // Auto-bust stale immutable browser cache for local videos and posters
+  /* Files under /videos keep their filename across edits and are served with
+     a day of freshness plus a week of stale-while-revalidate, so replacing
+     one silently would be invisible to returning visitors. Bump the token
+     for whichever file actually changed.
+     video v3: remuxed so the `moov` atom sits ahead of `mdat` — playback can
+     now start without a second round trip to fetch the index from the tail. */
   const resolvedVideoSrc =
     videoSrc && videoSrc.startsWith("/videos/") && !videoSrc.includes("?")
-      ? `${videoSrc}?v=2`
+      ? `${videoSrc}?v=3`
       : videoSrc;
 
   const resolvedPoster =

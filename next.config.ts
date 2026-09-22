@@ -53,7 +53,22 @@ const nextConfig: NextConfig = {
     return [
       { source: "/:path*", headers: securityHeaders },
       {
-        source: "/videos/:path*",
+        /* Everything under public/ — icons, the OG image, logos, the hero
+           footage. Next serves these with `Cache-Control: public, max-age=0`
+           by default, i.e. a revalidation round trip for every favicon on
+           every page view.
+
+           They cannot be `immutable`: unlike /_next/static, these filenames
+           carry no content hash, so a year-long cache would strip our ability
+           to ever replace one. A day of freshness plus a week of
+           stale-while-revalidate keeps them out of the network in the common
+           case while letting a replacement propagate within a day — and the
+           components that reference a file which really does change in place
+           append their own ?v= token on top.
+
+           _next is excluded so this never shadows the immutable headers Next
+           sets on its own hashed output. */
+        source: "/:asset((?!_next/).*\.(?:png|jpe?g|gif|svg|avif|webp|ico|mp4|webm|woff2?))",
         headers: [
           {
             key: "Cache-Control",
