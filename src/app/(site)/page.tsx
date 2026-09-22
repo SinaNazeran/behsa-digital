@@ -1,6 +1,6 @@
 import Home from "@/views/Home";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getContent, getFaqs, getPublishedArticles, getSettings, getTestimonials } from "@/lib/cms";
+import { getContent, getFaqs, getPublishedArticles, getSettings, getTestimonials, toCardView } from "@/lib/cms";
 import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata() {
@@ -34,7 +34,7 @@ export default async function HomePage() {
     <>
       {faqLd && <JsonLd data={faqLd} />}
       <Home
-        articles={articles.slice(0, 3)}
+        articles={articles.slice(0, 3).map(toCardView)}
         testimonials={testimonials}
         faqs={faqs}
         content={content}

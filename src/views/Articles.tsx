@@ -6,9 +6,9 @@ import { Icon } from "@/components/icons";
 import { Reveal, Btn, Badge, PageHero } from "@/components/ui";
 import { Thumb } from "@/components/charts";
 import { faNum } from "@/lib/format";
-import type { ArticleCardProps } from "@/components/ArticleCard";
+import type { ArticleCardView } from "@/lib/cms";
 
-type ListArticle = ArticleCardProps & { featured?: boolean; author: string };
+type ListArticle = ArticleCardView;
 import { ArticleCard } from "@/components/ArticleCard";
 import { SmartLink } from "@/components/SmartLink";
 

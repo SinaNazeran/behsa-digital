@@ -75,6 +75,40 @@ export type ArticleView = {
   status: "draft" | "published";
 };
 
+/** Exactly what an article card renders — and nothing else.
+ *
+ *  Handing a whole ArticleView to a client component serialises all of it
+ *  into the page's RSC payload, body included: /articles was shipping 5.4KB
+ *  of article bodies it never renders, the homepage 2.8KB, and both were
+ *  also leaking editorial fields (seoTitle, canonicalUrl, noindex, status)
+ *  to every visitor. The cost grows with every article published.
+ *  `featured` and `author` are here because the /articles hero uses them. */
+export type ArticleCardView = {
+  slug: string;
+  cat: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  read: string;
+  chart: ChartStyle;
+  coverUrl: string | null;
+  featured: boolean;
+  author: string;
+};
+
+export const toCardView = (a: ArticleView): ArticleCardView => ({
+  slug: a.slug,
+  cat: a.cat,
+  title: a.title,
+  excerpt: a.excerpt,
+  date: a.date,
+  read: a.read,
+  chart: a.chart,
+  coverUrl: a.coverUrl,
+  featured: a.featured,
+  author: a.author,
+});
+
 export const mediaUrl = (id: string | null | undefined) => (id ? `/media/${id}` : null);
 
 type ArticleRow = typeof schema.articles.$inferSelect & { category: typeof schema.categories.$inferSelect | null };

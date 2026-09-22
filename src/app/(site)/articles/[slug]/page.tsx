@@ -2,7 +2,7 @@ import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import ArticleDetail from "@/views/ArticleDetail";
 import { JsonLd, breadcrumbLd } from "@/components/seo/JsonLd";
-import { getArticleBySlug, getArticleForPreview, getPublishedArticles, getSettings } from "@/lib/cms";
+import { getArticleBySlug, getArticleForPreview, getPublishedArticles, getSettings, toCardView } from "@/lib/cms";
 import { getCurrentUser } from "@/lib/auth";
 import { absoluteUrl, buildMetadata, DEFAULT_OG_IMAGE, SITE_URL } from "@/lib/seo";
 
@@ -79,7 +79,7 @@ export default async function ArticlePage({ params }: Props) {
           ]),
         ]}
       />
-      <ArticleDetail article={article} related={related} panelUrl={settings.panelUrl} />
+      <ArticleDetail article={article} related={related.map(toCardView)} panelUrl={settings.panelUrl} />
     </>
   );
 }

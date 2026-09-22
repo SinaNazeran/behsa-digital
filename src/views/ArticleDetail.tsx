@@ -5,11 +5,11 @@ import { cn } from "@/utils/cn";
 import { Icon } from "@/components/icons";
 import { Reveal, Btn, Badge, Breadcrumb } from "@/components/ui";
 import { Thumb, SERIES } from "@/components/charts";
-import type { ArticleView } from "@/lib/cms";
+import type { ArticleView, ArticleCardView } from "@/lib/cms";
 import { ArticleCard } from "@/components/ArticleCard";
 import { SmartLink } from "@/components/SmartLink";
 
-export default function ArticleDetail({ article, related, panelUrl }: { article: ArticleView; related: ArticleView[]; panelUrl: string }) {
+export default function ArticleDetail({ article, related, panelUrl }: { article: ArticleView; related: ArticleCardView[]; panelUrl: string }) {
   const slug = article.slug;
   const [active, setActive] = useState(0);
   const [progress, setProgress] = useState(0);

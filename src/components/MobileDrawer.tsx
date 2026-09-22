@@ -24,6 +24,20 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
   const [openKey, setOpenKey] = useState<string | null>(null);
   const activeKey = sectionKeyForRoute(route, sections);
 
+  /* The drawer used to render its whole contents on every page: 208 elements
+     — 43 links, 9 icons, every menu section — built, laid out and hydrated
+     even on desktop, where it is `lg:hidden` and can never be opened. That
+     was 15% of the homepage's DOM for markup almost nobody sees.
+     It cannot simply be unmounted, though: the slide-in and slide-out are
+     CSS transitions on the shell below, and an element that mounts already
+     open has nothing to transition from. So the shell stays (three divs) and
+     only its contents wait. `open || filled` fills it in the same commit that
+     starts the opening transition, and `filled` keeps it populated afterwards
+     so the closing transition has something to slide out. */
+  const [filled, setFilled] = useState(false);
+  useEffect(() => { if (open) setFilled(true); }, [open]);
+  const populated = open || filled;
+
   useEffect(() => {
     if (!open) return;
     const prev = document.activeElement as HTMLElement | null;
@@ -115,59 +129,66 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
       />
       <div
         ref={ref}
-        role="dialog"
-        aria-modal="true"
-        aria-label="منوی ناوبری"
+        /* only a drawer that is actually on screen should claim to be a modal
+           dialog; announcing aria-modal from a permanently present, hidden
+           node tells assistive tech the rest of the page is inert */
+        role={open ? "dialog" : undefined}
+        aria-modal={open ? true : undefined}
+        aria-label={open ? "منوی ناوبری" : undefined}
         className={cn(
           "absolute inset-y-0 right-0 flex w-[310px] max-w-[88vw] flex-col border-l border-line bg-surface shadow-dark transition-transform duration-300 ease-out",
           open ? "translate-x-0" : "translate-x-full",
         )}
       >
-        <div className="flex items-center justify-between border-b border-linesoft p-5">
-          <div onClick={onClose}>
-            <BehsaLogo variant="stacked-with-text" height={42} autoplay={false} />
+        {populated && (
+          <>
+          <div className="flex items-center justify-between border-b border-linesoft p-5">
+            <div onClick={onClose}>
+              <BehsaLogo variant="stacked-with-text" height={42} autoplay={false} />
+            </div>
+            <button
+              onClick={onClose}
+              aria-label="بستن منو"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-line text-ink2 transition-colors hover:border-err/40 hover:text-err focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <Icon name="x" size={17} />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            aria-label="بستن منو"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-line text-ink2 transition-colors hover:border-err/40 hover:text-err focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-          >
-            <Icon name="x" size={17} />
-          </button>
-        </div>
 
-        <nav className="scroll-slim flex-1 overflow-y-auto overscroll-contain" aria-label="ناوبری موبایل">
-          {sections.map((s) => <SectionBlock key={s.id} section={s} />)}
-          <SmartLink
-            href={NAV_CONTACT.href}
-            onClick={onClose}
-            aria-current={activeKey === "contact" ? "true" : undefined}
-            className={cn("block px-5 py-4 text-[15px] font-bold transition-colors", activeKey === "contact" ? "text-orange-700" : "text-ink")}
-          >
-            {NAV_CONTACT.title}
-          </SmartLink>
-        </nav>
-
-        {/* sticky platform CTA at the drawer's base */}
-        <div className="space-y-2.5 border-t border-linesoft bg-bg p-5">
-          {/* same single CTA as the desktop header — panel, in a new tab */}
-          <Button
-            href={panelUrl}
-            target="_blank"
-            variant="primary"
-            className="w-full"
-            icon="login"
-            ariaLabel={`${NAV_CTA_LABEL} (باز شدن در پنجره جدید)`}
-            onClick={onClose}
-          >
-            {NAV_CTA_LABEL}
-          </Button>
-          {phoneHref && (
-            <SmartLink href={phoneHref} className="flex items-center justify-center gap-2 text-[12.5px] font-bold text-ink3 fa-num hover:text-orange-700 transition-colors" dir="ltr">
-              <Icon name="phone" size={13} /> {phoneDisplay}
+          <nav className="scroll-slim flex-1 overflow-y-auto overscroll-contain" aria-label="ناوبری موبایل">
+            {sections.map((s) => <SectionBlock key={s.id} section={s} />)}
+            <SmartLink
+              href={NAV_CONTACT.href}
+              onClick={onClose}
+              aria-current={activeKey === "contact" ? "true" : undefined}
+              className={cn("block px-5 py-4 text-[15px] font-bold transition-colors", activeKey === "contact" ? "text-orange-700" : "text-ink")}
+            >
+              {NAV_CONTACT.title}
             </SmartLink>
-          )}
-        </div>
+          </nav>
+
+          {/* sticky platform CTA at the drawer's base */}
+          <div className="space-y-2.5 border-t border-linesoft bg-bg p-5">
+            {/* same single CTA as the desktop header — panel, in a new tab */}
+            <Button
+              href={panelUrl}
+              target="_blank"
+              variant="primary"
+              className="w-full"
+              icon="login"
+              ariaLabel={`${NAV_CTA_LABEL} (باز شدن در پنجره جدید)`}
+              onClick={onClose}
+            >
+              {NAV_CTA_LABEL}
+            </Button>
+            {phoneHref && (
+              <SmartLink href={phoneHref} className="flex items-center justify-center gap-2 text-[12.5px] font-bold text-ink3 fa-num hover:text-orange-700 transition-colors" dir="ltr">
+                <Icon name="phone" size={13} /> {phoneDisplay}
+              </SmartLink>
+            )}
+          </div>
+          </>
+        )}
       </div>
     </div>
   );

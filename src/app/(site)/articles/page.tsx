@@ -1,6 +1,6 @@
 import Articles from "@/views/Articles";
 import { JsonLd, breadcrumbLd } from "@/components/seo/JsonLd";
-import { getCategories, getPublishedArticles } from "@/lib/cms";
+import { getCategories, getPublishedArticles, toCardView } from "@/lib/cms";
 import { buildMetadata, SITE_URL } from "@/lib/seo";
 
 export async function generateMetadata() {
@@ -37,7 +37,7 @@ export default async function ArticlesPage() {
   return (
     <>
       <JsonLd data={[breadcrumbLd(SITE_URL, [{ label: "خانه", path: "/" }, { label: "مقالات", path: "/articles" }]), listLd]} />
-      <Articles articles={articles} categories={usedCats} />
+      <Articles articles={articles.map(toCardView)} categories={usedCats} />
     </>
   );
 }
