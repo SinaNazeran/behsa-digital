@@ -216,4 +216,4 @@ export function MediaLayer({
    all, so the section is never blank. Everything else (image, mobile
    image, footage, on/off) is editor-managed. Video stays desktop-only
    and is dropped on Save-Data or explicit reduced-motion. */
-export const HERO_FALLBACK_IMAGE = "/videos/hero-poster.png";
+export const HERO_FALLBACK_IMAGE = "/videos/hero-poster.avif";
