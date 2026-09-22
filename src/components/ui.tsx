@@ -1,100 +1,29 @@
-"use client";
-
-import { useEffect, useRef, useState, type ReactNode } from "react";
+/* Deliberately NOT a client component.
+ *
+ * Everything below is markup with no state, no effects and no event handlers
+ * of its own, so a server component that renders <Btn> or <PageHero> should
+ * get plain HTML — not a client reference it has to ship and hydrate. While
+ * this file carried "use client", /product alone registered 83 of those.
+ *
+ * Reveal is the one piece that genuinely needs the browser; it lives in
+ * ./Reveal and is re-exported here so the existing import sites keep working.
+ * Re-exporting a client component from a server module is fine: the boundary
+ * travels with Reveal itself, not with this file.
+ *
+ * A client component importing from here is also fine — it simply compiles
+ * into that component's graph, which is how <Btn onClick> keeps working in
+ * views/Articles.tsx.
+ */
+import type { ReactNode } from "react";
 import { cn } from "../utils/cn";
 import { Icon, type IconName } from "./icons";
 import { AccentText } from "./AccentText";
 import { SmartLink } from "@/components/SmartLink";
 import { RevealOnLoad } from "./RevealOnLoad";
+import { Reveal } from "./Reveal";
 
-/* ── Scroll reveal ──
-   One observer for the whole page rather than one per element. Every Reveal
-   asks for the same threshold and the same root margin, so they can all share
-   a single registration; the homepage alone mounts 68 of them, and each extra
-   IntersectionObserver is another set of intersection computations the browser
-   runs against the same scroll. Built lazily on first use, so it never exists
-   during server rendering.
-
-   Only elements that opted into `repeat` are tracked, because the observer
-   callback is shared and has to know which target wants to re-arm. A WeakSet
-   keeps that off the element and out of the way of the garbage collector. */
-const repeaters = new WeakSet<Element>();
-let revealObserver: IntersectionObserver | null = null;
-
-function getRevealObserver(): IntersectionObserver {
-  if (!revealObserver) {
-    revealObserver = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            e.target.classList.add("is-in");
-            /* a one-shot reveal has done its job — stop paying for it */
-            if (!repeaters.has(e.target)) revealObserver?.unobserve(e.target);
-          } else if (repeaters.has(e.target)) {
-            /* re-arm the transition so it replays on every re-entry */
-            e.target.classList.remove("is-in");
-          }
-        }
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -36px 0px" },
-    );
-  }
-  return revealObserver;
-}
-
-/** Below-the-fold reveal. For content in the first viewport use
- *  <RevealOnLoad>, which needs no JavaScript to become visible. */
-export function Reveal({
-  children, className, delay = 0, dir, repeat = false,
-}: { children: ReactNode; className?: string; delay?: number; dir?: "l" | "r"; repeat?: boolean }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      el.classList.add("is-in");
-      return;
-    }
-    if (repeat) repeaters.add(el);
-    const io = getRevealObserver();
-    io.observe(el);
-    return () => {
-      io.unobserve(el);
-      repeaters.delete(el);
-    };
-  }, [repeat]);
-  return (
-    <div ref={ref} className={cn(dir === "l" ? "rv-l" : dir === "r" ? "rv-r" : "rv", className)} style={{ transitionDelay: `${delay}ms` }}>
-      {children}
-    </div>
-  );
-}
-
-/* ── Count-up number (honours reduced motion) ── */
-export function CountUp({ to, suffix = "", duration = 1500, className }: { to: number; suffix?: string; duration?: number; className?: string }) {
-  const [val, setVal] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setVal(to); return; }
-    let raf = 0;
-    const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return;
-      io.disconnect();
-      const t0 = performance.now();
-      const tick = (t: number) => {
-        const p = Math.min((t - t0) / duration, 1);
-        setVal(Math.round(to * (1 - Math.pow(1 - p, 3))));
-        if (p < 1) raf = requestAnimationFrame(tick);
-      };
-      raf = requestAnimationFrame(tick);
-    }, { threshold: 0.4 });
-    io.observe(el);
-    return () => { io.disconnect(); cancelAnimationFrame(raf); };
-  }, [to, duration]);
-  return <span ref={ref} className={className}>{val.toLocaleString("fa-IR")}{suffix}</span>;
-}
+export { Reveal } from "./Reveal";
+export { RevealOnLoad } from "./RevealOnLoad";
 
 /* ── Buttons ── */
 type BtnProps = {
@@ -199,54 +128,6 @@ export function Breadcrumb({ items, dark = false }: { items: { label: string; pa
         </span>
       ))}
     </nav>
-  );
-}
-
-/* ── Alert card (semantic) ── */
-export function AlertCard({ type, title, desc, time, dark = false }: { type: "ok" | "warn" | "err" | "info"; title: string; desc: string; time?: string; dark?: boolean }) {
-  const map = {
-    ok: { icon: "check" as IconName, c: "text-ok", bg: dark ? "bg-ok/20" : "bg-ok/10", bar: "bg-ok" },
-    warn: { icon: "alert" as IconName, c: dark ? "text-amber-400" : "text-warn", bg: dark ? "bg-warn/25" : "bg-warn/12", bar: "bg-warn" },
-    err: { icon: "alert" as IconName, c: dark ? "text-red-400" : "text-err", bg: dark ? "bg-err/20" : "bg-err/10", bar: "bg-err" },
-    info: { icon: "info" as IconName, c: dark ? "text-blue-300" : "text-info", bg: dark ? "bg-info/20" : "bg-info/10", bar: "bg-info" },
-  };
-  const m = map[type];
-  return (
-    <div className={cn(
-      "relative flex items-start gap-3 rounded-s border p-3.5 pr-4 overflow-hidden transition-all",
-      dark
-        ? "border-white/10 bg-white/[0.04] backdrop-blur-sm hover:border-white/20 hover:bg-white/[0.08] text-white"
-        : "border-line bg-surface hover:border-steel/30 hover:shadow-card text-ink"
-    )}>
-      <span className={cn("absolute inset-y-0 right-0 w-[3px]", m.bar)} />
-      <span className={cn("mt-0.5 rounded-xs p-1.5 shrink-0", m.bg, m.c)}><Icon name={m.icon} size={16} sw={2} /></span>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-baseline justify-between gap-2">
-          <p className={cn("text-[13.5px] font-bold truncate", dark ? "text-white" : "text-ink")}>{title}</p>
-          {time && <span className={cn("text-[11px] whitespace-nowrap fa-num", dark ? "text-neutral-400" : "text-ink3")}>{time}</span>}
-        </div>
-        <p className={cn("text-[12.5px] leading-6 mt-0.5", dark ? "text-neutral-300" : "text-ink2")}>{desc}</p>
-      </div>
-    </div>
-  );
-}
-
-/* ── Client / logo marquee ── */
-export function Marquee({ items }: { items: string[] }) {
-  const row = [...items, ...items];
-  return (
-    <div className="relative overflow-hidden" dir="ltr">
-      <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-bg to-transparent z-10" />
-      <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-bg to-transparent z-10" />
-      <div className="ticker-track flex w-max items-center gap-10 py-2">
-        {row.map((n, i) => (
-          <span key={i} dir="rtl" className="flex items-center gap-2.5 whitespace-nowrap text-steel/75 font-display font-bold text-[15px] transition-colors hover:text-orange-700">
-            <span className="inline-block h-2 w-2 rounded-[3px] bg-steel/35 rotate-45" />
-            {n}
-          </span>
-        ))}
-      </div>
-    </div>
   );
 }
 
