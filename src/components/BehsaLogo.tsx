@@ -118,7 +118,7 @@ export const BehsaLogo: React.FC<BehsaLogoProps> = ({
 
       {/* ── عنوان و زیرعنوان فارسی در کنار لوگوی پشته‌ای (اختیاری) ── */}
       {showPersianText && (
-        <div className="flex flex-col justify-center leading-none text-right border-r border-line/70 pr-3 mr-0.5">
+        <div className="flex flex-col justify-center whitespace-nowrap leading-none text-right border-r border-line/70 pr-3 mr-0.5">
           <span
             className={`font-display font-black tracking-tight text-[16px] md:text-[17.5px] ${
               theme === "dark" ? "text-white" : "text-ink"

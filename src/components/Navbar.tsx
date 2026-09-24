@@ -138,7 +138,7 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
                   aria-controls={hasPanel ? `nav-panel-${key}` : undefined}
                   aria-current={isActive ? "true" : undefined}
                   className={cn(
-                    "flex h-11 items-center gap-1.5 rounded-[10px] px-3.5 text-[13.5px] font-bold transition-colors",
+                    "flex h-11 items-center gap-1.5 whitespace-nowrap rounded-[10px] px-3 text-[13.5px] font-bold transition-colors xl:px-3.5",
                     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                     isActive ? "text-orange-700" : "text-ink2 hover:text-orange-700",
                     open === key && "bg-primary-soft text-orange-700",
@@ -154,7 +154,7 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
                       className={cn("text-ink3 transition-transform duration-200 ease-out", open === key && "rotate-180 text-orange-700")}
                     />
                   )}
-                  {isActive && <span className="absolute -bottom-0.5 right-3.5 left-3.5 h-0.5 rounded-full bg-primary" />}
+                  {isActive && <span className="absolute -bottom-0.5 right-3 left-3 h-0.5 rounded-full bg-primary xl:right-3.5 xl:left-3.5" />}
                 </SmartLink>
 
                 {/* simple dropdown — anchored to its trigger */}
@@ -186,13 +186,16 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
             href={NAV_CONTACT.href}
             aria-label={NAV_CONTACT.title}
             className={cn(
-              "group hidden h-10 items-center gap-2 rounded-[10px] border px-3 text-[13px] font-bold transition-all duration-200 active:translate-y-px",
+              "group hidden h-10 items-center gap-2 whitespace-nowrap rounded-[10px] border px-3 text-[13px] font-bold transition-all duration-200 active:translate-y-px",
               "border-line bg-bg text-ink2 hover:-translate-y-px hover:border-primary/40 hover:text-orange-700 hover:shadow-card",
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:inline-flex",
             )}
           >
             <Icon name="phone" size={15} className="shrink-0 transition-transform duration-200 group-hover:-rotate-6" />
-            <span className="hidden md:inline">{NAV_CONTACT.title}</span>
+            {/* icon-only while the desktop nav shares the bar below xl: at
+                lg the bar's content is ~70px wider than 1024px (aria-label
+                keeps the name) */}
+            <span className="hidden md:inline lg:hidden xl:inline">{NAV_CONTACT.title}</span>
           </SmartLink>
           {/* the site's single call to action — goes straight to the product
               panel; external → opens in a new tab so the page stays open */}
@@ -203,7 +206,7 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
             size="md"
             icon="login"
             ariaLabel={`${NAV_CTA_LABEL} (باز شدن در پنجره جدید)`}
-            className="hidden h-10 px-4 text-[13px] shadow-[0_2px_10px_rgb(250_100_0/0.26)] hover:shadow-[0_4px_14px_rgb(250_100_0/0.36)] sm:inline-flex"
+            className="hidden h-10 whitespace-nowrap px-4 text-[13px] shadow-[0_2px_10px_rgb(250_100_0/0.26)] hover:shadow-[0_4px_14px_rgb(250_100_0/0.36)] sm:inline-flex"
           >
             {NAV_CTA_LABEL}
           </Button>
