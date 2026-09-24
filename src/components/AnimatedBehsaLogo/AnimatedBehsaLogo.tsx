@@ -41,15 +41,12 @@ export interface AnimatedBehsaLogoProps {
    schedules it, and the only thing this component still does at runtime is
    drop the reveal masks once it has finished (see `masked` below). */
 
-// Deterministic reveal path lengths to eliminate forced synchronous SVG reflows on mount
-const REVEAL_LENGTHS = {
-  faBody: 1385,
-  enB: 175,
-  enE: 160,
-  enH: 170,
-  enS: 180,
-  enA: 180,
-} as const;
+/* Every reveal path is normalised with pathLength={1}, so dasharray and
+   dashoffset are both 1 — no measured lengths to keep in sync with
+   REVEAL_PATHS. Caps are butt on purpose: a square/round cap extends the
+   dash by half the stroke width at both ends, which popped the left half of
+   each letter (most visibly E's stem and arms) in at once the instant its
+   wipe began, and can draw a cap for the zero-length dash at offset == 1. */
 
 export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
   className = "",
@@ -127,10 +124,11 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
             fill="none"
             stroke="#FFFFFF"
             strokeWidth="240"
-            strokeLinecap="round"
+            strokeLinecap="butt"
             strokeLinejoin="round"
-            strokeDasharray={shouldAnimate ? REVEAL_LENGTHS.faBody : undefined}
-            strokeDashoffset={shouldAnimate ? REVEAL_LENGTHS.faBody : undefined}
+            pathLength={1}
+            strokeDasharray={shouldAnimate ? 1 : undefined}
+            strokeDashoffset={shouldAnimate ? 1 : undefined}
           />
         </mask>
 
@@ -142,9 +140,10 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
             fill="none"
             stroke="#FFFFFF"
             strokeWidth="160"
-            strokeLinecap="square"
-            strokeDasharray={shouldAnimate ? REVEAL_LENGTHS.enB : undefined}
-            strokeDashoffset={shouldAnimate ? REVEAL_LENGTHS.enB : undefined}
+            strokeLinecap="butt"
+            pathLength={1}
+            strokeDasharray={shouldAnimate ? 1 : undefined}
+            strokeDashoffset={shouldAnimate ? 1 : undefined}
           />
         </mask>
         <mask id={maskEnEId} maskUnits="userSpaceOnUse" x="0" y="0" width="888" height="664">
@@ -154,9 +153,10 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
             fill="none"
             stroke="#FFFFFF"
             strokeWidth="160"
-            strokeLinecap="square"
-            strokeDasharray={shouldAnimate ? REVEAL_LENGTHS.enE : undefined}
-            strokeDashoffset={shouldAnimate ? REVEAL_LENGTHS.enE : undefined}
+            strokeLinecap="butt"
+            pathLength={1}
+            strokeDasharray={shouldAnimate ? 1 : undefined}
+            strokeDashoffset={shouldAnimate ? 1 : undefined}
           />
         </mask>
         <mask id={maskEnHId} maskUnits="userSpaceOnUse" x="0" y="0" width="888" height="664">
@@ -166,9 +166,10 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
             fill="none"
             stroke="#FFFFFF"
             strokeWidth="160"
-            strokeLinecap="square"
-            strokeDasharray={shouldAnimate ? REVEAL_LENGTHS.enH : undefined}
-            strokeDashoffset={shouldAnimate ? REVEAL_LENGTHS.enH : undefined}
+            strokeLinecap="butt"
+            pathLength={1}
+            strokeDasharray={shouldAnimate ? 1 : undefined}
+            strokeDashoffset={shouldAnimate ? 1 : undefined}
           />
         </mask>
         <mask id={maskEnSId} maskUnits="userSpaceOnUse" x="0" y="0" width="888" height="664">
@@ -178,9 +179,10 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
             fill="none"
             stroke="#FFFFFF"
             strokeWidth="160"
-            strokeLinecap="square"
-            strokeDasharray={shouldAnimate ? REVEAL_LENGTHS.enS : undefined}
-            strokeDashoffset={shouldAnimate ? REVEAL_LENGTHS.enS : undefined}
+            strokeLinecap="butt"
+            pathLength={1}
+            strokeDasharray={shouldAnimate ? 1 : undefined}
+            strokeDashoffset={shouldAnimate ? 1 : undefined}
           />
         </mask>
         <mask id={maskEnAId} maskUnits="userSpaceOnUse" x="0" y="0" width="888" height="664">
@@ -190,9 +192,10 @@ export const AnimatedBehsaLogo: React.FC<AnimatedBehsaLogoProps> = ({
             fill="none"
             stroke="#FFFFFF"
             strokeWidth="160"
-            strokeLinecap="square"
-            strokeDasharray={shouldAnimate ? REVEAL_LENGTHS.enA : undefined}
-            strokeDashoffset={shouldAnimate ? REVEAL_LENGTHS.enA : undefined}
+            strokeLinecap="butt"
+            pathLength={1}
+            strokeDasharray={shouldAnimate ? 1 : undefined}
+            strokeDashoffset={shouldAnimate ? 1 : undefined}
           />
         </mask>
       </defs>

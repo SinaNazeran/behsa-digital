@@ -31,12 +31,13 @@ export const REVEAL_PATHS = {
   faBody:
     "M 895 88 C 850 120 790 160 730 205 C 670 250 620 295 595 385 C 570 340 520 285 460 278 C 400 282 300 290 220 290 C 140 285 70 265 25 220 C 0 170 15 100 65 45 C 110 10 155 0 185 -5",
   
-  // English letter reveals (Left -> Right)
-  enB: "M 15 590 L 186 590",
-  enE: "M 186 590 L 340 590",
-  enH: "M 340 590 L 506 590",
-  enS: "M 506 590 L 680 590",
-  enA: "M 680 590 L 855 590",
+  // English letter reveals (Left -> Right). Butt-capped, so each one spans
+  // exactly its letter's bbox (+2) — the wipe starts at the letter's edge.
+  enB: "M 22 590 L 180 590",
+  enE: "M 192 590 L 335 590",
+  enH: "M 347 590 L 501 590",
+  enS: "M 513 590 L 675 590",
+  enA: "M 686 590 L 848 590",
 } as const;
 
 export const BRAND_COLORS = {
