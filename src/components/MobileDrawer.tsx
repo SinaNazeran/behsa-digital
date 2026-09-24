@@ -129,10 +129,23 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
     );
   };
 
+  /* Enter decelerates in (400ms), exit accelerates away and is a little
+     shorter (300ms) — the Material 3 emphasized pair for elements that come
+     from / leave to off-screen. Scrim and panel share the timing so they
+     move as one. */
+  const motion = open
+    ? "duration-[400ms] ease-[cubic-bezier(0.05,0.7,0.1,1)]"
+    : "duration-300 ease-[cubic-bezier(0.3,0,0.8,0.15)]";
+
   return (
-    <div className={cn("fixed inset-0 z-[60] lg:hidden", open ? "visible" : "invisible pointer-events-none")}>
+    /* visibility is transitioned, not toggled: a visible→hidden transition
+       keeps it visible for its whole duration, so the drawer stays on screen
+       until the slide-out ends (it used to vanish on the first frame of the
+       close, hiding the exit animation entirely); hidden→visible flips at
+       once, so opening is unaffected. Keep its duration equal to the exit. */
+    <div className={cn("fixed inset-0 z-[60] transition-[visibility] duration-300 lg:hidden", open ? "visible" : "invisible pointer-events-none")}>
       <div
-        className={cn("absolute inset-0 bg-neutral-950/75 backdrop-blur-sm transition-opacity duration-300", open ? "opacity-100" : "opacity-0")}
+        className={cn("absolute inset-0 bg-neutral-950/75 backdrop-blur-sm transition-opacity", motion, open ? "opacity-100" : "opacity-0")}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -145,7 +158,8 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
         aria-modal={open ? true : undefined}
         aria-label={open ? "منوی ناوبری" : undefined}
         className={cn(
-          "absolute inset-y-0 right-0 flex w-[310px] max-w-[88vw] flex-col border-l border-line bg-surface shadow-dark transition-transform duration-300 ease-out",
+          "absolute inset-y-0 right-0 flex w-[310px] max-w-[88vw] flex-col border-l border-line bg-surface shadow-dark transition-transform",
+          motion,
           open ? "translate-x-0" : "translate-x-full",
         )}
       >
