@@ -1,6 +1,6 @@
 import type { IconName } from "@/components/icons";
 import {
-  ASSET_TYPES, BENEFITS, CAPACITOR_OUTPUTS, DASHBOARD_SHOTS, INDUSTRIES,
+  BENEFITS, CAPACITOR_OUTPUTS, DASHBOARD_SHOTS, INDUSTRIES,
   PAIN_POINTS, PLATFORM_STEPS, REGULATIONS, REPORT_CARDS, STATUS_QUO,
 } from "@/content/data";
 
@@ -114,23 +114,15 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "companies",
-    label: "انواع مصرف‌کننده (نوار زیر هیرو)",
-    hint: "نوار متحرک زیر بخش هیرو. انواع مصرف‌کننده را نشان می‌دهد، نه نام شرکت‌ها.",
+    label: "نوار لوگوی مشتریان (زیر هیرو)",
+    hint: "نوار متحرک لوگوها زیر بخش هیرو. خود لوگوها توسط تیم فنی در src/content/customers.ts مدیریت می‌شوند.",
     group: "hero",
     header: { title: "عنوان نوار" },
-    items: {
-      label: "انواع مصرف‌کننده",
-      addLabel: "مورد جدید",
-      titleLabel: "عنوان",
-      /* No `image` field by design: a logo upload here would reintroduce
-         a customer-logo wall, and Behsa has no permission to display
-         customer brands (docs/content-spec.md §Band 2). */
-      fields: [ICON_FIELD],
-      emptyHint: "اگر هیچ موردی فعال نباشد، نوار نمایش داده نمی‌شود.",
-    },
+    /* No item editor: logos are SVG, which the media library refuses
+       (it can carry scripts), so they ship as reviewed files in
+       public/logos/ — see src/content/customers.ts. */
     defaults: {
-      title: "انواع مصرف‌کننده‌ای که روی بهسا پایش می‌شوند",
-      items: ASSET_TYPES.map((a) => ({ title: a.title, icon: a.icon as IconName })),
+      title: "مورد اعتماد سازمان‌های پیشرو",
     },
   },
   {

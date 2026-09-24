@@ -3,6 +3,8 @@ import { btnCls, inputCls } from "@/components/admin/styles";
 import { IconPicker } from "@/components/admin/IconPicker";
 import { deleteNavItem, moveNavItem, saveNavItem, seedDefaultNav } from "@/app/admin/_actions/navigation";
 import type { navItems as navItemsTable } from "@/db/schema";
+import { REPORT_MENU_LIMIT } from "@/content/reports";
+import { faNum } from "@/lib/format";
 
 type NavRow = typeof navItemsTable.$inferSelect;
 
@@ -82,14 +84,19 @@ export function NavigationManager({ rows }: { rows: NavRow[] }) {
   return (
     <div className="space-y-8">
       {sections.map((section, si) => {
-        const items = childrenOf(section.id);
+        /* a catalogue section keeps its stored children (switching back
+           restores them) but never shows or edits them */
+        const catalogue = section.kind === "reports";
+        const items = catalogue ? [] : childrenOf(section.id);
         return (
           <Card key={section.id}>
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="font-display text-[16px] font-extrabold text-ink">{section.label}</h2>
-              <span className="rounded-full bg-bg px-2.5 py-0.5 text-[12px] font-bold text-ink3 fa-num">
-                {items.length.toLocaleString("fa-IR")} زیرمنو
-              </span>
+              {!catalogue && (
+                <span className="rounded-full bg-bg px-2.5 py-0.5 text-[12px] font-bold text-ink3 fa-num">
+                  {items.length.toLocaleString("fa-IR")} زیرمنو
+                </span>
+              )}
               {!section.isActive && <span className="rounded-full bg-warnbg px-2.5 py-0.5 text-[12px] font-bold text-warn">پنهان</span>}
               <MoveButtons id={section.id} parentId={null} index={si} count={sections.length} />
             </div>
@@ -99,10 +106,11 @@ export function NavigationManager({ rows }: { rows: NavRow[] }) {
               <input type="hidden" name="parentId" value={0} />
               <LinkFields item={section} withIcon={false} />
               <div className="grid gap-4 md:grid-cols-2">
-                <Field label="نوع منوی بازشونده" hint="«بزرگ» برای فهرست‌های طولانی با ستون معرفی، «ساده» برای فهرست کوتاه.">
+                <Field label="نوع منوی بازشونده" hint="«بزرگ» برای فهرست‌های طولانی با ستون معرفی، «ساده» برای فهرست کوتاه، «گزارش‌ها» برای منویی که خودکار از دسته‌ها و گزارش‌های منتشرشده ساخته می‌شود.">
                   <select name="kind" defaultValue={section.kind} className={inputCls}>
                     <option value="mega">بزرگ</option>
                     <option value="dropdown">ساده</option>
+                    <option value="reports">گزارش‌ها (خودکار از فهرست گزارش‌ها)</option>
                   </select>
                 </Field>
                 <Field label="نوع صفحات این سرفصل" hint="لحن صفحات داخلی این سرفصل را تعیین می‌کند.">
@@ -142,6 +150,14 @@ export function NavigationManager({ rows }: { rows: NavRow[] }) {
               <ConfirmSubmit label="حذف سرفصل" confirmLabel="بله، سرفصل و زیرمنوهایش حذف شود" />
             </AdminForm>
 
+            {catalogue ? (
+              <div className="mt-5 rounded-[10px] border border-line bg-bg p-4 text-[13.5px] leading-7 text-ink2">
+                زیرمنوهای این سرفصل خودکار ساخته می‌شوند: هر دسته یک ستون، و در هر ستون {faNum(REPORT_MENU_LIMIT)} گزارش منتشرشدهٔ اول آن دسته.
+                نام و ترتیب دسته‌ها را در <a href="/admin/report-categories" className="font-bold text-orange-700">دسته‌بندی گزارش‌ها</a> و
+                گزارش‌ها و ترتیبشان را در <a href="/admin/reports" className="font-bold text-orange-700">گزارش‌ها</a> تغییر دهید.
+              </div>
+            ) : (
+            <>
             <ol className="mt-5 space-y-3 border-t border-linesoft pt-5">
               {items.map((item, i) => (
                 <li key={item.id} className="rounded-[10px] border border-line bg-bg p-4">
@@ -189,6 +205,8 @@ export function NavigationManager({ rows }: { rows: NavRow[] }) {
                 </div>
               </AdminForm>
             </details>
+            </>
+            )}
           </Card>
         );
       })}

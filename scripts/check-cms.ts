@@ -7,6 +7,11 @@ import { plainText } from "../src/components/AccentText";
 import { SECTIONS, SECTION_BY_KEY } from "../src/content/sections";
 import { DEFAULT_NAV, isExternalHref, slugOf, sectionKeyForRoute, type NavSectionView } from "../src/content/navigation";
 import { capabilityBySlug } from "../src/content/capabilities";
+import { CUSTOMERS } from "../src/content/customers";
+import { REPORT_AUDIENCES, audienceLabels, matchesQuery, searchText } from "../src/content/reports";
+import { REPORT_AUDIENCE, REPORT_CATEGORIES, REPORT_MENU, REPORT_PAGES } from "./seed-reports";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
 let checks = 0;
 const ok = (cond: unknown, msg: string) => { assert.ok(cond, msg); checks++; };
@@ -38,11 +43,19 @@ for (const def of SECTIONS) {
   ok(isSafeHref(def.defaults.videoUrl ?? ""), `${def.key}: default video URL is safe`);
 }
 ok(SECTION_BY_KEY.hero?.header.media && SECTION_BY_KEY.hero?.header.video, "hero owns image and video fields");
-ok((SECTION_BY_KEY.companies?.defaults.items?.length ?? 0) > 0, "consumer-type strip ships with default items");
-/* The strip must never become a customer-logo wall again: Behsa has no
-   permission to display customer brands (docs/content-strategy.md). */
-ok(!(SECTION_BY_KEY.companies?.items?.fields ?? []).some((f) => f.name === "image"),
-   "consumer-type strip exposes no logo upload");
+/* Customer logos ship as reviewed SVG files, never through the media
+   library (which refuses SVG). Each must exist, stay free of scripts and
+   raster payloads, and declare the ratio its viewBox actually has —
+   the strip sizes logos from that ratio. */
+ok(!SECTION_BY_KEY.companies?.items, "customer logo strip has no CMS item editor");
+for (const c of CUSTOMERS) {
+  const file = join("public", c.logo);
+  ok(existsSync(file), `${c.logo}: file exists`);
+  const svg = readFileSync(file, "utf8");
+  ok(!/<script|\son\w+=|<image|<foreignObject/i.test(svg), `${c.logo}: no scripts or embedded raster`);
+  const vb = svg.match(/<svg\b[^>]*\bviewBox="([^"]+)"/)?.[1].trim().split(/[\s,]+/).map(Number);
+  ok(vb && Math.abs(vb[2] / vb[3] - c.ratio) < 0.02, `${c.logo}: ratio matches viewBox`);
+}
 /* Bands whose own copy claims real screenshots or real customer results
    must not ship switched on with placeholder content. */
 ok(SECTION_BY_KEY.dashboard?.defaults.isActive === false, "screenshot band ships inactive until real media exists");
@@ -75,14 +88,49 @@ ok(sectionKeyForRoute("/nope", sections) === null, "unknown route highlights no 
    component, and section roots that render their own children grid,
    are listed as exceptions. */
 const ROUTE_PAGES = new Set(["/articles", "/about", "/contact", "/product/platform"]);
+/* report pages live in the database; links to them must match what the seed imports */
+const SEEDED_REPORTS = new Set(REPORT_PAGES.map((p) => p.href));
+/* the report menu is built from the catalogue, so its factory section holds no items */
+const reportNav = DEFAULT_NAV.find((s) => s.href === "/reports");
+ok(reportNav?.kind === "reports" && reportNav.items.length === 0, "report menu is catalogue-driven, with no hand-written items");
 for (const s of DEFAULT_NAV) {
   for (const item of s.items) {
     if (item.isActive === false || isExternalHref(item.href)) continue;
     ok(
-      ROUTE_PAGES.has(item.href) || Boolean(capabilityBySlug(slugOf(item.href))),
+      ROUTE_PAGES.has(item.href) || SEEDED_REPORTS.has(item.href) || Boolean(capabilityBySlug(slugOf(item.href))),
       `nav "${item.label}" (${item.href}): has page content`,
     );
   }
 }
+
+/* ── report catalogue seed ──────────────────────────────────────────
+   Every seeded report lands in exactly one category, with at least one
+   known audience, or `npm run db:seed` would publish an incomplete page. */
+const AUDIENCE_KEYS = new Set<string>(REPORT_AUDIENCES.map((a) => a.key));
+const placed = REPORT_CATEGORIES.flatMap((c) => c.reports);
+ok(new Set(placed).size === placed.length, "no report is seeded into two categories");
+ok(new Set(REPORT_CATEGORIES.map((c) => c.slug)).size === REPORT_CATEGORIES.length, "report category slugs are unique");
+for (const page of REPORT_PAGES) {
+  ok(placed.includes(page.id), `report ${page.id}: has a category`);
+  ok(REPORT_MENU[page.href]?.label && REPORT_MENU[page.href]?.question, `report ${page.id}: has a menu label and question`);
+  const audiences = REPORT_AUDIENCE[page.id] ?? [];
+  ok(audiences.length > 0 && audiences.every((a) => AUDIENCE_KEYS.has(a)), `report ${page.id}: has known audiences`);
+  ok(page.slug === slugOf(page.href) && page.slug.startsWith("reports/"), `report ${page.id}: slug matches its URL`);
+  ok((page.sections ?? []).some((b) => b.body?.length || b.items?.length), `report ${page.id}: has body content`);
+  for (const l of page.links ?? []) {
+    ok(SEEDED_REPORTS.has(`/${l.slug}`) || capabilityBySlug(l.slug), `report ${page.id}: link ${l.slug} resolves`);
+  }
+}
+ok(audienceLabels(["finance", "gone"]).join() === "مدیر مالی", "unknown audience keys are dropped, never shown raw");
+
+/* ── report search folds Persian spelling variants ── */
+const hay = searchText(["گزارش‌های دادهٔ کنتور", "ضریب توان ۰٫۹۱"]);
+ok(matchesQuery(hay, "گزارشهای داده کنتور"), "search ignores the zero-width joiner and ٔ");
+ok(matchesQuery(hay, "گزارش ها"), "search matches a word typed with a space");
+ok(matchesQuery(hay, "كنتور"), "search folds Arabic kaf");
+ok(matchesQuery(hay, "ضريب"), "search folds Arabic yeh");
+ok(matchesQuery(hay, "91") && matchesQuery(hay, "۹۱"), "search folds Persian digits");
+ok(matchesQuery(hay, "  "), "an empty query matches everything");
+ok(!matchesQuery(hay, "کنتور خورشیدی"), "every word of the query must match");
 
 console.log(`✔ ${checks} CMS content-model checks passed`);

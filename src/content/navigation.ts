@@ -1,5 +1,5 @@
 import type { IconName } from "@/components/icons";
-import type { NavLens } from "@/db/schema";
+import type { NavKind, NavLens } from "@/db/schema";
 import { CAPABILITY_CATEGORIES, CONTENT_PAGES } from "@/content/capabilities";
 
 /* ════════════════════════════════════════════════════════════════
@@ -16,7 +16,7 @@ import { CAPABILITY_CATEGORIES, CONTENT_PAGES } from "@/content/capabilities";
 
    Slug convention (English, semantic, hierarchical):
      /product/capabilities/<feature>   → feature-oriented (WHAT it does)
-     /reports/<report>                 → the named report (L4)
+     /reports/<report>                 → the named report (L4, CMS-managed)
      /solutions/<outcome>              → outcome-oriented (WHICH problem)
      /industries/<vertical>            → vertical-oriented (HOW applied)
    Why English slugs: stable URLs under a Persian UI, predictable
@@ -45,12 +45,25 @@ export interface NavIntro {
   cta: { label: string; href: string } | null;
 }
 
+/** one category block of the report menu */
+export interface NavGroupView {
+  id: number;
+  title: string;
+  href: string;
+  icon?: IconName;
+  items: NavItemView[];
+  /** the category has more reports than the menu shows */
+  more: boolean;
+}
+
 export interface NavSectionView extends NavItemView {
-  kind: "mega" | "dropdown";
+  kind: NavKind;
   lens: NavLens;
   /** mega-panel intro column; null when the editor left it empty */
   intro: NavIntro | null;
   items: NavItemView[];
+  /** kind "reports" only: the catalogue, grouped by category (`items` is the flat list) */
+  groups?: NavGroupView[];
 }
 
 /** a node of the data-driven landing router (`/[...slug]`) */
@@ -96,7 +109,7 @@ export type DefaultNavItem = {
 };
 
 export type DefaultNavSection = DefaultNavItem & {
-  kind: "mega" | "dropdown";
+  kind: NavKind;
   lens: NavLens;
   intro?: { title: string; description: string; ctaLabel: string; ctaHref: string };
   items: DefaultNavItem[];
@@ -131,7 +144,10 @@ export const DEFAULT_NAV: DefaultNavSection[] = [
   {
     label: "گزارش‌ها",
     href: "/reports",
-    kind: "mega",
+    /* its items are the report catalogue (Admin → گزارش‌ها), grouped by
+       category — renaming a category or publishing a report changes the
+       menu without touching it here or in Admin → منو */
+    kind: "reports",
     lens: "feature",
     intro: {
       title: "هر گزارش، یک تصمیم",
@@ -139,23 +155,7 @@ export const DEFAULT_NAV: DefaultNavSection[] = [
       ctaLabel: "همهٔ گزارش‌ها",
       ctaHref: "/reports",
     },
-    items: [
-      { label: "بهینه‌سازی قدرت قراردادی", href: "/reports/contracted-power", description: "قدرت قراردادی شما زیاد است یا کم؟", icon: "contract" },
-      { label: "توان راکتیو جبرانی بانک خازنی", href: "/reports/capacitor-bank-design", description: "ظرفیت، پله‌بندی، فیوز و کابل", icon: "capacitor" },
-      { label: "نمودار ساعتی جبران‌ساز", href: "/reports/capacitor-bank-diagnostic", description: "بانک خازنی موجود درست کار می‌کند؟", icon: "reactive" },
-      { label: "خرید بهینه انرژی ماه جاری", href: "/reports/optimal-purchase", description: "چقدر برق بخریم تا جریمه نشویم؟", icon: "cart" },
-      { label: "ارزیابی سهم انرژی خورشیدی", href: "/reports/solar-share", description: "سهم واقعی خورشید و الزام ماده ۱۶", icon: "sun" },
-      { label: "پروفایل بار و دادهٔ کنتور", href: "/reports/load-profile", description: "پارامترهای الکتریکی در بازهٔ دلخواه", icon: "loadprofile" },
-      { label: "بیشینه مصرف اکتیو", href: "/reports/peak-demand", description: "پیک مصرف دقیقاً کی رخ داده است؟", icon: "peak" },
-      { label: "کنتورهای دارای تجاوز از دیماند", href: "/reports/demand-excess-meters", description: "کدام کنتور، در چه ساعتی", icon: "gauge" },
-      { label: "مقایسه مصرف دو بازه", href: "/reports/consumption-comparison", description: "مصرف نسبت به دورهٔ قبل چه تغییری کرد؟", icon: "compare" },
-      { label: "بهای انرژی مصرفی قبض", href: "/reports/bill-energy-cost", description: "مصرف و هزینه در هر بازه", icon: "rial" },
-      { label: "رویت‌پذیری دادهٔ کنتور", href: "/reports/observability", description: "چه بخشی از داده واقعی است، چه بخشی تخمینی؟", icon: "eye" },
-      { label: "کنتورهای هوشمند", href: "/reports/meter-register", description: "مشخصات کنتورها در جدول و روی نقشه", icon: "pin" },
-      { label: "هشدار کیفیت ولتاژ", href: "/reports/voltage-quality", description: "کدام مشترک به استابلایزر نیاز دارد؟", icon: "voltage" },
-      { label: "سلامت کنتورها", href: "/reports/meter-health", description: "کنتور خاموش، معیوب یا مصرف مشکوک", icon: "alert" },
-      { label: "داشبورد مدیریتی هلدینگ", href: "/reports/holding-dashboard", description: "همهٔ زیرمجموعه‌ها در یک صفحه", icon: "holding" },
-    ],
+    items: [],
   },
   {
     label: "راهکارها",

@@ -74,6 +74,9 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
   };
   const closeSoon = () => {
     window.clearTimeout(closeTimer.current);
+    /* never pull the panel away from someone typing in its search field */
+    const typing = document.activeElement instanceof HTMLInputElement && headerRef.current?.contains(document.activeElement);
+    if (typing) return;
     closeTimer.current = window.setTimeout(() => setOpen(null), 140);
   };
 
@@ -168,9 +171,9 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
         </nav>
 
         {/* mega panel — anchored to the full bar (not the nav) so it centers on the viewport */}
-        {openSection?.kind === "mega" && openSection.items.length > 0 && (
+        {openSection && openSection.kind !== "dropdown" && openSection.items.length > 0 && (
           <div id={`nav-panel-${openSection.id}`} data-panel={openSection.id} role="region" aria-label={openSection.title} className="absolute top-full inset-x-0 z-50 flex justify-center pt-3" onMouseEnter={() => openNow(String(openSection.id))}>
-            <div className="nav-panel-enter w-[min(1140px,calc(100vw-28px))] overflow-hidden rounded-[18px] border border-line bg-white/97 shadow-lift backdrop-blur-xl">
+            <div className="nav-panel-enter max-h-[calc(100dvh-110px)] w-[min(1140px,calc(100vw-28px))] overflow-y-auto overscroll-contain rounded-[18px] border border-line bg-white/97 shadow-lift backdrop-blur-xl">
               <MegaMenu section={openSection} activePath={route} />
             </div>
           </div>

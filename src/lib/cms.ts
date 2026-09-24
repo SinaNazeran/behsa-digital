@@ -1,14 +1,15 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
-import { and, asc, desc, eq, lte } from "drizzle-orm";
+import { and, asc, desc, eq, lte, or, sql } from "drizzle-orm";
 import { db, schema } from "@/db";
-import type { ArticleSection, ChartStyle, SiteSettings } from "@/db/schema";
+import type { ArticleSection, ChartStyle, ReportSection, SiteSettings } from "@/db/schema";
 import { DEFAULT_SETTINGS } from "@/content/defaults";
 import {
   CROSS_LINKS, DEFAULT_NAV, isExternalHref, slugOf,
-  type LandingNode, type NavItemView, type NavSectionView,
+  type LandingNode, type NavGroupView, type NavItemView, type NavSectionView,
 } from "@/content/navigation";
 import { SECTIONS, SECTION_BY_KEY } from "@/content/sections";
+import { REPORT_MENU_LIMIT, audienceLabels, searchText } from "@/content/reports";
 import type { IconName } from "@/components/icons";
 import { formatJalali, readingTime } from "@/lib/format";
 
@@ -27,6 +28,7 @@ export const TAGS = {
   seo: "cms:seo",
   nav: "cms:nav",
   content: "cms:content",
+  reports: "cms:reports",
 } as const;
 
 const HOUR = 3600;
@@ -277,7 +279,7 @@ function defaultNavigation(): NavSectionView[] {
   }));
 }
 
-export const getNavigation = unstable_cache(
+const getStoredNavigation = unstable_cache(
   async (): Promise<NavSectionView[]> => {
     const rows = await orDefault(() => db
       .select()
@@ -318,6 +320,31 @@ export const getNavigation = unstable_cache(
   ["navigation"],
   { tags: [TAGS.nav], revalidate: HOUR },
 );
+
+/** the menu, with a "reports" section filled from the report catalogue:
+    one block per category, its first few published reports in order */
+export async function getNavigation(): Promise<NavSectionView[]> {
+  const sections = await getStoredNavigation();
+  if (!sections.some((s) => s.kind === "reports")) return sections;
+
+  const { categories, reports } = await getReportCatalogue();
+  const groups: NavGroupView[] = categories
+    .map((c) => {
+      const all = reports.filter((r) => r.category.id === c.id);
+      return {
+        id: c.id,
+        title: c.name,
+        href: `/reports#${c.slug}`,
+        icon: c.icon,
+        more: all.length > REPORT_MENU_LIMIT,
+        items: all.slice(0, REPORT_MENU_LIMIT).map((r) => ({
+          id: r.id, title: r.label, href: r.href, description: r.question, icon: r.icon, newTab: false,
+        })),
+      };
+    })
+    .filter((g) => g.items.length > 0);
+  return sections.map((s) => (s.kind === "reports" ? { ...s, groups, items: groups.flatMap((g) => g.items) } : s));
+}
 
 /** every internal menu target that the `/[...slug]` landing template can render */
 export async function getLandingIndex(): Promise<Record<string, LandingNode>> {
@@ -488,4 +515,115 @@ export const getContent = unstable_cache(
 export async function getSection(key: string): Promise<SectionView> {
   const all = await getContent();
   return all[key] ?? defaultSection(key);
+}
+
+/* ── Report catalogue ──────────────────────────────────────────────
+   One cached read feeds every public surface — /reports, each report
+   page, cross-links and the sitemap. The catalogue is small (tens of
+   rows), so a single query beats one query per page. */
+
+export type ReportCategoryView = { id: number; slug: string; name: string; question: string; icon?: IconName };
+
+export type ReportView = {
+  id: number;
+  slug: string;
+  href: string;
+  previousSlugs: string[];
+  /** full name, the page H1 */
+  title: string;
+  /** short name for menus, cards and cross-links */
+  label: string;
+  question: string;
+  lead: string;
+  icon?: IconName;
+  category: ReportCategoryView;
+  /** display labels, already resolved */
+  audiences: string[];
+  /** stored keys, for the audience filter */
+  audienceKeys: string[];
+  /** folded text the /reports search matches against (see normalizeFa) */
+  search: string;
+  sections: ReportSection[];
+  gallery: { url: string; caption: string }[];
+  relatedReportIds: number[];
+  relatedPages: string[];
+  seoTitle: string;
+  seoDescription: string;
+  ogImageUrl: string | null;
+  noindex: boolean;
+  publishedAt: string | null;
+  updatedAt: string;
+  /** Persian display date of the last edit */
+  updated: string;
+  status: "draft" | "published";
+};
+
+const toCategoryView = (c: typeof schema.reportCategories.$inferSelect): ReportCategoryView => ({
+  id: c.id, slug: c.slug, name: c.name, question: c.question, icon: asIcon(c.icon),
+});
+
+function toReportView(r: typeof schema.reports.$inferSelect, c: typeof schema.reportCategories.$inferSelect): ReportView {
+  return {
+    id: r.id,
+    slug: r.slug,
+    href: `/reports/${r.slug}`,
+    previousSlugs: r.previousSlugs,
+    title: r.title,
+    label: r.menuTitle || r.title,
+    question: r.question,
+    lead: r.lead,
+    icon: asIcon(r.icon),
+    category: toCategoryView(c),
+    audiences: audienceLabels(r.audiences),
+    audienceKeys: r.audiences,
+    search: searchText([r.title, r.menuTitle, r.question, r.lead, c.name, ...r.keywords, ...audienceLabels(r.audiences)]),
+    /* an untouched template heading stays in the editor, never on the page */
+    sections: r.sections.filter((s) => s.body?.length || s.items?.length),
+    gallery: r.gallery.map((g) => ({ url: `/media/${g.mediaId}`, caption: g.caption })),
+    relatedReportIds: r.relatedReportIds,
+    relatedPages: r.relatedPages,
+    seoTitle: r.seoTitle,
+    seoDescription: r.seoDescription,
+    ogImageUrl: mediaUrl(r.ogMediaId ?? r.gallery[0]?.mediaId),
+    noindex: r.noindex,
+    publishedAt: r.publishedAt?.toISOString() ?? null,
+    updatedAt: r.updatedAt.toISOString(),
+    updated: formatJalali(r.updatedAt),
+    status: r.status,
+  };
+}
+
+const reportOrder = [
+  asc(schema.reportCategories.sortOrder), asc(schema.reportCategories.id),
+  asc(schema.reports.sortOrder), asc(schema.reports.id),
+];
+
+/** published reports in menu order, plus every category */
+export const getReportCatalogue = unstable_cache(
+  async (): Promise<{ categories: ReportCategoryView[]; reports: ReportView[] }> => {
+    const [categories, rows] = await Promise.all([
+      orDefault(() => db.select().from(schema.reportCategories)
+        .orderBy(asc(schema.reportCategories.sortOrder), asc(schema.reportCategories.id)), () => []),
+      orDefault(() => db.select({ r: schema.reports, c: schema.reportCategories })
+        .from(schema.reports)
+        .innerJoin(schema.reportCategories, eq(schema.reports.categoryId, schema.reportCategories.id))
+        .where(eq(schema.reports.status, "published"))
+        .orderBy(...reportOrder), () => []),
+    ]);
+    return { categories: categories.map(toCategoryView), reports: rows.map((x) => toReportView(x.r, x.c)) };
+  },
+  ["report-catalogue"],
+  { tags: [TAGS.reports], revalidate: HOUR },
+);
+
+/** uncached, any status, current or former slug — draft preview, and
+    telling "unpublished" from "never existed" */
+export async function getReportAnyStatus(slug: string): Promise<ReportView | null> {
+  const [row] = await db.select({ r: schema.reports, c: schema.reportCategories })
+    .from(schema.reports)
+    .innerJoin(schema.reportCategories, eq(schema.reports.categoryId, schema.reportCategories.id))
+    .where(or(eq(schema.reports.slug, slug), sql`${schema.reports.previousSlugs} @> ${JSON.stringify([slug])}::jsonb`))
+    .orderBy(sql`${schema.reports.slug} = ${slug} desc`)
+    .limit(1);
+  return row ? toReportView(row.r, row.c) : null;
 }

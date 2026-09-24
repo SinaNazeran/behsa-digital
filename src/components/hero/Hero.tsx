@@ -89,11 +89,11 @@ export function Hero({ hero, companies }: { hero: SectionView; companies: Sectio
         )}
       </div>
 
-      {/* audience marquee — part of the hero media; replays on every scroll-in */}
-      {companies.isActive && companies.items.length > 0 && (
+      {/* customer logo marquee — part of the hero media; replays on every scroll-in */}
+      {companies.isActive && (
         <div className="relative z-20">
           <Reveal delay={80} repeat>
-            <LogoStrip title={companies.title} items={companies.items} />
+            <LogoStrip title={companies.title} />
           </Reveal>
         </div>
       )}

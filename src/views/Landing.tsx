@@ -143,26 +143,32 @@ export default function Landing({ node, siblings, linked, panelUrl }: {
         </div>
       </section>
 
-      {/* CTA band — the site has a single call to action, the panel */}
-      <section className="relative overflow-hidden bg-bg border-t border-line text-ink">
-        <div className="absolute inset-0 grid-light" />
-        <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 py-14 md:py-16 text-center">
-          <Reveal>
-            <h2 className="font-display font-black text-[22px] md:text-[30px] leading-[1.5]">
-              {node.title} را روی دادهٔ مجموعهٔ خودتان ببینید.
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-[14.5px] leading-8 text-ink2">
-              گزارش‌ها را با دادهٔ مصرف مجموعهٔ خودتان در سامانه ببینید.
-            </p>
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-              <Btn href={panelUrl} target="_blank" size="lg" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">
-                ورود به سامانه
-              </Btn>
-              <Btn href="/contact" size="lg" variant="secondary">تماس با ما</Btn>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <PanelCta title={`${node.title} را روی دادهٔ مجموعهٔ خودتان ببینید.`} panelUrl={panelUrl} />
     </>
+  );
+}
+
+/** closing band — the site has a single call to action, the panel */
+export function PanelCta({ title, panelUrl }: { title: string; panelUrl: string }) {
+  return (
+    <section className="relative overflow-hidden bg-bg border-t border-line text-ink">
+      <div className="absolute inset-0 grid-light" />
+      <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 py-14 md:py-16 text-center">
+        <Reveal>
+          <h2 className="font-display font-black text-[22px] md:text-[30px] leading-[1.5]">
+            {title}
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-[14.5px] leading-8 text-ink2">
+            گزارش‌ها را با دادهٔ مصرف مجموعهٔ خودتان در سامانه ببینید.
+          </p>
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <Btn href={panelUrl} target="_blank" size="lg" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">
+              ورود به سامانه
+            </Btn>
+            <Btn href="/contact" size="lg" variant="secondary">تماس با ما</Btn>
+          </div>
+        </Reveal>
+      </div>
+    </section>
   );
 }

@@ -18,6 +18,8 @@ const GROUPS: { title: string; items: { href: string; label: string; adminOnly?:
   {
     title: "محتوا",
     items: [
+      { href: "/admin/reports", label: "گزارش‌ها" },
+      { href: "/admin/report-categories", label: "دسته‌بندی گزارش‌ها" },
       { href: "/admin/articles", label: "مقالات" },
       { href: "/admin/categories", label: "دسته‌بندی مقالات" },
       { href: "/admin/faqs", label: "پرسش‌های متداول" },

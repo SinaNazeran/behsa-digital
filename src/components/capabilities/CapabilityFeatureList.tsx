@@ -1,15 +1,15 @@
 import { cn } from "../../utils/cn";
 import { Icon } from "../icons";
 import { Reveal } from "../ui";
-import { STAGE_META, featureCount, type CapabilityCategory } from "@/content/capabilities";
+import { STAGE_META, featureCount, type CapabilityCategory, type ContentBlock } from "@/content/capabilities";
 
 /* Body of every page driven by content/capabilities.ts.
 
    Two shapes share one component:
    - capability pages carry `featureGroups` — verbatim feature names,
      rendered as a grouped, scannable list;
-   - report / solution / industry pages carry `sections` — prose blocks
-     with optional bullet lists.
+   - solution / industry pages carry `sections` — prose blocks
+     with optional bullet lists (ContentBlocks, shared with report pages).
 
    Either may be present, both may be present, and neither breaks the
    page: a node with no body still renders its lead. */
@@ -62,39 +62,8 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
         </Reveal>
       )}
 
-      {/* prose sections — reports, solutions, industries */}
-      {sections.length > 0 && (
-        <div className={cn("space-y-6", category.description ? "mt-8" : "mt-2")}>
-          {sections.map((block, bi) => (
-            <Reveal key={block.title} delay={bi * 70}>
-              <section className="rounded-m border border-line bg-surface p-6 md:p-7">
-                <h2 className="flex items-center gap-3 font-display text-[16px] font-extrabold text-ink">
-                  <span className="inline-block h-5 w-1.5 rounded-full bg-primary" />
-                  {block.title}
-                </h2>
-                {block.body?.map((para) => (
-                  <p key={para} className="mt-4 text-[14.5px] leading-9 text-ink2">{para}</p>
-                ))}
-                {block.items && block.items.length > 0 && (
-                  <ul className="mt-5">
-                    {block.items.map((item) => (
-                      <li
-                        key={item}
-                        className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-bg/70 rounded-s px-2 -mx-2"
-                      >
-                        <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] bg-primary-soft text-orange-700 transition-colors group-hover:bg-primary group-hover:text-on-primary">
-                          <Icon name="check" size={12} sw={2.6} />
-                        </span>
-                        <span className="text-[14px] font-medium leading-7 text-ink">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
-            </Reveal>
-          ))}
-        </div>
-      )}
+      {/* prose sections — solutions and industries */}
+      {sections.length > 0 && <ContentBlocks blocks={sections} className={category.description ? "mt-8" : "mt-2"} />}
 
       {/* verbatim feature names — capability pages */}
       {groups.length > 0 && (
@@ -126,6 +95,42 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+/** prose blocks with optional bullet lists — solution, industry and report pages */
+export function ContentBlocks({ blocks, className }: { blocks: ContentBlock[]; className?: string }) {
+  return (
+    <div className={cn("space-y-6", className)}>
+      {blocks.map((block, bi) => (
+        <Reveal key={bi} delay={bi * 70}>
+          <section className="rounded-m border border-line bg-surface p-6 md:p-7">
+            <h2 className="flex items-center gap-3 font-display text-[16px] font-extrabold text-ink">
+              <span className="inline-block h-5 w-1.5 rounded-full bg-primary" />
+              {block.title}
+            </h2>
+            {block.body?.map((para, pi) => (
+              <p key={pi} className="mt-4 text-[14.5px] leading-9 text-ink2">{para}</p>
+            ))}
+            {block.items && block.items.length > 0 && (
+              <ul className="mt-5">
+                {block.items.map((item, ii) => (
+                  <li
+                    key={ii}
+                    className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-bg/70 rounded-s px-2 -mx-2"
+                  >
+                    <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] bg-primary-soft text-orange-700 transition-colors group-hover:bg-primary group-hover:text-on-primary">
+                      <Icon name="check" size={12} sw={2.6} />
+                    </span>
+                    <span className="text-[14px] font-medium leading-7 text-ink">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </Reveal>
+      ))}
     </div>
   );
 }

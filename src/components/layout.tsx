@@ -74,15 +74,13 @@ export function Footer({ settings, sections }: { settings: SiteSettings; section
             </ul>
           </div>
 
-          {/* گزارش‌های پرکاربرد — every entry resolves to a written page */}
+          {/* report categories come from the catalogue (Admin → دسته‌بندی
+              گزارش‌ها), so a renamed or added category shows up here too */}
           <div className="lg:col-span-3">
-            <h3 className="font-display font-bold text-[15px] text-ink mb-5">گزارش‌های پرکاربرد</h3>
+            <h3 className="font-display font-bold text-[15px] text-ink mb-5">گزارش‌ها و منابع</h3>
             <ul className="space-y-3 text-[13.5px]">
               {[
-                { l: "بهینه‌سازی قدرت قراردادی", p: "/reports/contracted-power" },
-                { l: "طراحی بانک خازنی", p: "/reports/capacitor-bank-design" },
-                { l: "خرید بهینه انرژی ماه جاری", p: "/reports/optimal-purchase" },
-                { l: "ارزیابی سهم انرژی خورشیدی", p: "/reports/solar-share" },
+                ...(sections.find((s) => s.groups)?.groups ?? []).map((g) => ({ l: g.title, p: g.href })),
                 { l: "الزامات قانونی تأمین برق", p: "/solutions/article-16" },
                 { l: "مقالات و تحلیل‌های انرژی", p: "/articles" },
               ].map((n) => (

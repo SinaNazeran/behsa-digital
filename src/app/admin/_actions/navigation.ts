@@ -2,7 +2,7 @@
 
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { db, schema } from "@/db";
-import { NAV_LENSES, type NavLens } from "@/db/schema";
+import { NAV_LENSES, type NavKind, type NavLens } from "@/db/schema";
 import { requireUser } from "@/lib/auth";
 import { isIconName } from "@/components/icons";
 import type { ActionState } from "@/components/admin/ui";
@@ -17,7 +17,8 @@ function readItem(fd: FormData) {
   const label = str(fd, "label", 120);
   const href = str(fd, "href", 500);
   const icon = str(fd, "icon", 40);
-  const kind = str(fd, "kind", 12) === "mega" ? "mega" : "dropdown";
+  const kindRaw = str(fd, "kind", 12);
+  const kind: NavKind = kindRaw === "mega" || kindRaw === "reports" ? kindRaw : "dropdown";
   const lens = str(fd, "lens", 12);
   const introCtaHref = str(fd, "introCtaHref", 500);
 
@@ -33,7 +34,7 @@ function readItem(fd: FormData) {
       href,
       description: str(fd, "description", 255),
       icon: isIconName(icon) ? icon : "",
-      kind: kind as "mega" | "dropdown",
+      kind,
       lens: (NAV_LENSES as readonly string[]).includes(lens) ? (lens as NavLens) : "content",
       openInNewTab: bool(fd, "openInNewTab"),
       introTitle: str(fd, "introTitle", 160),

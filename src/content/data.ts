@@ -18,21 +18,6 @@ export const faNum = (v: string | number): string =>
 
 export const formatFa = (n: number): string => faNum(n.toLocaleString("en-US"));
 
-/* ── Home · Asset types strip (band 2) ──────────────────────────────
-   Replaces the former strip of real company names. Same reassurance
-   job — "this handles operations like mine" — without claiming anyone
-   as a customer. Every type is stated in info/. */
-export const ASSET_TYPES = [
-  { icon: "factory", title: "کارخانه و واحد صنعتی" },
-  { icon: "sun", title: "نیروگاه خورشیدی" },
-  { icon: "plant", title: "نیروگاه گازی" },
-  { icon: "bolt", title: "دیزل ژنراتور اضطراری" },
-  { icon: "gauge", title: "کنتور گاز صنعتی" },
-  { icon: "leaf", title: "چاه و موتور آب کشاورزی" },
-  { icon: "org", title: "ساختمان اداری و مهمانسرا" },
-  { icon: "board", title: "تعرفه‌های عمومی و دیماندی" },
-];
-
 /* ── Home · Pain points (band 3) ── */
 export const PAIN_POINTS = [
   {

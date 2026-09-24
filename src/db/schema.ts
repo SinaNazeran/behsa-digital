@@ -225,6 +225,7 @@ export const pageSeo = pgTable("page_seo", {
 /** messaging lens of a nav section — drives the landing template tone */
 export type NavLens = "feature" | "outcome" | "vertical" | "content" | "company";
 export const NAV_LENSES = ["feature", "outcome", "vertical", "content", "company"] as const;
+export type NavKind = "mega" | "dropdown" | "reports";
 
 export const navItems = pgTable("nav_items", {
   id: serial("id").primaryKey(),
@@ -235,8 +236,9 @@ export const navItems = pgTable("nav_items", {
   href: varchar("href", { length: 500 }).notNull(),
   description: varchar("description", { length: 255 }).notNull().default(""),
   icon: varchar("icon", { length: 40 }).notNull().default(""),
-  /** panel style of a top-level section that has children */
-  kind: varchar("kind", { length: 12 }).$type<"mega" | "dropdown">().notNull().default("dropdown"),
+  /** panel style of a top-level section · "reports" = children are built
+      from the report catalogue, never stored here */
+  kind: varchar("kind", { length: 12 }).$type<NavKind>().notNull().default("dropdown"),
   lens: varchar("lens", { length: 12 }).$type<NavLens>().notNull().default("content"),
   openInNewTab: boolean("open_in_new_tab").notNull().default(false),
   /* mega-panel intro column (top-level only, optional) */
@@ -249,6 +251,60 @@ export const navItems = pgTable("nav_items", {
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 }, (t) => [index("nav_items_parent_idx").on(t.parentId, t.sortOrder)]);
+
+/* ── Report catalogue ─────────────────────────────────────────────
+   The product's named reports, owned by the content team. Every page
+   uses one fixed template (src/views/ReportDetail.tsx): editors fill
+   fields, they never compose layout. Audience keys and their labels
+   live in src/content/reports.ts so client components can read them. */
+
+export type ReportSection = { title: string; body?: string[]; items?: string[] };
+export type ReportImage = { mediaId: string; caption: string };
+
+export const reportCategories = pgTable("report_categories", {
+  id: serial("id").primaryKey(),
+  slug: varchar("slug", { length: 120 }).notNull().unique(),
+  name: varchar("name", { length: 120 }).notNull(),
+  /** the management question every report in the category answers */
+  question: varchar("question", { length: 255 }).notNull().default(""),
+  icon: varchar("icon", { length: 40 }).notNull().default(""),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+});
+
+export const reports = pgTable("reports", {
+  id: serial("id").primaryKey(),
+  slug: varchar("slug", { length: 120 }).notNull().unique(),
+  /** slugs this report was published under before — they 308 to the current one */
+  previousSlugs: jsonb("previous_slugs").$type<string[]>().notNull().default([]),
+  /** full name, verbatim as in the product panel */
+  title: varchar("title", { length: 255 }).notNull(),
+  /** short label for menus and cards; empty = title */
+  menuTitle: varchar("menu_title", { length: 120 }).notNull().default(""),
+  question: varchar("question", { length: 255 }).notNull().default(""),
+  lead: text("lead").notNull().default(""),
+  /* restrict: a category is emptied before it is deleted, never silently */
+  categoryId: integer("category_id").notNull().references(() => reportCategories.id, { onDelete: "restrict" }),
+  audiences: jsonb("audiences").$type<string[]>().notNull().default([]),
+  icon: varchar("icon", { length: 40 }).notNull().default(""),
+  sections: jsonb("sections").$type<ReportSection[]>().notNull().default([]),
+  gallery: jsonb("gallery").$type<ReportImage[]>().notNull().default([]),
+  relatedReportIds: jsonb("related_report_ids").$type<number[]>().notNull().default([]),
+  /** landing slugs, e.g. "solutions/demand-management" */
+  relatedPages: jsonb("related_pages").$type<string[]>().notNull().default([]),
+  /** synonyms the /reports search should also match, e.g. «پیک» for peak demand */
+  keywords: jsonb("keywords").$type<string[]>().notNull().default([]),
+  status: varchar("status", { length: 12 }).$type<"draft" | "published">().notNull().default("draft"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
+  seoTitle: varchar("seo_title", { length: 255 }).notNull().default(""),
+  seoDescription: text("seo_description").notNull().default(""),
+  ogMediaId: uuid("og_media_id").references(() => media.id, { onDelete: "set null" }),
+  noindex: boolean("noindex").notNull().default(false),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+}, (t) => [index("reports_category_idx").on(t.categoryId, t.sortOrder)]);
 
 /* ── Editable page sections (hero, homepage bands, company strip) ─
    One generic shape keeps the model small: a section owns its heading

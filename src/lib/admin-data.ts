@@ -2,6 +2,8 @@ import "server-only";
 import { asc, desc, eq, sql } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { SECTIONS, SECTION_BY_KEY } from "@/content/sections";
+import { CAPABILITY_CATEGORIES, CONTENT_PAGES } from "@/content/capabilities";
+import { pageKind } from "@/content/reports";
 
 /* Uncached reads for the admin panel (always fresh). */
 
@@ -114,3 +116,35 @@ export async function sectionSummaries() {
     };
   });
 }
+
+/* ── Report catalogue ── */
+
+export const listReportCategories = () =>
+  db.select({
+    c: schema.reportCategories,
+    n: sql<number>`(select count(*)::int from ${schema.reports} where ${schema.reports.categoryId} = ${schema.reportCategories.id})`,
+  })
+    .from(schema.reportCategories)
+    .orderBy(asc(schema.reportCategories.sortOrder), asc(schema.reportCategories.id));
+
+/** every report, any status, in public menu order */
+export const listReports = () =>
+  db.select({
+    id: schema.reports.id, slug: schema.reports.slug, title: schema.reports.title, menuTitle: schema.reports.menuTitle,
+    status: schema.reports.status, noindex: schema.reports.noindex, updatedAt: schema.reports.updatedAt,
+    categoryId: schema.reports.categoryId, category: schema.reportCategories.name,
+  })
+    .from(schema.reports)
+    .innerJoin(schema.reportCategories, eq(schema.reports.categoryId, schema.reportCategories.id))
+    .orderBy(
+      asc(schema.reportCategories.sortOrder), asc(schema.reportCategories.id),
+      asc(schema.reports.sortOrder), asc(schema.reports.id),
+    );
+
+const PAGE_GROUP = { "قابلیت": "قابلیت‌های مرتبط", "راهکار": "راهکارهای مرتبط", "صنعت": "صنایع مرتبط" } as const;
+
+/** landing pages a report may link to, grouped for the editor */
+export const relatedPageOptions = () =>
+  [...CAPABILITY_CATEGORIES, ...CONTENT_PAGES]
+    .filter((p) => p.status !== "coming-soon")
+    .map((p) => ({ slug: p.slug, title: p.title, group: PAGE_GROUP[pageKind(p.slug)] }));

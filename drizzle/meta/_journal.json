@@ -22,6 +22,27 @@
       "when": 1789937190486,
       "tag": "0002_nostalgic_talisman",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790278953656,
+      "tag": "0003_report_catalogue",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790281614828,
+      "tag": "0004_report_menu",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790282596146,
+      "tag": "0005_report_keywords",
+      "breakpoints": true
     }
   ]
 }

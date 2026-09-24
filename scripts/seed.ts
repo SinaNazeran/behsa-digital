@@ -1,13 +1,14 @@
 /* Idempotent seed: imports the content that was hardcoded in the Vite app.
    Existing rows (matched by slug / key) are left untouched, so it is safe
    to re-run after editors have changed content. */
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { connect } from "./_db";
 import { ARTICLE_CATS, ARTICLES, FAQ_ITEMS } from "./seed-data";
 import { parseJalaliLabel } from "../src/lib/format";
 import { DEFAULT_SETTINGS } from "../src/content/defaults";
 import { DEFAULT_NAV } from "../src/content/navigation";
 import { SECTIONS } from "../src/content/sections";
+import { REPORT_AUDIENCE, REPORT_CATEGORIES, REPORT_MENU, REPORT_PAGES } from "./seed-reports";
 
 const CAT_SLUGS: Record<string, string> = {
   "مدیریت انرژی": "energy-management",
@@ -74,6 +75,52 @@ await db.transaction(async (tx) => {
           icon: i.icon ?? "", openInNewTab: i.newTab ?? false, sortOrder: ii,
           isActive: i.isActive ?? true,
         })));
+      }
+    }
+  }
+
+/* report catalogue — only into empty tables, so categories or reports the
+     content team deleted are never brought back */
+  const [{ n: catCount }] = await tx.select({ n: sql<number>`count(*)::int` }).from(schema.reportCategories);
+  const [{ n: reportCount }] = await tx.select({ n: sql<number>`count(*)::int` }).from(schema.reports);
+  if (catCount === 0 && reportCount === 0) {
+    const now = new Date();
+    for (const [ci, cat] of REPORT_CATEGORIES.entries()) {
+      const [row] = await tx.insert(schema.reportCategories)
+        .values({ slug: cat.slug, name: cat.name, question: cat.question, icon: cat.icon, sortOrder: ci })
+        .returning({ id: schema.reportCategories.id });
+      for (const [ri, id] of cat.reports.entries()) {
+        const page = REPORT_PAGES.find((p) => p.id === id);
+        if (!page) throw new Error(`seed: unknown report ${id}`);
+        const menu = REPORT_MENU[page.href];
+        await tx.insert(schema.reports).values({
+          slug: page.slug.slice("reports/".length),
+          title: page.title,
+          menuTitle: menu?.label ?? "",
+          /* the menu line is the short question; the page description is the lead */
+          question: menu?.question ?? "",
+          lead: page.description ?? "",
+          categoryId: row.id,
+          audiences: REPORT_AUDIENCE[id] ?? [],
+          icon: page.icon,
+          sections: page.sections ?? [],
+          relatedPages: (page.links ?? []).map((l) => l.slug).filter((s) => !s.startsWith("reports/")),
+          status: "published",
+          sortOrder: ri,
+          publishedAt: now,
+        });
+      }
+    }
+    /* related reports need every id to exist first */
+    const rows = await tx.select({ id: schema.reports.id, slug: schema.reports.slug }).from(schema.reports);
+    for (const page of REPORT_PAGES) {
+      const ids = (page.links ?? [])
+        .filter((l) => l.slug.startsWith("reports/"))
+        .map((l) => rows.find((r) => `reports/${r.slug}` === l.slug)?.id)
+        .filter((x): x is number => x !== undefined);
+      if (ids.length) {
+        await tx.update(schema.reports).set({ relatedReportIds: ids })
+          .where(eq(schema.reports.slug, page.slug.slice("reports/".length)));
       }
     }
   }

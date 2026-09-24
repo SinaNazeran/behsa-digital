@@ -1,64 +1,60 @@
-import { Icon } from "./icons";
-import type { SectionItemView } from "@/lib/cms";
+import { CUSTOMERS } from "@/content/customers";
+import { cn } from "@/lib/utils";
 
-/* ── Audience marquee · lives at the base of the hero, over the same media ──
-   Entries come from the CMS (Admin → انواع مصرف‌کننده): a name and an icon
-   from the built-in set. They describe consumer TYPES, not companies —
-   the admin exposes no logo upload here, because Behsa has no permission
-   to display customer brands (docs/content-strategy.md §Trust / Proof).
-   The `imageUrl` branch stays for rows created before that change.
-   The duplicated half is hidden from assistive tech, and the loop works
-   with any number of entries. */
+/* ── Customer logo marquee · lives at the base of the hero, over the same media ──
+   Logos come from src/content/customers.ts; the title and on/off switch
+   from the CMS (Admin → نوار لوگوی مشتریان).
 
-export function LogoStrip({ title, items }: { title: string; items: SectionItemView[] }) {
-  if (items.length === 0) return null;
+   Every logo is rendered in solid white so no single brand colour
+   outshouts the rest over the footage. Size follows equal visual weight,
+   not equal height: height ∝ ratio^-0.4, so a wide wordmark is shorter
+   than a square emblem but never shrinks to an unreadable sliver.
+   The duplicated half is hidden from assistive tech. */
+
+const weight = (ratio: number) => Math.min(1.25, Math.max(0.62, ratio ** -0.4));
+
+export function LogoStrip({ title }: { title: string }) {
+  if (CUSTOMERS.length === 0) return null;
   /* a short list would leave a gap mid-loop — repeat it until it fills */
-  const base = items.length < 5 ? Array.from({ length: Math.ceil(5 / items.length) }, () => items).flat() : items;
+  const base = CUSTOMERS.length < 5 ? Array.from({ length: Math.ceil(5 / CUSTOMERS.length) }, () => CUSTOMERS).flat() : CUSTOMERS;
   const row = [...base, ...base];
 
   return (
-    <div className="relative py-8 md:py-10" aria-label={title || "مخاطبان بهسا"}>
+    <div className="relative py-10 md:py-14" aria-label={title || "مشتریان بهسا"}>
       {title && (
-        <p className="px-5 text-center text-[12px] font-bold text-white/85 [text-shadow:0_1px_12px_rgb(3_9_18/0.8)] md:text-[13px]">
+        <p className="px-5 text-center font-display text-[15px] font-extrabold text-white/90 [text-shadow:0_1px_12px_rgb(3_9_18/0.8)] md:text-[19px]">
           {title}
         </p>
       )}
 
-      <div className={title ? "relative mt-6" : "relative"} dir="ltr">
-        {/* edge fades melt the loop into the darkened footage */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-navy to-transparent md:w-32" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-navy to-transparent md:w-32" />
-
-        <div className="ticker-track flex w-max items-center">
-          {row.map((l, i) => (
-            <span
-              key={`${l.id}-${i}`}
-              aria-hidden={i >= base.length}
-              dir="rtl"
-              className="flex shrink-0 cursor-default items-center gap-2.5 pr-12 text-white opacity-60 transition-opacity duration-300 hover:opacity-100 md:pr-16"
-            >
-              {l.imageUrl ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  src={l.imageUrl}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                  className="h-6 w-auto max-w-[96px] shrink-0 object-contain drop-shadow-[0_2px_8px_rgb(3_9_18/0.6)] md:h-7"
-                />
-              ) : (
-                <Icon
-                  name={l.icon ?? "factory"}
-                  size={22}
-                  className="shrink-0 drop-shadow-[0_2px_8px_rgb(3_9_18/0.6)]"
-                />
-              )}
-              <span className="whitespace-nowrap font-display text-[15px] font-extrabold [text-shadow:0_1px_10px_rgb(3_9_18/0.75)] md:text-[16px]">
-                {l.title}
-              </span>
-            </span>
+      {/* edges fade by mask, not by painted overlays, so they melt into
+          whatever footage is behind them */}
+      <div
+        dir="ltr"
+        className={cn(
+          "overflow-hidden [--fade:5rem] md:[--fade:8rem] [mask-image:linear-gradient(to_right,transparent,#000_var(--fade),#000_calc(100%-var(--fade)),transparent)]",
+          title && "mt-7 md:mt-10",
+        )}
+      >
+        <ul className="ticker-track flex w-max items-center [--logo:52px] md:[--logo:66px]">
+          {row.map((c, i) => (
+            <li key={`${c.logo}-${i}`} aria-hidden={i >= base.length} className="flex h-[calc(var(--logo)*1.25)] shrink-0 items-center px-8 md:px-12">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={c.logo}
+                alt={i >= base.length ? "" : c.name}
+                title={c.name}
+                width={Math.round(40 * c.ratio)}
+                height={40}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+                style={{ height: `calc(var(--logo) * ${weight(c.ratio).toFixed(3)})` }}
+                className="w-auto select-none opacity-70 brightness-0 invert drop-shadow-[0_2px_10px_rgb(3_9_18/0.6)] transition-opacity duration-300 hover:opacity-100"
+              />
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </div>
   );

@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import { SLUG_RE } from "@/lib/format";
 
 export async function GET(req: Request) {
-  const slug = new URL(req.url).searchParams.get("slug") ?? "";
+  const params = new URL(req.url).searchParams;
+  const slug = params.get("slug") ?? "";
+  const base = params.get("type") === "report" ? "/reports" : "/articles";
   (await draftMode()).disable();
-  redirect(SLUG_RE.test(slug) ? `/articles/${slug}` : "/articles");
+  redirect(SLUG_RE.test(slug) ? `${base}/${slug}` : base);
 }

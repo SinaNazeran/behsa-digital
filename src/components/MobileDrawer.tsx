@@ -7,6 +7,7 @@ import { BehsaLogo } from "./BehsaLogo";
 import { Button } from "./ui/Button";
 import { NAV_CONTACT, NAV_CTA_LABEL, sectionKeyForRoute, type NavSectionView } from "@/content/navigation";
 import { SmartLink } from "@/components/SmartLink";
+import { ReportSearchForm } from "./MegaMenu";
 
 /* Full-height RTL drawer · multi-level accordion · focus trap ·
    scroll lock · Escape / backdrop close · sticky demo CTA at the base. */
@@ -72,6 +73,11 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
     const key = String(section.id);
     const isOpen = openKey === key;
     const hasItems = section.items.length > 0;
+    /* the report catalogue lists its categories here, not every report:
+       one level, short enough to scan in a drawer */
+    const links = section.groups
+      ? section.groups.map((g) => ({ id: g.id, title: g.title, href: g.href, icon: g.icon, newTab: false }))
+      : section.items;
     return (
       <div className="border-b border-linesoft">
         <div className="flex items-stretch">
@@ -98,8 +104,9 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
         </div>
         <div className={cn("grid transition-[grid-template-rows] duration-300 ease-out", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
           <div className="overflow-hidden">
+            {section.groups && <ReportSearchForm id="drawer-report-search" className="mx-5 mb-2 mt-1" />}
             <ul className="pb-3">
-              {section.items.map((item) => (
+              {links.map((item) => (
                 <li key={item.id}>
                   <SmartLink
                     href={item.href}
@@ -108,7 +115,9 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
                     onClick={onClose}
                     className="flex items-center gap-3 py-2.5 pr-8 pl-5 text-[13.5px] font-semibold text-ink2 transition-colors hover:text-orange-700"
                   >
-                    <span className="h-1 w-1 rounded-full bg-primary/50" />
+                    {section.groups && item.icon
+                      ? <Icon name={item.icon} size={15} className="shrink-0 text-orange-700" />
+                      : <span className="h-1 w-1 rounded-full bg-primary/50" />}
                     {item.title}
                   </SmartLink>
                 </li>
