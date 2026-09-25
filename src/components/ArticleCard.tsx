@@ -6,7 +6,7 @@ export type ArticleCardProps = { slug: string; cat: string; title: string; excer
 
 export function ArticleCard({ slug, cat, title, excerpt, date, read, chart, coverUrl }: ArticleCardProps) {
   return (
-    <article className="group h-full flex flex-col rounded-m border border-line bg-surface overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
+    <article className="group h-full flex flex-col rounded-md border border-line bg-surface overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
       <SmartLink href={`/articles/${slug}`} className="block overflow-hidden">
         <div className="transition-transform duration-500 group-hover:scale-[1.04]">
           {coverUrl ? (

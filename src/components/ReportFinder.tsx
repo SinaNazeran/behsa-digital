@@ -65,7 +65,7 @@ export function ReportFinder({ categories, reports }: { categories: FinderCatego
 
   return (
     <div className="space-y-12">
-      <div className="rounded-m border border-line bg-surface p-5 md:p-6 space-y-4">
+      <div className="rounded-md border border-line bg-surface p-5 md:p-6 space-y-4">
         <label htmlFor="report-search" className="sr-only">جستجوی گزارش</label>
         <div className="relative">
           <Icon name="search" size={18} className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink3" />
@@ -75,7 +75,7 @@ export function ReportFinder({ categories, reports }: { categories: FinderCatego
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="جستجو، مثلاً «جریمهٔ راکتیو» یا «پیک مصرف»"
-            className="h-12 w-full rounded-s border border-line bg-bg pr-11 pl-4 text-[14.5px] text-ink placeholder:text-ink3 focus:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+            className="h-12 w-full rounded-sm border border-line bg-bg pr-11 pl-4 text-[14.5px] text-ink placeholder:text-ink3 focus:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
           />
         </div>
         {audienceOptions.length > 1 && (
@@ -113,13 +113,13 @@ export function ReportFinder({ categories, reports }: { categories: FinderCatego
       </div>
 
       {groups.length === 0 && (
-        <div className="rounded-m border border-dashed border-line bg-surface p-8 text-center">
+        <div className="rounded-md border border-dashed border-line bg-surface p-8 text-center">
           <p className="font-display text-[17px] font-extrabold text-ink">گزارشی با این جستجو پیدا نشد</p>
           <p className="mx-auto mt-2 max-w-md text-[13.5px] leading-7 text-ink2">
             عبارت کوتاه‌تری امتحان کنید یا فیلترها را پاک کنید. اگر گزارشی را که لازم دارید پیدا نمی‌کنید،{" "}
             <SmartLink href="/contact" className="font-bold text-orange-700">با ما تماس بگیرید</SmartLink>.
           </p>
-          <button type="button" onClick={clear} className="mt-5 rounded-s border border-line bg-bg px-4 py-2 text-[13px] font-bold text-ink hover:text-orange-700">
+          <button type="button" onClick={clear} className="mt-5 rounded-sm border border-line bg-bg px-4 py-2 text-[13px] font-bold text-ink hover:text-orange-700">
             پاک‌کردن فیلترها
           </button>
         </div>
@@ -129,7 +129,7 @@ export function ReportFinder({ categories, reports }: { categories: FinderCatego
         <section key={category.id} id={category.slug} aria-labelledby={`cat-${category.slug}`} className="scroll-mt-32">
           <h2 id={`cat-${category.slug}`} className="flex items-center gap-3 font-display font-extrabold text-[22px] md:text-[26px] text-ink">
             {category.icon && (
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-s bg-primary-soft text-orange-700">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-sm bg-primary-soft text-orange-700">
                 <Icon name={category.icon} size={20} />
               </span>
             )}
@@ -139,9 +139,9 @@ export function ReportFinder({ categories, reports }: { categories: FinderCatego
           <ul className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((r) => (
               <li key={r.id}>
-                <SmartLink href={r.href} className="group flex h-full flex-col rounded-m border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
+                <SmartLink href={r.href} className="group flex h-full flex-col rounded-md border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
                   {r.icon && (
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-s bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-sm bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
                       <Icon name={r.icon} size={21} />
                     </span>
                   )}

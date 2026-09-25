@@ -16,13 +16,13 @@ export function CapabilitiesOverview() {
     <div>
       {/* narrative pipeline legend */}
       <Reveal>
-        <div className="rounded-m border border-line bg-surface p-5">
+        <div className="rounded-md border border-line bg-surface p-5">
           <p className="text-[12.5px] font-bold text-ink3">جای‌گذاری قابلیت‌ها در روایت بهسا</p>
           <div className="mt-4 flex flex-wrap items-center gap-y-3" aria-label="مراحل روایت: داده، هوشمندی، تصمیم، بهینه‌سازی، نتیجه کسب و کار">
             {STAGE_ORDER.map((s, i) => (
               <span key={s} className="flex items-center gap-2">
                 <span
-                  className="inline-flex items-center gap-2 rounded-s px-3.5 py-2 text-[12.5px] font-bold"
+                  className="inline-flex items-center gap-2 rounded-sm px-3.5 py-2 text-[12.5px] font-bold"
                   style={{ background: STAGE_META[s].soft, color: STAGE_META[s].color }}
                 >
                   <span className="h-1.5 w-1.5 rounded-full" style={{ background: STAGE_META[s].color }} />
@@ -47,7 +47,7 @@ export function CapabilitiesOverview() {
             <Reveal key={c.id} delay={(i % 3) * 90}>
               <article
                 className={cn(
-                  "group relative flex h-full flex-col rounded-m border bg-surface p-6 transition-all duration-300",
+                  "group relative flex h-full flex-col rounded-md border bg-surface p-6 transition-all duration-300",
                   soon
                     ? "border-dashed border-line bg-bg/60"
                     : "border-line hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35",
@@ -56,7 +56,7 @@ export function CapabilitiesOverview() {
                 <div className="flex items-start justify-between gap-3">
                   <span
                     className={cn(
-                      "inline-flex h-12 w-12 items-center justify-center rounded-s transition-colors duration-300",
+                      "inline-flex h-12 w-12 items-center justify-center rounded-sm transition-colors duration-300",
                       soon ? "bg-linesoft text-ink3" : "bg-primary-soft text-orange-700 group-hover:bg-primary group-hover:text-on-primary",
                     )}
                   >

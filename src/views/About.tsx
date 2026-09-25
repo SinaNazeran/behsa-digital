@@ -1,5 +1,5 @@
 import { Icon } from "@/components/icons";
-import { Reveal, Btn, SectionHead, PageHero } from "@/components/ui";
+import { Reveal, Btn, SectionHead, PageHero, CtaBanner } from "@/components/ui";
 import { DIFFERENTIATORS, FLOW_STEPS } from "@/content/data";
 
 export default function About() {
@@ -8,9 +8,9 @@ export default function About() {
       <PageHero
         crumb={[{ label: "خانه", path: "/" }, { label: "درباره ما" }]}
         title="درباره بهسا دیجیتال"
+        eyebrow={{ label: "درباره بهسا", icon: "org" }}
         lead="بهسا دیجیتال از یک مشاهدهٔ ساده شروع شد: بخش بزرگی از هزینهٔ برق صنایع، جریمه‌ای است که اگر به‌موقع دیده شود قابل پیشگیری است — و دادهٔ لازم برای دیدنش، از قبل در کنتور هوشمند وجود دارد."
-      >
-      </PageHero>
+      />
 
       {/* ── Mission & Vision ── */}
       <section className="py-20 md:py-24 bg-bg relative">
@@ -26,8 +26,8 @@ export default function About() {
             </div>
             <div className="lg:col-span-7 grid gap-5 sm:grid-cols-2">
               <Reveal dir="l">
-                <div className="h-full rounded-m border border-line bg-surface p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-s bg-primary text-on-primary"><Icon name="decision" size={23} /></span>
+                <div className="h-full rounded-md border border-line bg-surface p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-sm bg-primary text-on-primary"><Icon name="decision" size={23} /></span>
                   <h3 className="mt-5 font-display font-extrabold text-[19px] text-ink">مأموریت</h3>
                   <p className="mt-3 text-[14px] leading-8 text-ink2">
                     کمک به سازمان‌ها و صنایع برای تصمیم‌گیری بهتر در حوزه انرژی با استفاده از داده و فناوری.
@@ -35,8 +35,8 @@ export default function About() {
                 </div>
               </Reveal>
               <Reveal dir="l" delay={130}>
-                <div className="h-full rounded-m border border-line bg-surface p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-accent/50">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-s bg-accent text-white"><Icon name="eye" size={23} /></span>
+                <div className="h-full rounded-md border border-line bg-surface p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-accent/50">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-sm bg-accent text-white"><Icon name="eye" size={23} /></span>
                   <h3 className="mt-5 font-display font-extrabold text-[19px] text-ink">چشم‌انداز</h3>
                   <p className="mt-3 text-[14px] leading-8 text-ink2">
                     تبدیل‌شدن به یک پلتفرم هوشمند و قابل اعتماد در مدیریت و بهینه‌سازی انرژی.
@@ -64,7 +64,7 @@ export default function About() {
             <div className="lg:col-span-8">
               {DIFFERENTIATORS.map((d, i) => (
                 <Reveal key={d.title} delay={i * 80}>
-                  <div className="group flex gap-6 border-b border-line py-7 first:pt-0 last:border-0 transition-colors hover:bg-bg/60 rounded-s px-2">
+                  <div className="group flex gap-6 border-b border-line py-7 first:pt-0 last:border-0 transition-colors hover:bg-bg/60 rounded-sm px-2">
                     <span className="font-display font-black text-[34px] leading-none text-line group-hover:text-orange-700 transition-colors shrink-0 w-14 fa-num">
                       {`۰${i + 1}`}
                     </span>
@@ -98,7 +98,7 @@ export default function About() {
             {FLOW_STEPS.map((s, i) => (
               <Reveal key={s} delay={i * 120}>
                 <div className="flex flex-col lg:flex-row items-center gap-4">
-                  <div className="group relative flex flex-col items-center gap-3 rounded-m border border-line bg-surface shadow-card px-8 py-6 min-w-[150px] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
+                  <div className="group relative flex flex-col items-center gap-3 rounded-md border border-line bg-surface shadow-card px-8 py-6 min-w-[150px] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft border border-primary/20 font-display font-extrabold text-[15px] text-orange-700 fa-num">{(i + 1).toLocaleString("fa-IR")}</span>
                     <span className="font-display font-extrabold text-[17px] text-ink">{s}</span>
                   </div>
@@ -121,20 +121,10 @@ export default function About() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="relative overflow-hidden border-t border-line bg-surface text-ink">
-        <div className="absolute inset-0 grid-light" />
-        <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 py-16 md:py-20 text-center">
-          <Reveal>
-            <h2 className="font-display font-black text-[24px] md:text-[34px] leading-[1.5] max-w-3xl mx-auto">
-              با ما درباره مدیریت انرژی <span className="text-orange-700">مجموعه خود</span> صحبت کنید.
-            </h2>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <Btn href="/contact" size="lg" icon="arrowL">تماس با ما</Btn>
-              <Btn href="/product/platform" size="lg" variant="secondary">آشنایی با پلتفرم</Btn>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <CtaBanner title="با ما درباره مدیریت انرژی *مجموعه خود* صحبت کنید.">
+        <Btn href="/contact" size="lg" icon="arrowL">تماس با ما</Btn>
+        <Btn href="/product/platform" size="lg" variant="dark">آشنایی با پلتفرم</Btn>
+      </CtaBanner>
     </>
   );
 }

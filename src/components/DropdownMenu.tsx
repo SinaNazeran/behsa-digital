@@ -20,7 +20,7 @@ export function DropdownMenu({ section, activePath }: { section: NavSectionView;
             )}
           >
             {/* same hover language as the mega menu: tint, not invert */}
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-s border border-line bg-bg text-orange-700 transition-colors duration-200 group-hover:border-primary/40 group-hover:bg-primary-soft">
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-line bg-bg text-orange-700 transition-colors duration-200 group-hover:border-primary/40 group-hover:bg-primary-soft">
               {item.icon && <Icon name={item.icon} size={17} />}
             </span>
             <span className="min-w-0">

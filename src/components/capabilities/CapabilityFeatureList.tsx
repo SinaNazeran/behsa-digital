@@ -1,7 +1,7 @@
 import { cn } from "../../utils/cn";
 import { Icon } from "../icons";
 import { Reveal } from "../ui";
-import { STAGE_META, featureCount, type CapabilityCategory, type ContentBlock } from "@/content/capabilities";
+import { featureCount, type CapabilityCategory, type ContentBlock } from "@/content/capabilities";
 
 /* Body of every page driven by content/capabilities.ts.
 
@@ -15,7 +15,6 @@ import { STAGE_META, featureCount, type CapabilityCategory, type ContentBlock } 
    page: a node with no body still renders its lead. */
 
 export function CapabilityFeatureList({ category }: { category: CapabilityCategory }) {
-  const stage = STAGE_META[category.narrativeStage];
   const soon = category.status === "coming-soon";
   const groups = category.featureGroups;
   const sections = category.sections ?? [];
@@ -23,7 +22,7 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
   if (soon) {
     return (
       <Reveal>
-        <div className="rounded-m border-2 border-dashed border-line bg-surface p-8 text-center">
+        <div className="rounded-md border-2 border-dashed border-line bg-surface p-8 text-center">
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-linesoft text-ink3">
             <Icon name="clock" size={26} />
           </span>
@@ -44,17 +43,10 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
         </Reveal>
       )}
 
-      {/* narrative-stage badge belongs to capability pages, where the five
-          stages are the organising idea; on a report page it would be noise */}
+      {/* the narrative stage itself is drawn in the hero (Landing StageTrack) */}
       {groups.length > 0 && (
         <Reveal>
           <div className={cn("flex flex-wrap items-center gap-3", category.description && "mt-7")}>
-            <span
-              className="inline-flex items-center gap-2 rounded-s px-3 py-1.5 text-[12px] font-bold"
-              style={{ background: stage.soft, color: stage.color }}
-            >
-              مرحلهٔ روایت: {stage.label}
-            </span>
             <span className="text-[12.5px] font-semibold text-ink3 fa-num">
               {featureCount(category).toLocaleString("fa-IR")} قابلیت در {groups.length.toLocaleString("fa-IR")} گروه
             </span>
@@ -70,7 +62,7 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
         <div className="mt-6 space-y-6">
           {groups.map((group, gi) => (
             <Reveal key={group.title ?? gi} delay={gi * 80}>
-              <section className="rounded-m border border-line bg-surface p-6 md:p-7">
+              <section className="rounded-md border border-line bg-surface p-6 md:p-7">
                 {group.title && (
                   <h3 className="flex items-center gap-3 font-display text-[16px] font-extrabold text-ink">
                     <span className="inline-block h-5 w-1.5 rounded-full bg-primary" />
@@ -81,7 +73,7 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
                   {group.items.map((item) => (
                     <li
                       key={item}
-                      className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-bg/70 rounded-s px-2 -mx-2"
+                      className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-bg/70 rounded-sm px-2 -mx-2"
                     >
                       <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] bg-primary-soft text-orange-700 transition-colors group-hover:bg-primary group-hover:text-on-primary">
                         <Icon name="check" size={12} sw={2.6} />
@@ -105,7 +97,7 @@ export function ContentBlocks({ blocks, className }: { blocks: ContentBlock[]; c
     <div className={cn("space-y-6", className)}>
       {blocks.map((block, bi) => (
         <Reveal key={bi} delay={bi * 70}>
-          <section className="rounded-m border border-line bg-surface p-6 md:p-7">
+          <section className="rounded-md border border-line bg-surface p-6 md:p-7">
             <h2 className="flex items-center gap-3 font-display text-[16px] font-extrabold text-ink">
               <span className="inline-block h-5 w-1.5 rounded-full bg-primary" />
               {block.title}
@@ -118,7 +110,7 @@ export function ContentBlocks({ blocks, className }: { blocks: ContentBlock[]; c
                 {block.items.map((item, ii) => (
                   <li
                     key={ii}
-                    className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-bg/70 rounded-s px-2 -mx-2"
+                    className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-bg/70 rounded-sm px-2 -mx-2"
                   >
                     <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] bg-primary-soft text-orange-700 transition-colors group-hover:bg-primary group-hover:text-on-primary">
                       <Icon name="check" size={12} sw={2.6} />

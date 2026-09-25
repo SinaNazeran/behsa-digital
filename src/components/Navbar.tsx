@@ -111,8 +111,10 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
           /* scrolled: solid surface, tighter bar, subtle elevation that lifts it off the page */
           scrolled || open
             ? "h-[58px] border-line bg-surface/[0.97] shadow-[0_10px_30px_-14px_rgb(22_33_46/0.28)] backdrop-blur-md md:h-[62px]"
-            /* at rest: frosted translucent glass that melts into the hero */
-            : "h-[64px] border-white/60 bg-white/[0.72] shadow-card backdrop-blur-xl md:h-[68px]",
+            /* at rest: frosted glass over a saturated hero. Mostly white so it
+               stays white, saturated so the little that bleeds through is a
+               tint of the hero colour rather than grey */
+            : "h-[64px] border-white/70 bg-white/[0.9] shadow-card backdrop-blur-xl backdrop-saturate-[1.8] md:h-[68px]",
         )}
       >
         {/* logo — rightmost: symbol on top + BEHSA underneath exactly like brand asset */}

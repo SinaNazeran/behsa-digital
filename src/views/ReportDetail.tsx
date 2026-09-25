@@ -1,5 +1,6 @@
 import { Icon } from "@/components/icons";
-import { Reveal, Badge, PageHero } from "@/components/ui";
+import { Reveal, PageHero, HERO_PANEL } from "@/components/ui";
+import { cn } from "@/utils/cn";
 import { ContentBlocks } from "@/components/capabilities/CapabilityFeatureList";
 import { SmartLink } from "@/components/SmartLink";
 import { PanelCta } from "@/views/Landing";
@@ -23,23 +24,34 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
         crumb={[{ label: "خانه", path: "/" }, { label: "گزارش‌ها", path: "/reports" }, { label: report.label }]}
         title={report.title}
         lead={report.question}
+        tone="report"
+        eyebrow={{ label: "گزارش سامانه", icon: report.icon ?? "chart" }}
       >
         <Reveal dir="l" delay={150}>
-          <div className="rounded-m border border-line bg-surface p-5 shadow-lift space-y-4">
-            <SmartLink href={`/reports#${report.category.slug}`} className="inline-flex">
-              <Badge tone="teal" icon={report.category.icon}>{report.category.name}</Badge>
+          <div className={cn(HERO_PANEL, "bg-blue-950/40! space-y-4")}>
+            <SmartLink href={`/reports#${report.category.slug}`} className="group -m-1.5 flex items-center gap-3 rounded-md p-1.5 transition-colors hover:bg-white/10">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-primary text-on-primary shadow-[0_6px_16px_rgb(250_100_0/0.35)]">
+                <Icon name={report.category.icon ?? "chart"} size={20} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[11.5px] font-bold text-white/70">دستهٔ گزارش</span>
+                <span className="block text-[14.5px] font-bold text-white">{report.category.name}</span>
+                {report.category.question && <span className="block text-[12px] text-blue-100/85">{report.category.question}</span>}
+              </span>
+              <Icon name="arrowL" size={14} sw={2.2} className="shrink-0 text-white/45 transition-all group-hover:-translate-x-1 group-hover:text-white" />
             </SmartLink>
             {report.audiences.length > 0 && (
-              <div>
-                <p className="text-[12px] font-bold text-ink3">برای چه کسی</p>
-                <ul className="mt-2 flex flex-wrap gap-2">
+              <div className="border-t border-white/15 pt-4">
+                <p className="flex items-center gap-2 text-[12px] font-bold text-white/75"><Icon name="consultant" size={14} />برای چه کسی</p>
+                <ul className="mt-2.5 flex flex-wrap gap-2">
                   {report.audiences.map((a) => (
-                    <li key={a} className="rounded-xs border border-line bg-bg px-2.5 py-1 text-[12.5px] font-semibold text-ink2">{a}</li>
+                    <li key={a} className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[12.5px] font-semibold text-white">{a}</li>
                   ))}
                 </ul>
               </div>
             )}
-            <p className="border-t border-linesoft pt-3 text-[12.5px] text-ink3">
+            <p className="flex items-center gap-2 border-t border-white/15 pt-3 text-[12.5px] text-white/80">
+              <Icon name="clock" size={14} />
               آخرین به‌روزرسانی: <time dateTime={report.updatedAt} className="fa-num">{report.updated}</time>
             </p>
           </div>
@@ -61,7 +73,7 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
               <div className="mt-8 space-y-6">
                 {report.gallery.map((g, i) => (
                   <Reveal key={g.url + i}>
-                    <figure className="overflow-hidden rounded-m border border-line bg-surface">
+                    <figure className="overflow-hidden rounded-md border border-line bg-surface">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={g.url} alt={g.caption || `نمونهٔ خروجی ${report.label}`} loading={i === 0 ? "eager" : "lazy"} className="w-full" />
                       {g.caption && <figcaption className="border-t border-linesoft px-5 py-3 text-[13px] leading-7 text-ink2">{g.caption}</figcaption>}
@@ -75,14 +87,14 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
 
             {pages.length > 0 && (
               <Reveal className="mt-8">
-                <div className="rounded-m border border-accent/25 bg-accent-soft/40 p-6">
+                <div className="rounded-md border border-accent/25 bg-accent-soft/40 p-6">
                   <p className="flex items-center gap-2.5 font-display font-bold text-[15px] text-ink">
                     <Icon name="central" size={18} className="text-accent" />
                     این گزارش کجا به‌کار می‌آید؟
                   </p>
                   <div className="mt-4 flex flex-wrap gap-3">
                     {pages.map((p) => (
-                      <SmartLink key={p.href} href={p.href} className="inline-flex items-center gap-2 rounded-s border border-line bg-surface px-4 py-2.5 text-[13px] font-bold text-ink transition-all hover:border-accent/50 hover:text-accent">
+                      <SmartLink key={p.href} href={p.href} className="inline-flex items-center gap-2 rounded-sm border border-line bg-surface px-4 py-2.5 text-[13px] font-bold text-ink transition-all hover:border-accent/50 hover:text-accent">
                         {p.label}
                         <Icon name="arrowL" size={13} sw={2.2} />
                       </SmartLink>
@@ -94,13 +106,13 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
           </div>
 
           <aside className="lg:col-span-4">
-            <div className="lg:sticky lg:top-32 rounded-m border border-line bg-surface p-6">
+            <div className="lg:sticky lg:top-32 rounded-md border border-line bg-surface p-6">
               <p className="font-display font-bold text-[15px] text-ink">گزارش‌های مرتبط</p>
               {related.length > 0 && (
                 <ul className="mt-4 space-y-1">
                   {related.map((r) => (
                     <li key={r.id}>
-                      <SmartLink href={r.href} className="group flex items-center gap-3 rounded-s px-3 py-2.5 text-[13.5px] font-semibold text-ink2 transition-colors hover:bg-bg hover:text-orange-700">
+                      <SmartLink href={r.href} className="group flex items-center gap-3 rounded-sm px-3 py-2.5 text-[13.5px] font-semibold text-ink2 transition-colors hover:bg-bg hover:text-orange-700">
                         {r.icon && <Icon name={r.icon} size={16} className="shrink-0 text-ink3 group-hover:text-orange-700" />}
                         {r.label}
                         <Icon name="arrowL" size={12} className="mr-auto shrink-0 opacity-0 transition-opacity group-hover:opacity-60" />
@@ -117,7 +129,7 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
         </div>
       </section>
 
-      <PanelCta title={`${report.label} را روی دادهٔ مجموعهٔ خودتان ببینید.`} panelUrl={panelUrl} />
+      <PanelCta title={`*${report.label}* را روی دادهٔ مجموعهٔ خودتان ببینید.`} panelUrl={panelUrl} />
     </>
   );
 }

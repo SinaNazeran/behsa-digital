@@ -10,6 +10,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
       <PageHero
         crumb={[{ label: "خانه", path: "/" }, { label: "تماس با ما" }]}
         title="راه‌های ارتباط با بهسا دیجیتال"
+        eyebrow={{ label: "تماس با ما", icon: "phone" }}
         lead="برای مشاوره، استقرار سامانه یا پرسش فنی می‌توانید مستقیماً تماس بگیرید یا فرم زیر را تکمیل کنید."
       />
 
@@ -26,7 +27,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
             <Reveal dir="r" delay={60}>
               <SmartLink
                 href={settings.phoneHref}
-                className="group flex flex-col justify-between h-full rounded-m border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40"
+                className="group flex flex-col justify-between h-full rounded-md border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
@@ -52,7 +53,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
             <Reveal dir="r" delay={120}>
               <SmartLink
                 href={`mailto:${settings.email}`}
-                className="group flex flex-col justify-between h-full rounded-m border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40"
+                className="group flex flex-col justify-between h-full rounded-md border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
@@ -76,7 +77,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
 
             {/* Working Hours */}
             <Reveal dir="r" delay={180}>
-              <div className="flex flex-col justify-between h-full rounded-m border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/30">
+              <div className="flex flex-col justify-between h-full rounded-md border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/30">
                 <div>
                   <div className="flex items-center justify-between mb-5">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-accent-soft text-accent">
@@ -101,7 +102,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
           <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Address */}
             <Reveal dir="l" delay={60}>
-              <div className="flex flex-col justify-between h-full rounded-m border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/30">
+              <div className="flex flex-col justify-between h-full rounded-md border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/30">
                 <div>
                   <div className="flex items-center justify-between mb-5">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-primary-soft text-orange-700">
@@ -122,7 +123,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
 
             {/* Bale Social Network */}
             <Reveal dir="l" delay={120}>
-              <div className="flex flex-col justify-between h-full rounded-m border border-[#00B894]/40 bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-[#00B894]/70">
+              <div className="flex flex-col justify-between h-full rounded-md border border-[#00B894]/40 bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-[#00B894]/70">
                 <div>
                   <div className="flex items-center justify-between mb-5">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-[#00B894]/12 text-[#00785F]">
@@ -154,7 +155,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
 
             {/* Support / Dashboard Panel */}
             <Reveal dir="l" delay={180}>
-              <div className="flex flex-col justify-between h-full rounded-m border border-primary/25 bg-primary-soft/50 p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40">
+              <div className="flex flex-col justify-between h-full rounded-md border border-primary/25 bg-primary-soft/50 p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40">
                 <div>
                   <div className="flex items-center justify-between mb-5">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-primary text-on-primary">
@@ -202,7 +203,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
             </p>
           </Reveal>
           <Reveal delay={120}>
-            <div className="mt-9 rounded-m border border-line bg-bg p-6 md:p-8 shadow-card">
+            <div className="mt-9 rounded-md border border-line bg-bg p-6 md:p-8 shadow-card">
               <LeadForm
                 sourcePath="/contact"
                 subject={subject || "تماس عمومی"}
@@ -220,7 +221,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
         <div className="absolute inset-0 grid-light" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
           <Reveal>
-            <div className="relative overflow-hidden rounded-l border border-line shadow-card">
+            <div className="relative overflow-hidden rounded-lg border border-line shadow-card">
               <svg viewBox="0 0 1200 340" className="w-full h-auto block bg-neutral-100" role="img" aria-label="موقعیت شرکت بهسا دیجیتال روی نقشه شهرک صنعتی توس">
                 <g stroke="#D3DAE2" strokeWidth="1.5">
                   {Array.from({ length: 24 }, (_, i) => <line key={`v${i}`} x1={i * 52} y1="0" x2={i * 52} y2="340" />)}
@@ -258,7 +259,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                   <text x="0" y="0" textAnchor="middle" fontSize="14" fill="#fff" fontFamily="Vazirmatn" fontWeight="700">بهسا دیجیتال — شهرک صنعتی توس، پلاک ۳۷۰</text>
                 </g>
               </svg>
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-s bg-surface/95 border border-line px-4 py-2.5 text-[12.5px] font-bold text-ink shadow-card">
+              <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-sm bg-surface/95 border border-line px-4 py-2.5 text-[12.5px] font-bold text-ink shadow-card">
                 <Icon name="pin" size={15} className="text-orange-700" />
                 مشهد، شهرک صنعتی توس، فاز یک
               </div>

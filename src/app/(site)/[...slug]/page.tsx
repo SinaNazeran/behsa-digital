@@ -27,6 +27,8 @@ export default async function LandingPage({ params }: Props) {
   const node = await resolve(slug);
   if (!node) notFound();
 
+  /* one list for both the visible breadcrumb and the JSON-LD; a section's
+     own page (/product) must not repeat its title as a third crumb */
   const crumbs = [{ label: "خانه", path: "/" }, { label: node.section.title, path: `/${node.section.slug}` }];
   if (node.slug !== node.section.slug) crumbs.push({ label: node.title, path: `/${node.slug}` });
 
@@ -49,7 +51,7 @@ export default async function LandingPage({ params }: Props) {
   return (
     <>
       <JsonLd data={breadcrumbLd(SITE_URL, crumbs)} />
-      <Landing node={node} siblings={siblings} linked={linked} panelUrl={settings.panelUrl} />
+      <Landing node={node} crumbs={crumbs} siblings={siblings} linked={linked} panelUrl={settings.panelUrl} />
     </>
   );
 }

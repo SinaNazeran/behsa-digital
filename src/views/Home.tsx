@@ -87,11 +87,11 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
           <div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {pains.items.map((p, i) => (
               <Reveal key={p.id} delay={(i % 4) * 90}>
-                <article className="group relative h-full flex flex-col justify-between rounded-m border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40">
+                <article className="group relative h-full flex flex-col justify-between rounded-md border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40">
                   <span className="absolute top-0 inset-x-0 h-[3px] rounded-t-m bg-gradient-to-r from-transparent via-transparent to-transparent transition-colors duration-300 group-hover:via-primary" />
                   <div>
                     <div className="flex items-center justify-between">
-                      <span className="inline-flex h-12 w-12 items-center justify-center rounded-s bg-orange-50 text-orange-700 border border-orange-200/60 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary">
+                      <span className="inline-flex h-12 w-12 items-center justify-center rounded-sm bg-orange-50 text-orange-700 border border-orange-200/60 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary">
                         <Icon name={p.icon ?? "alert"} size={22} />
                       </span>
                       <span className="font-display font-black text-[22px] text-neutral-300 group-hover:text-primary transition-colors fa-num">{ordinal(i)}</span>
@@ -130,9 +130,9 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
           <div className="mt-12 grid gap-6 lg:grid-cols-2">
             {regulations.items.map((r, i) => (
               <Reveal key={r.id} delay={i * 110}>
-                <article className="h-full flex flex-col rounded-m border border-white/15 bg-white/[0.04] backdrop-blur-sm p-7 md:p-8">
+                <article className="h-full flex flex-col rounded-md border border-white/15 bg-white/[0.04] backdrop-blur-sm p-7 md:p-8">
                   <div className="flex items-start gap-4">
-                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-s bg-green-500/15 border border-green-500/25 text-green-300">
+                    <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-sm bg-green-500/15 border border-green-500/25 text-green-300">
                       <Icon name={r.icon ?? "leaf"} size={23} />
                     </span>
                     <h3 className="font-display font-bold text-[17px] md:text-[18px] leading-8 text-white">{r.title}</h3>
@@ -204,14 +204,14 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                 <button
                   key={p.id} role="tab" aria-selected={tab === i} onClick={() => setTab(i)}
                   className={cn(
-                    "flex items-center gap-3.5 rounded-m border p-4 text-right transition-all duration-200 cursor-pointer",
+                    "flex items-center gap-3.5 rounded-md border p-4 text-right transition-all duration-200 cursor-pointer",
                     tab === i
                       ? "border-white/40 bg-white text-neutral-950 shadow-[0_12px_28px_rgb(0_32_70/0.45)]"
                       : "border-white/10 bg-white/[0.05] text-blue-100 hover:bg-white/[0.1] hover:border-white/20 hover:text-white backdrop-blur-sm",
                   )}
                 >
                   <span className={cn(
-                    "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-s transition-colors",
+                    "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-sm transition-colors",
                     tab === i ? "bg-blue-600 text-white shadow-sm" : "bg-white/10 border border-white/15 text-blue-200",
                   )}>
                     <Icon name={p.icon ?? "monitor"} size={22} />
@@ -227,7 +227,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
             </div>
 
             <div className="lg:col-span-8">
-              <div key={tab} className="rv is-in h-full rounded-m border border-white/15 bg-blue-950/70 backdrop-blur-md p-7 md:p-9 shadow-dark flex flex-col justify-between">
+              <div key={tab} className="rv is-in h-full rounded-md border border-white/15 bg-blue-950/70 backdrop-blur-md p-7 md:p-9 shadow-dark flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-3">
                     <span className="inline-flex items-center gap-2 rounded-full border border-orange-400/30 bg-orange-500/15 px-3.5 py-1 text-[12.5px] font-bold text-orange-300">
@@ -238,7 +238,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                   {t.description && <p className="mt-4 text-[15.5px] leading-8 text-blue-100 max-w-2xl">{t.description}</p>}
                   <ul className="mt-7 grid gap-3 sm:grid-cols-2">
                     {t.bullets.map((it, i) => (
-                      <li key={it} className="rv is-in flex items-center gap-3 rounded-s border border-white/10 bg-white/[0.06] hover:bg-white/[0.1] px-4 py-3.5 text-[14px] font-semibold text-white transition-colors" style={{ transitionDelay: `${i * 60}ms` }}>
+                      <li key={it} className="rv is-in flex items-center gap-3 rounded-sm border border-white/10 bg-white/[0.06] hover:bg-white/[0.1] px-4 py-3.5 text-[14px] font-semibold text-white transition-colors" style={{ transitionDelay: `${i * 60}ms` }}>
                         <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
                           <Icon name="check" size={14} sw={2.4} />
                         </span>
@@ -280,11 +280,11 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
               <Reveal key={r.id} delay={(i % 3) * 100}>
                 <SmartLink
                   href={r.href || "/reports"}
-                  className="group h-full rounded-m border border-line bg-bg p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:bg-surface hover:border-primary/40 flex flex-col justify-between"
+                  className="group h-full rounded-md border border-line bg-bg p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:bg-surface hover:border-primary/40 flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-start justify-between gap-3">
-                      <span className="inline-flex h-12 w-12 items-center justify-center rounded-s bg-primary-soft text-orange-700 border border-orange-200/50 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary">
+                      <span className="inline-flex h-12 w-12 items-center justify-center rounded-sm bg-primary-soft text-orange-700 border border-orange-200/50 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary">
                         <Icon name={r.icon ?? "board"} size={23} />
                       </span>
                       {r.tag && <Badge tone="steel">{r.tag}</Badge>}
@@ -315,13 +315,13 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
           <div className="mt-12 grid gap-6 md:grid-cols-2">
             {shots.map((shot, i) => (
               <Reveal key={shot.id} delay={(i % 2) * 110}>
-                <figure className="h-full rounded-m border border-white/15 bg-white/[0.04] p-3 backdrop-blur-sm">
+                <figure className="h-full rounded-md border border-white/15 bg-white/[0.04] p-3 backdrop-blur-sm">
                   <img
                     src={shot.imageUrl!}
                     alt={shot.title}
                     loading="lazy"
                     decoding="async"
-                    className="w-full rounded-s border border-white/10 bg-neutral-900 object-cover"
+                    className="w-full rounded-sm border border-white/10 bg-neutral-900 object-cover"
                   />
                   <figcaption className="px-3 py-4">
                     <p className="font-display font-bold text-[15px] text-white">{shot.title}</p>
@@ -359,14 +359,14 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                   alt={capacitor.title}
                   loading="lazy"
                   decoding="async"
-                  className="w-full rounded-m border border-line bg-surface shadow-lift"
+                  className="w-full rounded-md border border-line bg-surface shadow-lift"
                 />
               </Reveal>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2">
                 {capacitor.items.map((c, i) => (
                   <Reveal key={c.id} delay={(i % 2) * 100}>
-                    <div className="h-full rounded-m border border-line bg-surface p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40">
+                    <div className="h-full rounded-md border border-line bg-surface p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40">
                       <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary-soft font-display font-black text-[14px] text-orange-700 fa-num">
                         {faNum(i + 1)}
                       </span>
@@ -394,10 +394,10 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                 <Reveal key={ind.id} delay={(i % 2) * 90}>
                   <Wrapper
                     {...(ind.href ? { href: ind.href } : {})}
-                    className="group h-full flex flex-col rounded-m border border-line bg-bg p-6 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40"
+                    className="group h-full flex flex-col rounded-md border border-line bg-bg p-6 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40"
                   >
                     <div className="flex items-center gap-4">
-                      <span className="inline-flex h-13 w-13 shrink-0 items-center justify-center rounded-s bg-blue-50 border border-blue-200/60 text-blue-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary">
+                      <span className="inline-flex h-13 w-13 shrink-0 items-center justify-center rounded-sm bg-blue-50 border border-blue-200/60 text-blue-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary">
                         <Icon name={ind.icon ?? "org"} size={25} />
                       </span>
                       <h3 className="font-display font-bold text-[17px] text-ink group-hover:text-orange-700 transition-colors">{ind.title}</h3>
@@ -433,7 +433,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
               <div className="lg:sticky lg:top-32">
                 <SectionHead eyebrow={benefits.eyebrow} title={benefits.title} lead={benefits.description} dark={true} />
                 <Reveal delay={200}>
-                  <div className="mt-8 rounded-m border border-white/20 bg-blue-950/70 backdrop-blur-md p-7 shadow-dark">
+                  <div className="mt-8 rounded-md border border-white/20 bg-blue-950/70 backdrop-blur-md p-7 shadow-dark">
                     <p className="flex items-center gap-2.5 font-display font-bold text-[15px] text-white">
                       <Icon name="precision" size={18} className="text-orange-400" />
                       اثر مالی را چطور اندازه می‌گیریم؟
@@ -448,8 +448,8 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
             <div className="lg:col-span-8 grid gap-4 sm:grid-cols-2">
               {benefits.items.map((b, i) => (
                 <Reveal key={b.id} delay={(i % 2) * 100}>
-                  <div className="h-full rounded-m border border-white/12 bg-white/[0.05] backdrop-blur-sm p-6 transition-colors hover:bg-white/[0.09] hover:border-white/25">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-s bg-white/10 border border-white/15 text-orange-300">
+                  <div className="h-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm p-6 transition-colors hover:bg-white/[0.09] hover:border-white/25">
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-sm bg-white/10 border border-white/15 text-orange-300">
                       <Icon name={b.icon ?? "check"} size={21} />
                     </span>
                     <h3 className="mt-4 font-display font-bold text-[15.5px] text-white leading-7">{b.title}</h3>
@@ -475,7 +475,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
           <div className="mt-12 grid gap-6 lg:grid-cols-2">
             {testimonials.map((q, i) => (
               <Reveal key={`${q.name}-${i}`} delay={i * 120} dir={i % 2 ? "l" : "r"}>
-                <figure className="relative h-full flex flex-col justify-between rounded-m border border-line bg-bg p-8 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40">
+                <figure className="relative h-full flex flex-col justify-between rounded-md border border-line bg-bg p-8 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40">
                   <blockquote className="text-[16px] leading-8 text-ink font-medium">«{q.quote}»</blockquote>
                   <figcaption className="mt-6 flex flex-wrap items-center gap-4 pt-5 border-t border-linesoft">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 border border-blue-200 text-blue-700 font-display font-extrabold text-[17px]">
@@ -527,8 +527,8 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
               <div className="lg:sticky lg:top-32">
                 <SectionHead eyebrow={faqHead.eyebrow} title={faqHead.title} lead={faqHead.description} />
                 <Reveal delay={200}>
-                  <div className="mt-8 rounded-m border border-line bg-bg p-6 shadow-card transition-colors hover:border-primary/40">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-s bg-primary-soft text-orange-700 border border-orange-200/50">
+                  <div className="mt-8 rounded-md border border-line bg-bg p-6 shadow-card transition-colors hover:border-primary/40">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-sm bg-primary-soft text-orange-700 border border-orange-200/50">
                       <Icon name="consultant" size={23} />
                     </span>
                     <p className="mt-4 font-display font-bold text-[16.5px] text-ink">پاسخ خود را پیدا نکردید؟</p>
@@ -543,7 +543,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
               {faqs.map((f, i) => (
                 <Reveal key={f.q} delay={i * 70}>
                   <div className={cn(
-                    "rounded-m border overflow-hidden transition-all duration-300",
+                    "rounded-md border overflow-hidden transition-all duration-300",
                     faq === i ? "border-primary/50 bg-surface shadow-card" : "border-line bg-bg hover:border-primary/30",
                   )}>
                     <button
@@ -565,7 +565,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                         {f.q}
                       </span>
                       <span className={cn(
-                        "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-s border transition-all duration-300",
+                        "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border transition-all duration-300",
                         faq === i
                           ? "rotate-45 bg-primary border-primary text-on-primary"
                           : "border-line bg-surface text-ink2 group-hover:border-primary/40 group-hover:text-orange-700",
@@ -599,7 +599,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
         <div className="absolute -bottom-32 left-[18%] h-[340px] w-[480px] rounded-full bg-orange-500/10 blur-3xl glow-b pointer-events-none" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 py-20 md:py-28 text-center">
           <Reveal>
-            <span className="mx-auto mb-7 flex h-14 w-14 items-center justify-center rounded-l bg-white/15 border border-white/25 text-white shadow-lift">
+            <span className="mx-auto mb-7 flex h-14 w-14 items-center justify-center rounded-lg bg-white/15 border border-white/25 text-white shadow-lift">
               <Icon name="bolt" size={28} />
             </span>
             {closing.title && (

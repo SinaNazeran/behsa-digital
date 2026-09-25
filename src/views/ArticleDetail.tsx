@@ -68,7 +68,7 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
               </Reveal>
 
               <Reveal delay={120}>
-                <div className="mt-8 rounded-l overflow-hidden border border-line shadow-card">
+                <div className="mt-8 rounded-lg overflow-hidden border border-line shadow-card">
                   {article.coverUrl ? <img src={article.coverUrl} alt={article.title} className="aspect-[40/22] w-full object-cover" fetchPriority="high" /> : <Thumb chart={article.chart} cat={article.cat} accent={article.cat.includes("خورشیدی") ? SERIES.solar : SERIES.grid} />}
                 </div>
               </Reveal>
@@ -94,7 +94,7 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
                 ))}
 
                 {/* inline callout */}
-                <aside className="rounded-m border border-primary/25 bg-primary-soft/60 p-6 flex gap-4">
+                <aside className="rounded-md border border-primary/25 bg-primary-soft/60 p-6 flex gap-4">
                   <span className="text-orange-700 shrink-0 mt-1"><Icon name="info" size={22} /></span>
                   <div>
                     <p className="font-display font-bold text-[15.5px] text-ink">جمع‌بندی کاربردی</p>
@@ -108,7 +108,7 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
 
               {/* author box */}
               <Reveal>
-                <footer className="mt-12 rounded-m border border-line bg-surface p-6 flex flex-wrap items-center gap-5">
+                <footer className="mt-12 rounded-md border border-line bg-surface p-6 flex flex-wrap items-center gap-5">
                   <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-on-primary font-display font-extrabold text-[20px]">ب</span>
                   <div className="flex-1 min-w-[220px]">
                     <p className="font-display font-bold text-[15.5px] text-ink">{article.author}</p>
@@ -122,7 +122,7 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
             {/* ── Sticky TOC sidebar (leftmost in RTL) ── */}
             <aside className="hidden lg:block lg:col-span-4">
               <div className="sticky top-32 space-y-6">
-                <nav className="rounded-m border border-line bg-surface p-6" aria-label="فهرست مطالب">
+                <nav className="rounded-md border border-line bg-surface p-6" aria-label="فهرست مطالب">
                   <p className="flex items-center gap-2.5 font-display font-bold text-[14.5px] text-ink">
                     <Icon name="board" size={17} className="text-orange-700" /> فهرست مطالب
                   </p>
@@ -133,7 +133,7 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
                           href={`#sec-${article.body.findIndex((b) => b.h === h)}`}
                           onClick={(e) => { e.preventDefault(); document.getElementById(`sec-${article.body.findIndex((b) => b.h === h)}`)?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
                           className={cn(
-                            "block rounded-s border-r-2 py-2 pl-3 text-[13px] font-semibold transition-all",
+                            "block rounded-sm border-r-2 py-2 pl-3 text-[13px] font-semibold transition-all",
                             active === i ? "border-accent bg-accent-soft/60 text-ink pr-3.5" : "border-transparent text-ink2 hover:text-orange-700 hover:border-primary/30 pr-3",
                           )}
                         >
@@ -152,7 +152,7 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
                   </div>
                 </nav>
 
-                <div className="rounded-m border border-line bg-navy text-neutral-100 p-6 on-dark relative overflow-hidden">
+                <div className="rounded-md border border-line bg-navy text-neutral-100 p-6 on-dark relative overflow-hidden">
                   <div className="absolute inset-0 grid-dark" />
                   <div className="relative">
                     <p className="font-display font-bold text-[16px]">این محاسبات را خودکار دریافت کنید</p>

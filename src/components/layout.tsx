@@ -27,7 +27,7 @@ export function Footer({ settings, sections }: { settings: SiteSettings; section
                 rel="noopener noreferrer"
                 aria-label="کانال بله بهسا دیجیتال"
                 title="کانال رسمی بهسا دیجیتال در پیام‌رسان بله"
-                className="inline-flex items-center gap-2.5 h-10 px-3.5 rounded-s border border-line bg-surface text-ink hover:text-white hover:border-[#00B894] hover:bg-[#00B894] transition-all text-[13px] font-bold shadow-sm"
+                className="inline-flex items-center gap-2.5 h-10 px-3.5 rounded-sm border border-line bg-surface text-ink hover:text-white hover:border-[#00B894] hover:bg-[#00B894] transition-all text-[13px] font-bold shadow-sm"
               >
                 <Icon name="bale" size={18} />
                 <span>کانال بله بهسا دیجیتال</span>

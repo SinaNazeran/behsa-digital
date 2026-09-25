@@ -1,7 +1,8 @@
 import { Icon, type IconName } from "@/components/icons";
-import { Reveal, Btn, Badge, PageHero } from "@/components/ui";
+import { Reveal, Btn, PageHero, CtaBanner, HERO_PANEL } from "@/components/ui";
 import type { LandingNode, NavLens } from "@/content/navigation";
-import { capabilityBySlug } from "@/content/capabilities";
+import { capabilityBySlug, STAGE_META, type NarrativeStage } from "@/content/capabilities";
+import { cn } from "@/utils/cn";
 import { CapabilitiesOverview } from "@/components/capabilities/CapabilitiesOverview";
 import { CapabilityFeatureList } from "@/components/capabilities/CapabilityFeatureList";
 import { SmartLink } from "@/components/SmartLink";
@@ -10,44 +11,116 @@ import { SmartLink } from "@/components/SmartLink";
    The `lens` field switches the messaging tone so capability /
    solution / industry pages never read alike. */
 
-const LENS_META: Record<NavLens, { badge: string; tone: "blue" | "green" | "teal" | "amber" | "steel"; note: string }> = {
-  feature: { badge: "قابلیت پلتفرم", tone: "blue", note: "این صفحه آنچه پلتفرم انجام می‌دهد را شرح می‌دهد: ورودی داده، مکانیزم تحلیل و خروجی گزارش — نه وعدهٔ کلی." },
-  outcome: { badge: "راهکار کسب‌وکار", tone: "green", note: "این صفحه مسئلهٔ کسب‌وکار، اثر مالی مورد انتظار و شاخص‌هایی که بهبود می‌یابند را شرح می‌دهد." },
-  vertical: { badge: "کاربرد صنعتی", tone: "teal", note: "این صفحه الگوی مصرف، تعرفه و سناریوی استقرارِ پلتفرم در این صنعت را شرح می‌دهد." },
-  content: { badge: "منبع", tone: "steel", note: "محتوای این بخش توسط تیم تحلیل بهسا دیجیتال تولید و به‌روزرسانی می‌شود." },
-  company: { badge: "درباره بهسا", tone: "amber", note: "این صفحه بخشی از هویت، تیم و همکاری‌های بهسا دیجیتال را معرفی می‌کند." },
+const LENS_BADGE: Record<NavLens, string> = {
+  feature: "قابلیت پلتفرم",
+  outcome: "راهکار کسب‌وکار",
+  vertical: "کاربرد صنعتی",
+  content: "منبع",
+  company: "درباره بهسا",
 };
 
-export default function Landing({ node, siblings, linked, panelUrl }: {
+/* ── Hero side card ──
+   Shown only when the page has something of its own to put there — the
+   same rule the report pages follow. A section's own page gets none: its
+   child grid sits right under the hero and would only be repeated. */
+
+const STAGES = (Object.keys(STAGE_META) as NarrativeStage[]).sort((a, b) => STAGE_META[a].order - STAGE_META[b].order);
+
+/** where a capability sits on the data → business-result chain */
+function StageTrack({ stage }: { stage: NarrativeStage }) {
+  const at = STAGE_META[stage].order;
+  return (
+    <div>
+      <p className="flex items-center gap-2 text-[12px] font-bold text-white/75">
+        <Icon name="central" size={14} />
+        جایگاه در مسیر داده تا نتیجه
+      </p>
+      <ol className="mt-3 grid grid-cols-5 gap-1.5">
+        {STAGES.map((s) => {
+          const { order, label } = STAGE_META[s];
+          return (
+            <li key={s} aria-current={order === at ? "step" : undefined} className="min-w-0">
+              <span className={cn("block h-1.5 rounded-full", order === at ? "bg-primary shadow-[0_0_12px_rgb(250_100_0/0.7)]" : order < at ? "bg-white/45" : "bg-white/15")} />
+              <span className={cn("mt-2 block text-center text-[11px] leading-4", order === at ? "font-bold text-orange-200" : "text-white/65")}>{label}</span>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
+const LINK_KIND: { prefix: string; label: string; icon: IconName }[] = [
+  { prefix: "reports/", label: "گزارش", icon: "chart" },
+  { prefix: "product/", label: "قابلیت", icon: "tech" },
+  { prefix: "solutions/", label: "راهکار", icon: "decision" },
+  { prefix: "industries/", label: "صنعت", icon: "factory" },
+];
+
+function RelatedLinks({ links }: { links: { slug: string; title: string; href: string }[] }) {
+  return (
+    <div>
+      <p className="flex items-center gap-2 text-[12px] font-bold text-white/75">
+        <Icon name="compare" size={14} />
+        گزارش‌ها و صفحات مرتبط
+      </p>
+      <ul className="mt-2 grid gap-0.5">
+        {links.map((l) => {
+          const kind = LINK_KIND.find((k) => l.slug.startsWith(k.prefix));
+          return (
+            <li key={l.slug}>
+              <SmartLink href={l.href} className="group -mx-2 flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-white/10">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-white/10 text-orange-200 ring-1 ring-white/15 transition-colors group-hover:bg-primary group-hover:text-on-primary group-hover:ring-transparent">
+                  <Icon name={kind?.icon ?? "arrowL"} size={16} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  {kind && <span className="block text-[11px] font-bold text-white/60">{kind.label}</span>}
+                  <span className="block truncate text-[13.5px] font-bold text-white">{l.title}</span>
+                </span>
+                <Icon name="arrowL" size={14} sw={2.2} className="shrink-0 text-white/45 transition-all group-hover:-translate-x-1 group-hover:text-white" />
+              </SmartLink>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+export default function Landing({ node, crumbs, siblings, linked, panelUrl }: {
   node: LandingNode;
+  /** built once by the route, shared with the BreadcrumbList JSON-LD */
+  crumbs: { label: string; path?: string }[];
   /** other entries of the same menu section */
   siblings: { id: number; title: string; href: string; icon?: IconName }[];
   /** capability ⇄ solution cross-links that resolved to a live page */
   linked: { slug: string; title: string; href: string }[];
   panelUrl: string;
 }) {
-  const meta = LENS_META[node.lens];
+  const badge = LENS_BADGE[node.lens];
   const capability = capabilityBySlug(node.slug);
   const isPlatformIntro = node.slug === "product/platform";
+  /* the stage only means something on capability pages — every solution
+     and industry page sits at "outcome", which would say nothing */
+  const stage = node.lens === "feature" && capability ? capability.narrativeStage : undefined;
 
   return (
     <>
       <PageHero
-        crumb={[{ label: "خانه", path: "/" }, { label: node.section.title, path: `/${node.section.slug}` }, { label: node.title }]}
+        crumb={crumbs}
         title={node.title}
         lead={node.description}
+        eyebrow={{ label: badge, icon: node.icon }}
+        tone={node.lens}
       >
-        <Reveal dir="l" delay={150}>
-          <div className="rounded-m border border-line bg-surface p-5 shadow-lift space-y-3">
-            <Badge tone={meta.tone} icon={node.icon}>{meta.badge}</Badge>
-            <p className="text-[13px] leading-7 text-ink2">{meta.note}</p>
-            {node.children && (
-              <p className="pt-3 border-t border-linesoft text-[12.5px] font-bold text-ink fa-num">
-                {node.children.length.toLocaleString("fa-IR")} زیربخش در این صفحه
-              </p>
-            )}
-          </div>
-        </Reveal>
+        {(stage || linked.length > 0) && (
+          <Reveal dir="l" delay={150}>
+            <div className={cn(HERO_PANEL, "bg-black/20! divide-y divide-white/15 [&>*]:py-4 [&>*:first-child]:pt-0 [&>*:last-child]:pb-0")}>
+              {stage && <StageTrack stage={stage} />}
+              {linked.length > 0 && <RelatedLinks links={linked} />}
+            </div>
+          </Reveal>
+        )}
       </PageHero>
 
       <section className="py-16 md:py-20 bg-bg relative">
@@ -67,8 +140,8 @@ export default function Landing({ node, siblings, linked, panelUrl }: {
                 <div className="mt-8 grid gap-5 sm:grid-cols-2">
                   {node.children.map((c, i) => (
                     <Reveal key={c.id} delay={(i % 2) * 90}>
-                      <SmartLink href={c.href} className="group flex h-full flex-col rounded-m border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
-                        <span className="inline-flex h-12 w-12 items-center justify-center rounded-s bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
+                      <SmartLink href={c.href} className="group flex h-full flex-col rounded-md border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
+                        <span className="inline-flex h-12 w-12 items-center justify-center rounded-sm bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
                           {c.icon && <Icon name={c.icon} size={23} />}
                         </span>
                         <h3 className="mt-4 font-display font-bold text-[16.5px] text-ink group-hover:text-orange-700 transition-colors">{c.title}</h3>
@@ -83,11 +156,11 @@ export default function Landing({ node, siblings, linked, panelUrl }: {
               </>
             ) : (
               <Reveal>
-                <div className="rounded-m border border-line bg-surface p-8">
+                <div className="rounded-md border border-line bg-surface p-8">
                   <h2 className="font-display font-extrabold text-[20px] text-ink">{node.title}</h2>
                   <p className="mt-4 text-[15px] leading-8 text-ink2">{node.description}.</p>
                   <p className="mt-3 text-[15px] leading-8 text-ink2">
-                    {meta.note} برای دیدن جزئیات اجرایی متناسب با مجموعهٔ خود با ما تماس بگیرید.
+                    برای دیدن جزئیات اجرایی متناسب با مجموعهٔ خود با ما تماس بگیرید.
                   </p>
                   <div className="mt-7 flex flex-wrap gap-3">
                     <Btn href={panelUrl} target="_blank" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">ورود به سامانه</Btn>
@@ -97,36 +170,17 @@ export default function Landing({ node, siblings, linked, panelUrl }: {
               </Reveal>
             )}
 
-            {/* capability ⇄ solution cross-links */}
-            {linked.length > 0 && (
-              <Reveal className="mt-8">
-                <div className="rounded-m border border-accent/25 bg-accent-soft/40 p-6">
-                  <p className="flex items-center gap-2.5 font-display font-bold text-[15px] text-ink">
-                    <Icon name="central" size={18} className="text-accent" />
-                    این {meta.badge.toLowerCase()} کجا به‌کار می‌آید؟
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-3">
-                    {linked.map((l) => (
-                      <SmartLink key={l.slug} href={l.href} className="inline-flex items-center gap-2 rounded-s border border-line bg-surface px-4 py-2.5 text-[13px] font-bold text-ink transition-all hover:border-accent/50 hover:text-accent">
-                        {l.title}
-                        <Icon name="arrowL" size={13} sw={2.2} />
-                      </SmartLink>
-                    ))}
-                  </div>
-                </div>
-              </Reveal>
-            )}
           </div>
 
           {/* sibling rail */}
           {siblings.length > 0 && (
             <aside className="lg:col-span-4">
-              <div className="lg:sticky lg:top-32 rounded-m border border-line bg-surface p-6">
+              <div className="lg:sticky lg:top-32 rounded-md border border-line bg-surface p-6">
                 <p className="font-display font-bold text-[15px] text-ink">سایر موارد {node.section.title}</p>
                 <ul className="mt-4 space-y-1">
                   {siblings.map((s) => (
                     <li key={s.id}>
-                      <SmartLink href={s.href} className="group flex items-center gap-3 rounded-s px-3 py-2.5 text-[13.5px] font-semibold text-ink2 transition-colors hover:bg-bg hover:text-orange-700">
+                      <SmartLink href={s.href} className="group flex items-center gap-3 rounded-sm px-3 py-2.5 text-[13.5px] font-semibold text-ink2 transition-colors hover:bg-bg hover:text-orange-700">
                         {s.icon && <Icon name={s.icon} size={16} className="text-ink3 group-hover:text-orange-700" />}
                         {s.title}
                         <Icon name="arrowL" size={12} className="mr-auto opacity-0 transition-opacity group-hover:opacity-60" />
@@ -143,32 +197,19 @@ export default function Landing({ node, siblings, linked, panelUrl }: {
         </div>
       </section>
 
-      <PanelCta title={`${node.title} را روی دادهٔ مجموعهٔ خودتان ببینید.`} panelUrl={panelUrl} />
+      <PanelCta title={`*${node.title}* را روی دادهٔ مجموعهٔ خودتان ببینید.`} panelUrl={panelUrl} />
     </>
   );
 }
 
-/** closing band — the site has a single call to action, the panel */
+/** closing banner — the site has a single call to action, the panel */
 export function PanelCta({ title, panelUrl }: { title: string; panelUrl: string }) {
   return (
-    <section className="relative overflow-hidden bg-bg border-t border-line text-ink">
-      <div className="absolute inset-0 grid-light" />
-      <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 py-14 md:py-16 text-center">
-        <Reveal>
-          <h2 className="font-display font-black text-[22px] md:text-[30px] leading-[1.5]">
-            {title}
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-[14.5px] leading-8 text-ink2">
-            گزارش‌ها را با دادهٔ مصرف مجموعهٔ خودتان در سامانه ببینید.
-          </p>
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-            <Btn href={panelUrl} target="_blank" size="lg" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">
-              ورود به سامانه
-            </Btn>
-            <Btn href="/contact" size="lg" variant="secondary">تماس با ما</Btn>
-          </div>
-        </Reveal>
-      </div>
-    </section>
+    <CtaBanner title={title} lead="گزارش‌ها را با دادهٔ مصرف مجموعهٔ خودتان در سامانه ببینید.">
+      <Btn href={panelUrl} target="_blank" size="lg" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">
+        ورود به سامانه
+      </Btn>
+      <Btn href="/contact" size="lg" variant="dark">تماس با ما</Btn>
+    </CtaBanner>
   );
 }
