@@ -230,6 +230,6 @@ await db.transaction(async (tx) => {
 console.log("✔ content strategy applied");
 /* The public read layer is cached per tag and this script writes outside
    the app, so a running instance keeps serving the previous menu until
-   its caches expire. Hit /api/revalidate (or restart) right after. */
-console.log("  → next: GET /api/revalidate on the running instance");
+   its caches expire. POST /api/revalidate (or restart) right after. */
+console.log('  → next: curl -X POST -H "Authorization: Bearer $REVALIDATE_SECRET" <site>/api/revalidate');
 await client.end();

@@ -184,6 +184,9 @@ SITE_NOINDEX="false"
 ADMIN_EMAIL="admin@example.com"
 ADMIN_PASSWORD=""
 ADMIN_NAME="مدیر سیستم"
+
+# کلید مسیر POST /api/revalidate (خالی = مسیر غیرفعال)
+REVALIDATE_SECRET=""
 ```
 
 ### ۳. آماده‌سازی جداول و انتقال محتوای اولیه به دیتابیس

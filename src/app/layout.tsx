@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { preload } from "react-dom";
+import { preinit, preload } from "react-dom";
 import "@/styles/index.css";
 import { SITE_URL } from "@/lib/seo";
 
@@ -48,6 +48,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
      downloaded twice. */
   preload(vazirmatnArabic, { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
   preload(estedadArabic, { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+
+  /* Old Vite URLs were hash-based (/#/about); the hash never reaches the
+     server, so public/legacy-hash-redirect.js forwards them in the browser.
+
+     preinit(), not an inline <script>: React refuses to run — and warns
+     about — any executable <script> it has to create itself in the
+     browser, and that happens on every 404. A notFound() thrown by a page
+     (the [...slug] catch-all throws it for every unknown URL) is served
+     through Next's error recovery: an empty `__next_error__` shell that
+     React renders from scratch with createRoot, <head> included. An async
+     external script is a React resource instead — hoisted into <head>,
+     deduplicated, and inserted the same way on the server and the client —
+     so it runs in both cases and never warns. next/script would not help:
+     its beforeInteractive strategy is itself an inline <script>. */
+  preinit("/legacy-hash-redirect.js", { as: "script" });
 
   return (
     // suppressHydrationWarning on <html> only: some browser extensions (e.g. LanguageTool,

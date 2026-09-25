@@ -13,10 +13,6 @@ import { SITE_URL } from "@/lib/seo";
    /articles/[slug]) still opt themselves out and render dynamically. */
 export const revalidate = 3600;
 
-/* Old Vite URLs were hash-based (/#/about). The hash never reaches the
-   server, so this tiny inline script forwards them before paint. */
-const LEGACY_HASH_REDIRECT = `(function(){var h=location.hash;if(h.indexOf("#/")===0){var p=h.slice(1);if(p==="/products")p="/product";location.replace(p);}})();`;
-
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const [settings, sections] = await Promise.all([getSettings(), getNavigation()]);
 
@@ -51,7 +47,6 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   return (
     <>
-      <script dangerouslySetInnerHTML={{ __html: LEGACY_HASH_REDIRECT }} />
       <JsonLd data={[organization, website]} />
       <div className="min-h-screen flex flex-col bg-bg text-ink font-body">
         <a
