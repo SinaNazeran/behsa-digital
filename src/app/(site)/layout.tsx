@@ -51,7 +51,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <div className="min-h-screen flex flex-col bg-bg text-ink font-body">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[70] focus:inline-flex focus:items-center focus:rounded-[10px] focus:bg-primary focus:px-4 focus:py-2 focus:text-[13.5px] focus:font-bold focus:text-on-primary focus:shadow-lift"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[70] focus:inline-flex focus:items-center focus:rounded-control focus:bg-primary focus:px-4 focus:py-2 focus:text-[13.5px] focus:font-bold focus:text-on-primary focus:shadow-lift"
         >
           پرش به محتوای اصلی
         </a>

@@ -41,8 +41,8 @@ export function MegaMenu({ section, activePath }: { section: NavSectionView; act
             {section.groups.map((group) => (
               <section key={group.id} aria-labelledby={`nav-group-${group.id}`}>
                 <h3 id={`nav-group-${group.id}`}>
-                  <SmartLink href={group.href} className="group flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 text-[13.5px] font-extrabold text-ink transition-colors hover:text-orange-700">
-                    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] border border-line bg-bg text-orange-700 transition-colors group-hover:border-primary/40 group-hover:bg-primary-soft">
+                  <SmartLink href={group.href} className="group flex items-center gap-2.5 rounded-control px-2 py-1.5 text-[13.5px] font-extrabold text-ink transition-colors hover:text-orange-700">
+                    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-line bg-bg text-orange-700 transition-colors group-hover:border-primary/40 group-hover:bg-primary-soft">
                       {group.icon && <Icon name={group.icon} size={16} />}
                     </span>
                     {group.title}
@@ -54,7 +54,7 @@ export function MegaMenu({ section, activePath }: { section: NavSectionView; act
                       <SmartLink
                         href={item.href}
                         className={cn(
-                          "block rounded-[8px] px-2.5 py-1.5 text-[13px] font-semibold transition-colors",
+                          "block rounded-sm px-2.5 py-1.5 text-[13px] font-semibold transition-colors",
                           activePath === item.href ? "bg-primary-soft/70 text-orange-700" : "text-ink2 hover:bg-bg hover:text-orange-700",
                         )}
                       >
@@ -83,11 +83,11 @@ export function MegaMenu({ section, activePath }: { section: NavSectionView; act
                   target={item.newTab ? "_blank" : undefined}
                   rel={item.newTab ? "noopener noreferrer" : undefined}
                   className={cn(
-                    "group flex items-start gap-3.5 rounded-[12px] p-3.5 transition-colors duration-200",
+                    "group flex items-start gap-3.5 rounded-md p-3.5 transition-colors duration-200",
                     activePath === item.href ? "bg-primary-soft/70" : "hover:bg-bg",
                   )}
                 >
-                  <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-line bg-bg text-orange-700 transition-colors duration-200 group-hover:border-primary/40 group-hover:bg-primary-soft">
+                  <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-control border border-line bg-bg text-orange-700 transition-colors duration-200 group-hover:border-primary/40 group-hover:bg-primary-soft">
                     {item.icon && <Icon name={item.icon} size={19} />}
                   </span>
                   <span className="min-w-0">
@@ -116,7 +116,7 @@ export function ReportSearchForm({ id, className }: { id: string; className?: st
         type="search"
         required
         placeholder="جستجوی گزارش…"
-        className="h-10 w-full rounded-[10px] border border-line bg-bg pr-9 pl-3 text-[13px] text-ink placeholder:text-ink3 focus:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+        className="h-10 w-full rounded-control border border-line bg-bg pr-9 pl-3 text-[13px] text-ink placeholder:text-ink3 focus:border-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
       />
     </form>
   );

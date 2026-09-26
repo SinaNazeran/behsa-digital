@@ -75,7 +75,7 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
                       key={item}
                       className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-bg/70 rounded-sm px-2 -mx-2"
                     >
-                      <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] bg-primary-soft text-orange-700 transition-colors group-hover:bg-primary group-hover:text-on-primary">
+                      <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-primary-soft text-orange-700 transition-colors group-hover:bg-primary group-hover:text-on-primary">
                         <Icon name="check" size={12} sw={2.6} />
                       </span>
                       <span className="text-[14px] font-medium leading-7 text-ink">{item}</span>
@@ -112,7 +112,7 @@ export function ContentBlocks({ blocks, className }: { blocks: ContentBlock[]; c
                     key={ii}
                     className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-bg/70 rounded-sm px-2 -mx-2"
                   >
-                    <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[6px] bg-primary-soft text-orange-700 transition-colors group-hover:bg-primary group-hover:text-on-primary">
+                    <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-primary-soft text-orange-700 transition-colors group-hover:bg-primary group-hover:text-on-primary">
                       <Icon name="check" size={12} sw={2.6} />
                     </span>
                     <span className="text-[14px] font-medium leading-7 text-ink">{item}</span>

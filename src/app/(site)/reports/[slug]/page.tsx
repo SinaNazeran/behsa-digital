@@ -57,7 +57,7 @@ export default async function ReportPage({ params }: Props) {
   return (
     <>
       {preview && (
-        <div className="fixed bottom-4 left-4 z-[80] flex items-center gap-3 rounded-[10px] bg-ink px-4 py-2.5 text-[13px] font-bold text-white shadow-lift">
+        <div className="fixed bottom-4 left-4 z-[80] flex items-center gap-3 rounded-control bg-ink px-4 py-2.5 text-[13px] font-bold text-white shadow-lift">
           پیش‌نمایش ({report.status === "draft" ? "پیش‌نویس" : "منتشرشده"})
           <a href={`/api/preview/exit?type=report&slug=${encodeURIComponent(report.slug)}`} className="underline">خروج</a>
         </div>

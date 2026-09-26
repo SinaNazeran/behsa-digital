@@ -15,7 +15,7 @@ export function DropdownMenu({ section, activePath }: { section: NavSectionView;
             target={item.newTab ? "_blank" : undefined}
             rel={item.newTab ? "noopener noreferrer" : undefined}
             className={cn(
-              "group flex items-center gap-3.5 rounded-[10px] px-3.5 py-3 transition-colors duration-200",
+              "group flex items-center gap-3.5 rounded-control px-3.5 py-3 transition-colors duration-200",
               activePath === item.href ? "bg-primary-soft/70" : "hover:bg-bg",
             )}
           >

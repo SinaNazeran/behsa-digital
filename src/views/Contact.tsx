@@ -31,7 +31,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
                       <Icon name="phone" size={22} />
                     </span>
                     <span className="text-[12px] font-bold text-orange-700 bg-primary-soft/60 px-3 py-1 rounded-full">تماس مستقیم</span>
@@ -57,7 +57,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
                       <Icon name="mail" size={22} />
                     </span>
                     <span className="text-[12px] font-bold text-orange-700 bg-primary-soft/60 px-3 py-1 rounded-full">مکاتبات رسمی</span>
@@ -80,7 +80,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
               <div className="flex flex-col justify-between h-full rounded-md border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/30">
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-accent-soft text-accent">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-accent-soft text-accent">
                       <Icon name="clock" size={22} />
                     </span>
                     <span className="text-[12px] font-bold text-accent bg-accent-soft/60 px-3 py-1 rounded-full">روزهای کاری</span>
@@ -105,7 +105,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
               <div className="flex flex-col justify-between h-full rounded-md border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/30">
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-primary-soft text-orange-700">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-primary-soft text-orange-700">
                       <Icon name="pin" size={22} />
                     </span>
                     <span className="text-[12px] font-bold text-orange-700 bg-primary-soft/60 px-3 py-1 rounded-full">کارخانه و دفتر مرکزی</span>
@@ -126,7 +126,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
               <div className="flex flex-col justify-between h-full rounded-md border border-[#00B894]/40 bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-[#00B894]/70">
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-[#00B894]/12 text-[#00785F]">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-[#00B894]/12 text-[#00785F]">
                       <Icon name="bale" size={24} />
                     </span>
                     <span className="text-[12px] font-bold text-[#00785F] bg-[#00B894]/12 px-3 py-1 rounded-full">شبکه اجتماعی فعال</span>
@@ -144,7 +144,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                     href={settings.baleUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 w-full rounded-[9px] bg-[#00785F] px-4 py-2.5 text-[13.5px] font-bold text-white transition-all hover:bg-[#006F58] shadow-sm"
+                    className="inline-flex items-center justify-center gap-2 w-full rounded-sm bg-[#00785F] px-4 py-2.5 text-[13.5px] font-bold text-white transition-all hover:bg-[#006F58] shadow-sm"
                   >
                     <span>عضویت در کانال بله (behsa_digital@)</span>
                     <Icon name="external" size={13} />
@@ -158,7 +158,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
               <div className="flex flex-col justify-between h-full rounded-md border border-primary/25 bg-primary-soft/50 p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40">
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-[10px] bg-primary text-on-primary">
+                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-primary text-on-primary">
                       <Icon name="bolt" size={22} />
                     </span>
                     <span className="text-[12px] font-bold text-orange-700 bg-surface px-3 py-1 rounded-full border border-primary/20">مشترکان سامانه</span>
@@ -176,7 +176,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                     href={settings.panelUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 w-full rounded-[9px] bg-primary px-4 py-2.5 text-[13.5px] font-bold text-on-primary transition-all hover:bg-primary-deep shadow-sm"
+                    className="inline-flex items-center justify-center gap-2 w-full rounded-sm bg-primary px-4 py-2.5 text-[13.5px] font-bold text-on-primary transition-all hover:bg-primary-deep shadow-sm"
                   >
                     <span>ورود به سامانه بهسا</span>
                     <Icon name="external" size={13} />

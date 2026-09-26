@@ -79,8 +79,10 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
       ? section.groups.map((g) => ({ id: g.id, title: g.title, href: g.href, icon: g.icon, newTab: false }))
       : section.items;
     return (
-      <div className="border-b border-linesoft">
-        <div className="flex items-stretch">
+      <div className={cn("border-b border-linesoft transition-colors duration-300", isOpen && "bg-primary-soft/50")}>
+        <div className="relative flex items-stretch">
+          {/* start-edge rail for the current section, as on the desktop tabs */}
+          {activeKey === key && <span className="absolute right-0 inset-y-3 w-[3px] rounded-l-full bg-primary" />}
           <SmartLink
             href={section.href}
             target={section.newTab ? "_blank" : undefined}
@@ -98,11 +100,12 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
               aria-label={isOpen ? `بستن ${section.title}` : `باز کردن ${section.title}`}
               className="inline-flex w-14 items-center justify-center text-ink3 transition-colors hover:text-orange-700"
             >
-              <Icon name="arrowL" size={16} sw={2.2} className={cn("transition-transform duration-300", isOpen ? "rotate-90" : "-rotate-90")} />
+              {/* the desktop chevron, turning the same way */}
+              <Icon name="chevron" size={15} sw={2.2} className={cn("transition-transform duration-300 ease-fluid", isOpen && "rotate-180 text-orange-700")} />
             </button>
           )}
         </div>
-        <div className={cn("grid transition-[grid-template-rows] duration-300 ease-out", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
+        <div inert={!isOpen} className={cn("grid transition-[grid-template-rows] duration-300 ease-out", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
           <div className="overflow-hidden">
             {section.groups && <ReportSearchForm id="drawer-report-search" className="mx-5 mb-2 mt-1" />}
             <ul className="pb-3">
@@ -115,8 +118,9 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
                     onClick={onClose}
                     className="flex items-center gap-3 py-2.5 pr-8 pl-5 text-[13.5px] font-semibold text-ink2 transition-colors hover:text-orange-700"
                   >
-                    {section.groups && item.icon
-                      ? <Icon name={item.icon} size={15} className="shrink-0 text-orange-700" />
+                    {/* boxed icons, as in the mega menu */}
+                    {item.icon
+                      ? <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-line bg-surface text-orange-700"><Icon name={item.icon} size={14} /></span>
                       : <span className="h-1 w-1 rounded-full bg-primary/50" />}
                     {item.title}
                   </SmartLink>
@@ -172,7 +176,7 @@ export function MobileDrawer({ open, onClose, route, sections, panelUrl, phoneHr
             <button
               onClick={onClose}
               aria-label="بستن منو"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-line text-ink2 transition-colors hover:border-err/40 hover:text-err focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-control border border-line text-ink2 transition-colors hover:border-err/40 hover:text-err focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               <Icon name="x" size={17} />
             </button>
