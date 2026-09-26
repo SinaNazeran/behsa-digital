@@ -20,7 +20,7 @@ export default function Reports({ lead, categories, reports, panelUrl }: {
       <PageHero crumb={[{ label: "خانه", path: "/" }, { label: "گزارش‌ها" }]} title="گزارش‌های سامانه" lead={lead} tone="report" eyebrow={{ label: "هر گزارش، یک تصمیم", icon: "chart" }}>
         {categories.length > 1 && (
           <Reveal dir="l" delay={150}>
-            <nav aria-label="دسته‌های گزارش" className={cn(HERO_PANEL, "bg-blue-950/40! p-2")}>
+            <nav aria-label="دسته‌های گزارش" className={cn(HERO_PANEL, "p-2")}>
               <p className="flex items-center gap-2 px-3 pt-2 pb-1.5 text-[12px] font-bold text-white/75">
                 <Icon name="board" size={14} />
                 پرش به دسته — هر دسته به یک پرسش پاسخ می‌دهد
@@ -47,10 +47,10 @@ export default function Reports({ lead, categories, reports, panelUrl }: {
       </PageHero>
 
       <section className="py-16 md:py-20 bg-bg relative">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
           {reports.length === 0 ? (
-            <p className="rounded-md border border-line bg-surface p-8 text-center text-[15px] text-ink2">گزارشی منتشر نشده است.</p>
+            <p className="rounded-sheet border border-line bg-surface p-8 text-center text-[15px] text-ink2 shadow-card">گزارشی منتشر نشده است.</p>
           ) : (
             <ReportFinder categories={categories} reports={reports} />
           )}

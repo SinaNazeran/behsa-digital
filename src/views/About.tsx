@@ -1,6 +1,7 @@
 import { Icon } from "@/components/icons";
 import { Reveal, Btn, SectionHead, PageHero, CtaBanner } from "@/components/ui";
 import { DIFFERENTIATORS, FLOW_STEPS } from "@/content/data";
+import { faNum } from "@/lib/format";
 
 export default function About() {
   return (
@@ -14,7 +15,7 @@ export default function About() {
 
       {/* ── Mission & Vision ── */}
       <section className="py-20 md:py-24 bg-bg relative">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-5">
@@ -25,18 +26,18 @@ export default function About() {
               />
             </div>
             <div className="lg:col-span-7 grid gap-5 sm:grid-cols-2">
-              <Reveal dir="l">
-                <div className="h-full rounded-md border border-line bg-surface p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/40">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-sm bg-primary text-on-primary"><Icon name="decision" size={23} /></span>
+              <Reveal dir="l" className="h-full">
+                <div className="tone-orange kpi-card card-live group h-full p-7">
+                  <span className="kpi-icon h-12 w-12 group-hover:scale-110 group-hover:-rotate-6"><Icon name="decision" size={23} /></span>
                   <h3 className="mt-5 font-display font-extrabold text-[19px] text-ink">مأموریت</h3>
                   <p className="mt-3 text-[14px] leading-8 text-ink2">
                     کمک به سازمان‌ها و صنایع برای تصمیم‌گیری بهتر در حوزه انرژی با استفاده از داده و فناوری.
                   </p>
                 </div>
               </Reveal>
-              <Reveal dir="l" delay={130}>
-                <div className="h-full rounded-md border border-line bg-surface p-7 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-accent/50">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-sm bg-accent text-white"><Icon name="eye" size={23} /></span>
+              <Reveal dir="l" delay={130} className="h-full">
+                <div className="tone-green kpi-card card-live group h-full p-7">
+                  <span className="kpi-icon h-12 w-12 group-hover:scale-110 group-hover:-rotate-6"><Icon name="eye" size={23} /></span>
                   <h3 className="mt-5 font-display font-extrabold text-[19px] text-ink">چشم‌انداز</h3>
                   <p className="mt-3 text-[14px] leading-8 text-ink2">
                     تبدیل‌شدن به یک پلتفرم هوشمند و قابل اعتماد در مدیریت و بهینه‌سازی انرژی.
@@ -64,9 +65,9 @@ export default function About() {
             <div className="lg:col-span-8">
               {DIFFERENTIATORS.map((d, i) => (
                 <Reveal key={d.title} delay={i * 80}>
-                  <div className="group flex gap-6 border-b border-line py-7 first:pt-0 last:border-0 transition-colors hover:bg-bg/60 rounded-sm px-2">
-                    <span className="font-display font-black text-[34px] leading-none text-line group-hover:text-orange-700 transition-colors shrink-0 w-14 fa-num">
-                      {`۰${i + 1}`}
+                  <div className="tone-orange group flex gap-6 border-b border-line py-7 first:pt-0 last:border-0 transition-colors hover:bg-(--tone-50)/60 rounded-control px-3">
+                    <span className="kpi-num font-display font-black text-[38px] leading-none tracking-tighter shrink-0 w-12 fa-num">
+                      {faNum(i + 1)}
                     </span>
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
@@ -85,7 +86,7 @@ export default function About() {
 
       {/* ── Approach — RTL flow: داده ← تحلیل ← بینش ← تصمیم ← بهینه‌سازی ── */}
       <section className="relative py-20 md:py-24 bg-gradient-to-b from-blue-50 to-bg text-ink overflow-hidden border-y border-line">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_70%_at_90%_0%,rgb(0_98_189/0.12),transparent_60%)]" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
           <SectionHead
@@ -98,8 +99,8 @@ export default function About() {
             {FLOW_STEPS.map((s, i) => (
               <Reveal key={s} delay={i * 120}>
                 <div className="flex flex-col lg:flex-row items-center gap-4">
-                  <div className="group relative flex flex-col items-center gap-3 rounded-md border border-line bg-surface shadow-card px-8 py-6 min-w-[150px] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-soft border border-primary/20 font-display font-extrabold text-[15px] text-orange-700 fa-num">{(i + 1).toLocaleString("fa-IR")}</span>
+                  <div className="tone-blue kpi-card card-live group flex flex-col items-center gap-3 px-8 py-6 min-w-[150px]">
+                    <span className="kpi-icon h-10 w-10 rounded-full! font-display font-extrabold text-[15px] fa-num group-hover:scale-110">{(i + 1).toLocaleString("fa-IR")}</span>
                     <span className="font-display font-extrabold text-[17px] text-ink">{s}</span>
                   </div>
                   {i < FLOW_STEPS.length - 1 && (

@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/layout";
+import { CardSpotlight } from "@/components/CardSpotlight";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getNavigation, getSettings } from "@/lib/cms";
 import { SITE_URL } from "@/lib/seo";
@@ -65,6 +66,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           {children}
         </main>
         <Footer settings={settings} sections={sections} />
+        <CardSpotlight />
       </div>
     </>
   );

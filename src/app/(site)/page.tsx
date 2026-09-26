@@ -1,6 +1,6 @@
 import Home from "@/views/Home";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getContent, getFaqs, getPublishedArticles, getSettings, getTestimonials, toCardView } from "@/lib/cms";
+import { getContent, getFaqs, getPublishedArticles, getReportCatalogue, getSettings, getTestimonials, toCardView } from "@/lib/cms";
 import { buildMetadata } from "@/lib/seo";
 
 export async function generateMetadata() {
@@ -14,9 +14,11 @@ export async function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const [articles, testimonials, faqs, content, settings] = await Promise.all([
-    getPublishedArticles(), getTestimonials(), getFaqs(), getContent(), getSettings(),
+  const [articles, testimonials, faqs, content, settings, { reports }] = await Promise.all([
+    getPublishedArticles(), getTestimonials(), getFaqs(), getContent(), getSettings(), getReportCatalogue(),
   ]);
+  /* a homepage report card wears the colour of its report's category */
+  const reportTones = Object.fromEntries(reports.map((r) => [r.href, r.category.toneClass]));
 
   const faqLd = faqs.length
     ? {
@@ -39,6 +41,7 @@ export default async function HomePage() {
         faqs={faqs}
         content={content}
         panelUrl={settings.panelUrl}
+        reportTones={reportTones}
       />
     </>
   );

@@ -7,6 +7,7 @@
 # Testing & Coverage
 /coverage
 /.playwright
+/.playwright-cli
 /test-results
 
 # Next.js build output

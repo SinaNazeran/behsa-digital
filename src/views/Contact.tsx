@@ -16,7 +16,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
 
       {/* ── Contact Info Cards Grid ── */}
       <section className="relative bg-bg overflow-hidden py-16 md:py-20 border-b border-line">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="absolute -top-32 right-[12%] h-[400px] w-[520px] rounded-full bg-[radial-gradient(closest-side,rgb(0_98_189/0.12),transparent_70%)] blur-2xl glow-a" />
         <div className="absolute bottom-[-160px] left-[2%] h-[360px] w-[480px] rounded-full bg-[radial-gradient(closest-side,rgb(250_100_0/0.07),transparent_70%)] blur-2xl glow-b" />
 
@@ -27,14 +27,14 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
             <Reveal dir="r" delay={60}>
               <SmartLink
                 href={settings.phoneHref}
-                className="group flex flex-col justify-between h-full rounded-md border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40"
+                className="tone-orange kpi-card card-live group flex flex-col justify-between h-full p-7"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
+                    <span className="kpi-icon h-12 w-12 group-hover:scale-110 group-hover:-rotate-6">
                       <Icon name="phone" size={22} />
                     </span>
-                    <span className="text-[12px] font-bold text-orange-700 bg-primary-soft/60 px-3 py-1 rounded-full">تماس مستقیم</span>
+                    <span className="text-[12px] font-bold text-(--tone-700) bg-(--tone-50) ring-1 ring-inset ring-(--tone-200) px-3 py-1 rounded-full">تماس مستقیم</span>
                   </div>
                   <span className="block text-[13px] font-bold text-ink3">شماره تماس</span>
                   <span className="mt-2 block font-display font-black text-[20px] text-ink fa-num" dir="ltr" style={{ textAlign: "right" }}>
@@ -42,7 +42,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                   </span>
                   <span className="mt-1 block text-[13px] text-ink2">خطوط تلفن دفتر و کارخانه</span>
                 </div>
-                <div className="mt-6 pt-4 border-t border-linesoft flex items-center gap-2 text-[12.5px] font-bold text-orange-700 group-hover:gap-3 transition-all">
+                <div className="mt-6 pt-4 border-t border-(--tone-100) flex items-center gap-2 text-[12.5px] font-bold text-(--tone-700) group-hover:gap-3 transition-all">
                   <span>برقراری تماس</span>
                   <Icon name="arrowL" size={14} sw={2.2} />
                 </div>
@@ -53,14 +53,14 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
             <Reveal dir="r" delay={120}>
               <SmartLink
                 href={`mailto:${settings.email}`}
-                className="group flex flex-col justify-between h-full rounded-md border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40"
+                className="tone-blue kpi-card card-live group flex flex-col justify-between h-full p-7"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
+                    <span className="kpi-icon h-12 w-12 group-hover:scale-110 group-hover:-rotate-6">
                       <Icon name="mail" size={22} />
                     </span>
-                    <span className="text-[12px] font-bold text-orange-700 bg-primary-soft/60 px-3 py-1 rounded-full">مکاتبات رسمی</span>
+                    <span className="text-[12px] font-bold text-(--tone-700) bg-(--tone-50) ring-1 ring-inset ring-(--tone-200) px-3 py-1 rounded-full">مکاتبات رسمی</span>
                   </div>
                   <span className="block text-[13px] font-bold text-ink3">ایمیل</span>
                   <span className="mt-2 block font-display font-black text-[20px] text-ink" dir="ltr" style={{ textAlign: "right" }}>
@@ -68,7 +68,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                   </span>
                   <span className="mt-1 block text-[13px] text-ink2">ارسال استعلام، پیشنهادها و RFP</span>
                 </div>
-                <div className="mt-6 pt-4 border-t border-linesoft flex items-center gap-2 text-[12.5px] font-bold text-orange-700 group-hover:gap-3 transition-all">
+                <div className="mt-6 pt-4 border-t border-(--tone-100) flex items-center gap-2 text-[12.5px] font-bold text-(--tone-700) group-hover:gap-3 transition-all">
                   <span>ارسال ایمیل</span>
                   <Icon name="arrowL" size={14} sw={2.2} />
                 </div>
@@ -77,13 +77,13 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
 
             {/* Working Hours */}
             <Reveal dir="r" delay={180}>
-              <div className="flex flex-col justify-between h-full rounded-md border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/30">
+              <div className="tone-green kpi-card flex flex-col justify-between h-full p-7">
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-accent-soft text-accent">
+                    <span className="kpi-icon h-12 w-12">
                       <Icon name="clock" size={22} />
                     </span>
-                    <span className="text-[12px] font-bold text-accent bg-accent-soft/60 px-3 py-1 rounded-full">روزهای کاری</span>
+                    <span className="text-[12px] font-bold text-(--tone-700) bg-(--tone-50) ring-1 ring-inset ring-(--tone-200) px-3 py-1 rounded-full">روزهای کاری</span>
                   </div>
                   <span className="block text-[13px] font-bold text-ink3">ساعات کاری و حضور</span>
                   <span className="mt-2 block font-display font-bold text-[17px] text-ink leading-7">
@@ -102,13 +102,13 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
           <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Address */}
             <Reveal dir="l" delay={60}>
-              <div className="flex flex-col justify-between h-full rounded-md border border-line bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/30">
+              <div className="tone-blue kpi-card flex flex-col justify-between h-full p-7">
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-primary-soft text-orange-700">
+                    <span className="kpi-icon h-12 w-12">
                       <Icon name="pin" size={22} />
                     </span>
-                    <span className="text-[12px] font-bold text-orange-700 bg-primary-soft/60 px-3 py-1 rounded-full">کارخانه و دفتر مرکزی</span>
+                    <span className="text-[12px] font-bold text-(--tone-700) bg-(--tone-50) ring-1 ring-inset ring-(--tone-200) px-3 py-1 rounded-full">کارخانه و دفتر مرکزی</span>
                   </div>
                   <span className="block text-[13px] font-bold text-ink3">آدرس رسمی</span>
                   <p className="mt-2 text-[15.5px] font-bold text-ink leading-8">
@@ -123,7 +123,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
 
             {/* Bale Social Network */}
             <Reveal dir="l" delay={120}>
-              <div className="flex flex-col justify-between h-full rounded-md border border-[#00B894]/40 bg-surface p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-[#00B894]/70">
+              <div className="tone-green kpi-card flex flex-col justify-between h-full p-7">
                 <div>
                   <div className="flex items-center justify-between mb-5">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-[#00B894]/12 text-[#00785F]">
@@ -144,7 +144,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                     href={settings.baleUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 w-full rounded-sm bg-[#00785F] px-4 py-2.5 text-[13.5px] font-bold text-white transition-all hover:bg-[#006F58] shadow-sm"
+                    className="inline-flex items-center justify-center gap-2 w-full rounded-control bg-[#00785F] px-4 py-2.5 text-[13.5px] font-bold text-white transition-all hover:bg-[#006F58] shadow-sm"
                   >
                     <span>عضویت در کانال بله (behsa_digital@)</span>
                     <Icon name="external" size={13} />
@@ -155,10 +155,10 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
 
             {/* Support / Dashboard Panel */}
             <Reveal dir="l" delay={180}>
-              <div className="flex flex-col justify-between h-full rounded-md border border-primary/25 bg-primary-soft/50 p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-primary/40">
+              <div className="tone-orange kpi-card flex flex-col justify-between h-full p-7">
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-control bg-primary text-on-primary">
+                    <span className="kpi-icon h-12 w-12">
                       <Icon name="bolt" size={22} />
                     </span>
                     <span className="text-[12px] font-bold text-orange-700 bg-surface px-3 py-1 rounded-full border border-primary/20">مشترکان سامانه</span>
@@ -176,7 +176,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                     href={settings.panelUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 w-full rounded-sm bg-primary px-4 py-2.5 text-[13.5px] font-bold text-on-primary transition-all hover:bg-primary-deep shadow-sm"
+                    className="inline-flex items-center justify-center gap-2 w-full rounded-control bg-primary px-4 py-2.5 text-[13.5px] font-bold text-on-primary transition-all hover:bg-primary-deep shadow-sm"
                   >
                     <span>ورود به سامانه بهسا</span>
                     <Icon name="external" size={13} />
@@ -192,7 +192,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
           start a conversation. Until this shipped, the page offered
           contact details and nothing else (docs/content-audit.md). */}
       <section className="relative bg-surface border-b border-line py-16 md:py-20">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="relative mx-auto max-w-[840px] px-5 md:px-8">
           <Reveal>
             <h2 className="font-display text-[22px] md:text-[26px] font-extrabold text-ink text-center">
@@ -203,7 +203,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
             </p>
           </Reveal>
           <Reveal delay={120}>
-            <div className="mt-9 rounded-md border border-line bg-bg p-6 md:p-8 shadow-card">
+            <div className="mt-9 tone-blue kpi-card p-6 md:p-8">
               <LeadForm
                 sourcePath="/contact"
                 subject={subject || "تماس عمومی"}
@@ -218,7 +218,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
 
       {/* ── Map · Location preview ── */}
       <section className="relative bg-surface border-t border-line py-14 md:py-16">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
           <Reveal>
             <div className="relative overflow-hidden rounded-lg border border-line shadow-card">
@@ -255,11 +255,11 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                   <circle cx="0" cy="-6" r="8" fill="#fff" />
                 </g>
                 <g transform="translate(600 62)">
-                  <rect x="-140" y="-26" width="280" height="40" rx="8" fill="#16212E" />
+                  <rect x="-140" y="-26" width="280" height="40" rx="10" fill="#0062BD" />
                   <text x="0" y="0" textAnchor="middle" fontSize="14" fill="#fff" fontFamily="Vazirmatn" fontWeight="700">بهسا دیجیتال — شهرک صنعتی توس، پلاک ۳۷۰</text>
                 </g>
               </svg>
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-sm bg-surface/95 border border-line px-4 py-2.5 text-[12.5px] font-bold text-ink shadow-card">
+              <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-control bg-surface/95 border border-line px-4 py-2.5 text-[12.5px] font-bold text-ink shadow-card">
                 <Icon name="pin" size={15} className="text-orange-700" />
                 مشهد، شهرک صنعتی توس، فاز یک
               </div>

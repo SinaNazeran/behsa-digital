@@ -1,5 +1,6 @@
 import { Icon, type IconName } from "@/components/icons";
-import { Reveal, Btn, PageHero, CtaBanner, HERO_PANEL } from "@/components/ui";
+import { Reveal, Btn, PageHero, CtaBanner, HERO_PANEL, SideNav } from "@/components/ui";
+import { TONES, LENS_TONE } from "@/components/tones";
 import type { LandingNode, NavLens } from "@/content/navigation";
 import { capabilityBySlug, STAGE_META, type NarrativeStage } from "@/content/capabilities";
 import { cn } from "@/utils/cn";
@@ -115,7 +116,7 @@ export default function Landing({ node, crumbs, siblings, linked, panelUrl }: {
       >
         {(stage || linked.length > 0) && (
           <Reveal dir="l" delay={150}>
-            <div className={cn(HERO_PANEL, "bg-black/20! divide-y divide-white/15 [&>*]:py-4 [&>*:first-child]:pt-0 [&>*:last-child]:pb-0")}>
+            <div className={cn(HERO_PANEL, "divide-y divide-white/15 [&>*]:py-4 [&>*:first-child]:pt-0 [&>*:last-child]:pb-0")}>
               {stage && <StageTrack stage={stage} />}
               {linked.length > 0 && <RelatedLinks links={linked} />}
             </div>
@@ -124,14 +125,14 @@ export default function Landing({ node, crumbs, siblings, linked, panelUrl }: {
       </PageHero>
 
       <section className="py-16 md:py-20 bg-bg relative">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 grid gap-10 lg:grid-cols-12">
           {/* main column */}
           <div className="lg:col-span-8">
             {isPlatformIntro ? (
               <CapabilitiesOverview />
             ) : capability ? (
-              <CapabilityFeatureList category={capability} />
+              <CapabilityFeatureList category={capability} tone={LENS_TONE[node.lens]} />
             ) : node.children ? (
               <>
                 <Reveal>
@@ -139,14 +140,14 @@ export default function Landing({ node, crumbs, siblings, linked, panelUrl }: {
                 </Reveal>
                 <div className="mt-8 grid gap-5 sm:grid-cols-2">
                   {node.children.map((c, i) => (
-                    <Reveal key={c.id} delay={(i % 2) * 90}>
-                      <SmartLink href={c.href} className="group flex h-full flex-col rounded-md border border-line bg-surface p-6 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
-                        <span className="inline-flex h-12 w-12 items-center justify-center rounded-sm bg-primary-soft text-orange-700 transition-colors duration-300 group-hover:bg-primary group-hover:text-on-primary">
+                    <Reveal key={c.id} delay={(i % 2) * 90} className="h-full">
+                      <SmartLink href={c.href} className={cn(TONES[i % TONES.length], "kpi-card card-live group flex h-full flex-col p-6")}>
+                        <span className="kpi-icon h-12 w-12 group-hover:scale-110 group-hover:-rotate-6">
                           {c.icon && <Icon name={c.icon} size={23} />}
                         </span>
-                        <h3 className="mt-4 font-display font-bold text-[16.5px] text-ink group-hover:text-orange-700 transition-colors">{c.title}</h3>
+                        <h3 className="mt-5 font-display font-extrabold text-[16.5px] text-ink tracking-tight group-hover:text-(--tone-700) transition-colors">{c.title}</h3>
                         {c.description && <p className="mt-2 text-[13px] leading-6.5 text-ink2 flex-1">{c.description}</p>}
-                        <span className="mt-4 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-orange-700">
+                        <span className="mt-4 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-(--tone-700)">
                           مشاهده <Icon name="arrowL" size={13} sw={2.2} className="transition-transform group-hover:-translate-x-1" />
                         </span>
                       </SmartLink>
@@ -156,7 +157,7 @@ export default function Landing({ node, crumbs, siblings, linked, panelUrl }: {
               </>
             ) : (
               <Reveal>
-                <div className="rounded-md border border-line bg-surface p-8">
+                <div className={cn(LENS_TONE[node.lens], "kpi-card p-8")}>
                   <h2 className="font-display font-extrabold text-[20px] text-ink">{node.title}</h2>
                   <p className="mt-4 text-[15px] leading-8 text-ink2">{node.description}.</p>
                   <p className="mt-3 text-[15px] leading-8 text-ink2">
@@ -175,23 +176,12 @@ export default function Landing({ node, crumbs, siblings, linked, panelUrl }: {
           {/* sibling rail */}
           {siblings.length > 0 && (
             <aside className="lg:col-span-4">
-              <div className="lg:sticky lg:top-32 rounded-md border border-line bg-surface p-6">
-                <p className="font-display font-bold text-[15px] text-ink">سایر موارد {node.section.title}</p>
-                <ul className="mt-4 space-y-1">
-                  {siblings.map((s) => (
-                    <li key={s.id}>
-                      <SmartLink href={s.href} className="group flex items-center gap-3 rounded-sm px-3 py-2.5 text-[13.5px] font-semibold text-ink2 transition-colors hover:bg-bg hover:text-orange-700">
-                        {s.icon && <Icon name={s.icon} size={16} className="text-ink3 group-hover:text-orange-700" />}
-                        {s.title}
-                        <Icon name="arrowL" size={12} className="mr-auto opacity-0 transition-opacity group-hover:opacity-60" />
-                      </SmartLink>
-                    </li>
-                  ))}
-                </ul>
-                <SmartLink href={node.section.href} className="mt-4 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-orange-700 hover:gap-3 transition-all">
-                  همهٔ {node.section.title} <Icon name="arrowL" size={13} sw={2.2} />
-                </SmartLink>
-              </div>
+              <SideNav
+                title={`سایر موارد ${node.section.title}`}
+                items={siblings.map((x) => ({ key: x.id, href: x.href, label: x.title, icon: x.icon }))}
+                more={{ href: node.section.href, label: `همهٔ ${node.section.title}` }}
+                tone={LENS_TONE[node.lens]}
+              />
             </aside>
           )}
         </div>

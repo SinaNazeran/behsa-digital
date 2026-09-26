@@ -113,13 +113,13 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
         onMouseLeave={closeSoon}
         className={cn(
           "relative mx-auto mt-3 flex max-w-[1280px] items-center gap-4 rounded-lg border px-4 transition-all duration-300 ease-out md:px-5",
-          /* scrolled: solid surface, tighter bar, subtle elevation that lifts it off the page */
+          /* solid white in both states, not frosted glass: the logo's orange
+             «EHSA» reaches 3:1 only on pure white, and the saturated hero
+             grounds tinted a 90% glass enough to drop it to 2.67:1.
+             scrolled: tighter bar, and elevation that lifts it off the page */
           scrolled || open
-            ? "h-[58px] border-line bg-surface/[0.97] shadow-[0_10px_30px_-14px_rgb(22_33_46/0.28)] backdrop-blur-md md:h-[62px]"
-            /* at rest: frosted glass over a saturated hero. Mostly white so it
-               stays white, saturated so the little that bleeds through is a
-               tint of the hero colour rather than grey */
-            : "h-[64px] border-white/70 bg-white/[0.9] shadow-card backdrop-blur-xl backdrop-saturate-[1.8] md:h-[68px]",
+            ? "h-[58px] border-line bg-surface shadow-[0_10px_30px_-14px_rgb(22_33_46/0.28)] md:h-[62px]"
+            : "h-[64px] border-white/70 bg-surface shadow-[0_12px_32px_-16px_rgb(0_32_70/0.45)] md:h-[68px]",
         )}
       >
         {/* logo — rightmost: symbol on top + BEHSA underneath exactly like brand asset */}

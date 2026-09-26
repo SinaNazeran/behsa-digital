@@ -14,7 +14,8 @@ import { featureCount, type CapabilityCategory, type ContentBlock } from "@/cont
    Either may be present, both may be present, and neither breaks the
    page: a node with no body still renders its lead. */
 
-export function CapabilityFeatureList({ category }: { category: CapabilityCategory }) {
+/** `tone` — the page lens colour (components/tones LENS_TONE) */
+export function CapabilityFeatureList({ category, tone = "tone-blue" }: { category: CapabilityCategory; tone?: string }) {
   const soon = category.status === "coming-soon";
   const groups = category.featureGroups;
   const sections = category.sections ?? [];
@@ -22,7 +23,7 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
   if (soon) {
     return (
       <Reveal>
-        <div className="rounded-md border-2 border-dashed border-line bg-surface p-8 text-center">
+        <div className="rounded-sheet border-2 border-dashed border-line bg-surface p-8 text-center">
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-linesoft text-ink3">
             <Icon name="clock" size={26} />
           </span>
@@ -55,17 +56,17 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
       )}
 
       {/* prose sections — solutions and industries */}
-      {sections.length > 0 && <ContentBlocks blocks={sections} className={category.description ? "mt-8" : "mt-2"} />}
+      {sections.length > 0 && <ContentBlocks blocks={sections} tone={tone} className={category.description ? "mt-8" : "mt-2"} />}
 
       {/* verbatim feature names — capability pages */}
       {groups.length > 0 && (
         <div className="mt-6 space-y-6">
           {groups.map((group, gi) => (
             <Reveal key={group.title ?? gi} delay={gi * 80}>
-              <section className="rounded-md border border-line bg-surface p-6 md:p-7">
+              <section className={cn(tone, "kpi-card p-6 md:p-7")}>
                 {group.title && (
                   <h3 className="flex items-center gap-3 font-display text-[16px] font-extrabold text-ink">
-                    <span className="inline-block h-5 w-1.5 rounded-full bg-primary" />
+                    <span className="inline-block h-5 w-1.5 rounded-full bg-(--tone-500)" />
                     {group.title}
                   </h3>
                 )}
@@ -73,9 +74,9 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
                   {group.items.map((item) => (
                     <li
                       key={item}
-                      className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-bg/70 rounded-sm px-2 -mx-2"
+                      className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-(--tone-50)/70 rounded-control px-2 -mx-2"
                     >
-                      <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-primary-soft text-orange-700 transition-colors group-hover:bg-primary group-hover:text-on-primary">
+                      <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-(--tone-50) text-(--tone-700) ring-1 ring-inset ring-(--tone-200) transition-colors group-hover:bg-(--tone-600) group-hover:text-white group-hover:ring-(--tone-600)">
                         <Icon name="check" size={12} sw={2.6} />
                       </span>
                       <span className="text-[14px] font-medium leading-7 text-ink">{item}</span>
@@ -92,14 +93,14 @@ export function CapabilityFeatureList({ category }: { category: CapabilityCatego
 }
 
 /** prose blocks with optional bullet lists — solution, industry and report pages */
-export function ContentBlocks({ blocks, className }: { blocks: ContentBlock[]; className?: string }) {
+export function ContentBlocks({ blocks, className, tone = "tone-blue" }: { blocks: ContentBlock[]; className?: string; tone?: string }) {
   return (
     <div className={cn("space-y-6", className)}>
       {blocks.map((block, bi) => (
         <Reveal key={bi} delay={bi * 70}>
-          <section className="rounded-md border border-line bg-surface p-6 md:p-7">
+          <section className={cn(tone, "kpi-card p-6 md:p-7")}>
             <h2 className="flex items-center gap-3 font-display text-[16px] font-extrabold text-ink">
-              <span className="inline-block h-5 w-1.5 rounded-full bg-primary" />
+              <span className="inline-block h-5 w-1.5 rounded-full bg-(--tone-500)" />
               {block.title}
             </h2>
             {block.body?.map((para, pi) => (
@@ -110,9 +111,9 @@ export function ContentBlocks({ blocks, className }: { blocks: ContentBlock[]; c
                 {block.items.map((item, ii) => (
                   <li
                     key={ii}
-                    className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-bg/70 rounded-sm px-2 -mx-2"
+                    className="group flex items-start gap-3 border-b border-linesoft py-3.5 last:border-0 last:pb-0 transition-colors hover:bg-(--tone-50)/70 rounded-control px-2 -mx-2"
                   >
-                    <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-xs bg-primary-soft text-orange-700 transition-colors group-hover:bg-primary group-hover:text-on-primary">
+                    <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-(--tone-50) text-(--tone-700) ring-1 ring-inset ring-(--tone-200) transition-colors group-hover:bg-(--tone-600) group-hover:text-white group-hover:ring-(--tone-600)">
                       <Icon name="check" size={12} sw={2.6} />
                     </span>
                     <span className="text-[14px] font-medium leading-7 text-ink">{item}</span>

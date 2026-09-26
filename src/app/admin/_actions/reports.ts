@@ -11,6 +11,7 @@ import { REPORT_AUDIENCES } from "@/content/reports";
 import { CAPABILITY_CATEGORIES, CONTENT_PAGES } from "@/content/capabilities";
 import type { ActionState } from "@/components/admin/ui";
 import { bool, done, fail, int, isUniqueViolation, refresh, str, uuidOrNull } from "./helpers";
+import { isCategoryTone, nextCategoryTone } from "@/components/tones";
 
 const sectionsSchema = z
   .array(z.object({
@@ -153,11 +154,22 @@ export async function saveReportCategory(_prev: ActionState, fd: FormData): Prom
   if (!name) return fail("نام دسته الزامی است.");
   if (!SLUG_RE.test(slug)) return fail("نامک فقط حروف کوچک انگلیسی، عدد و خط تیره.");
   const sortOrder = int(fd, "sortOrder");
+  /* colour is the category's identity on the site: a chosen one must be a
+     validated slot; none chosen (a new category, or one saved before the
+     field existed) takes the first slot no other category uses */
+  const picked = str(fd, "tone", 20);
+  let tone: string = picked;
+  if (!isCategoryTone(picked)) {
+    const others = await db.select({ id: schema.reportCategories.id, tone: schema.reportCategories.tone }).from(schema.reportCategories);
+    const own = others.find((o) => o.id === id)?.tone;
+    tone = isCategoryTone(own) ? own : nextCategoryTone(others.filter((o) => o.id !== id).map((o) => o.tone));
+  }
   const values = {
     name,
     slug,
     question: str(fd, "question", 255),
     icon: str(fd, "icon", 40),
+    tone,
     sortOrder: Number.isFinite(sortOrder) ? sortOrder : 0,
   };
   try {

@@ -183,7 +183,10 @@ export function Donut({ segments, centerTop, centerBottom }: { segments: { v: nu
 /* Generated thumbnail for article cards — data-viz instead of stock photos */
 export function Thumb({ chart, cat, accent = SERIES.grid }: { chart: "line" | "bars" | "donut" | "area"; cat: string; accent?: string }) {
   const seed = cat.length * 7 + cat.charCodeAt(0);
-  const data = Array.from({ length: 12 }, (_, i) => 30 + Math.abs(Math.sin(seed + i * 1.7)) * 55 + (i % 3) * 6);
+  /* rounded: Math.sin differs in the last digits between the server's V8
+     and the browser's engine, and those digits reached the SVG attributes
+     as a hydration mismatch */
+  const data = Array.from({ length: 12 }, (_, i) => Math.round((30 + Math.abs(Math.sin(seed + i * 1.7)) * 55 + (i % 3) * 6) * 100) / 100);
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-surface grid-light" dir="ltr">
       <svg viewBox="0 0 400 220" className="w-full h-auto block" aria-hidden="true">

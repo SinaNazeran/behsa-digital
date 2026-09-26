@@ -44,11 +44,11 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
     <>
       {/* reading progress */}
       <div className="fixed top-0 right-0 left-0 z-[70] h-[3px] bg-transparent pointer-events-none" aria-hidden="true">
-        <div className="h-full bg-accent transition-[width] duration-150" style={{ width: `${progress * 100}%` }} />
+        <div className="h-full bg-primary transition-[width] duration-150" style={{ width: `${progress * 100}%` }} />
       </div>
 
       <article className="bg-bg relative">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 pt-10 md:pt-14">
           <Reveal dir="r"><Breadcrumb items={[{ label: "خانه", path: "/" }, { label: "مقالات", path: "/articles" }, { label: article.cat }, { label: article.title }]} /></Reveal>
 
@@ -83,7 +83,7 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
                         id={`sec-${i}`}
                         className="font-display font-extrabold text-[20px] md:text-[22px] leading-[1.55] text-ink scroll-mt-32 flex items-center gap-3"
                       >
-                        <span className="inline-block h-6 w-1.5 rounded-full bg-accent shrink-0" />
+                        <span className="inline-block h-6 w-1.5 rounded-full bg-blue-600 shrink-0" />
                         {sec.h}
                       </h2>
                     )}
@@ -94,7 +94,7 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
                 ))}
 
                 {/* inline callout */}
-                <aside className="rounded-md border border-primary/25 bg-primary-soft/60 p-6 flex gap-4">
+                <aside className="tone-orange kpi-card p-6 flex gap-4">
                   <span className="text-orange-700 shrink-0 mt-1"><Icon name="info" size={22} /></span>
                   <div>
                     <p className="font-display font-bold text-[15.5px] text-ink">جمع‌بندی کاربردی</p>
@@ -108,7 +108,7 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
 
               {/* author box */}
               <Reveal>
-                <footer className="mt-12 rounded-md border border-line bg-surface p-6 flex flex-wrap items-center gap-5">
+                <footer className="mt-12 tone-blue kpi-card p-6 flex flex-wrap items-center gap-5">
                   <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-on-primary font-display font-extrabold text-[20px]">ب</span>
                   <div className="flex-1 min-w-[220px]">
                     <p className="font-display font-bold text-[15.5px] text-ink">{article.author}</p>
@@ -122,7 +122,7 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
             {/* ── Sticky TOC sidebar (leftmost in RTL) ── */}
             <aside className="hidden lg:block lg:col-span-4">
               <div className="sticky top-32 space-y-6">
-                <nav className="rounded-md border border-line bg-surface p-6" aria-label="فهرست مطالب">
+                <nav className="tone-blue kpi-card p-6" aria-label="فهرست مطالب">
                   <p className="flex items-center gap-2.5 font-display font-bold text-[14.5px] text-ink">
                     <Icon name="board" size={17} className="text-orange-700" /> فهرست مطالب
                   </p>
@@ -133,8 +133,8 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
                           href={`#sec-${article.body.findIndex((b) => b.h === h)}`}
                           onClick={(e) => { e.preventDefault(); document.getElementById(`sec-${article.body.findIndex((b) => b.h === h)}`)?.scrollIntoView({ behavior: "smooth", block: "start" }); }}
                           className={cn(
-                            "block rounded-sm border-r-2 py-2 pl-3 text-[13px] font-semibold transition-all",
-                            active === i ? "border-accent bg-accent-soft/60 text-ink pr-3.5" : "border-transparent text-ink2 hover:text-orange-700 hover:border-primary/30 pr-3",
+                            "block rounded-control border-r-2 py-2 pl-3 text-[13px] font-semibold transition-all",
+                            active === i ? "border-blue-600 bg-blue-50 text-blue-700 pr-3.5" : "border-transparent text-ink2 hover:text-blue-700 hover:border-blue-300 pr-3",
                           )}
                         >
                           {h}
@@ -147,17 +147,17 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
                       <span>پیشرفت مطالعه</span><span className="fa-num">{`${Math.round(progress * 100).toLocaleString("fa-IR")}٪`}</span>
                     </div>
                     <div className="h-1.5 rounded-full bg-linesoft overflow-hidden">
-                      <div className="h-full rounded-full bg-accent transition-[width] duration-200" style={{ width: `${progress * 100}%` }} />
+                      <div className="h-full rounded-full bg-primary transition-[width] duration-200" style={{ width: `${progress * 100}%` }} />
                     </div>
                   </div>
                 </nav>
 
-                <div className="rounded-md border border-line bg-navy text-neutral-100 p-6 on-dark relative overflow-hidden">
-                  <div className="absolute inset-0 grid-dark" />
+                <div className="on-brand relative overflow-hidden rounded-lg bg-gradient-to-bl from-blue-600 via-blue-600 to-blue-700 p-6 text-white shadow-[0_24px_48px_-20px_rgb(0_98_189/0.55)]">
+                  <div className="absolute inset-0 grid-dark grid-fade opacity-80" />
                   <div className="relative">
                     <p className="font-display font-bold text-[16px]">این محاسبات را خودکار دریافت کنید</p>
-                    <p className="mt-2 text-[13px] leading-6.5 text-neutral-400">گزارش دیماند و توان راکتیو مجموعه‌تان، هر ماه روی داشبورد شما.</p>
-                    <Btn href={panelUrl} target="_blank" variant="green" size="sm" className="mt-4 w-full" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">ورود به سامانه</Btn>
+                    <p className="mt-2 text-[13px] leading-6.5 text-blue-50">گزارش دیماند و توان راکتیو مجموعه‌تان، هر ماه روی داشبورد شما.</p>
+                    <Btn href={panelUrl} target="_blank" size="sm" className="mt-4 w-full" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">ورود به سامانه</Btn>
                   </div>
                 </div>
               </div>
@@ -172,8 +172,8 @@ export default function ArticleDetail({ article, related, panelUrl }: { article:
               <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="h-px w-8 bg-accent" />
-                    <span className="text-[13px] font-bold text-accent">ادامه مطالعه</span>
+                    <span className="h-px w-8 bg-blue-600" />
+                    <span className="text-[13px] font-bold text-blue-700">ادامه مطالعه</span>
                   </div>
                   <h2 className="font-display font-extrabold text-[24px] md:text-[28px] text-ink">مقالات مرتبط</h2>
                 </div>

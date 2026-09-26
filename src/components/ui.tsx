@@ -45,7 +45,7 @@ export function Badge({ children, tone = "blue", icon }: { children: ReactNode; 
     steel: "bg-neutral-100 text-ink2 border-neutral-300",
   };
   return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-xs border px-2.5 py-1 text-[12px] font-semibold leading-none", tones[tone])}>
+    <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[12px] font-bold leading-none", tones[tone])}>
       {icon && <Icon name={icon} size={13} sw={2} />}
       {children}
     </span>
@@ -107,102 +107,101 @@ export function Breadcrumb({ items, dark = false }: { items: { label: string; pa
 /* ── Inner-page hero band ──
    One skeleton everywhere (crumb → eyebrow → H1 → lead → side panel), so
    every inner page reads as the same system. Every hero stands on a
-   saturated brand ground — none is left pale — and the hue plus one data
-   motif say which part of the site the visitor is in. The tone is the
-   menu section's lens:
-     feature  · product    navy control room, a live load profile
-     report   · reports    bright brand blue, a combo chart with one marked
-                           point (the decision the report serves)
-     outcome  · solutions  deep green, the curve dropping under the
-                           contracted-demand line (the penalty removed)
-     vertical · industries burnt orange, several sites' load shapes
-     content / company     the brand pair, blue fading through navy to orange
-   Every ground is dark enough for white text (blue-600, the lightest,
-   is 6.03:1), so side panels share one glass surface: HERO_PANEL. */
+   saturated brand ground — none is left pale, none is navy — and the hue
+   plus one data motif say which part of the site the visitor is in. The
+   grounds are the homepage's own bands, so an inner page reads as the
+   same product:
+     feature  · product    brand blue (the platform band), a live load profile
+     report   · reports    brand blue, deeper at the foot, a combo chart with
+                           one marked point (the decision the report serves)
+     outcome  · solutions  brand green (the regulation band), the curve
+                           dropping under the contracted-demand line
+     vertical · industries brand orange-700, several sites' load shapes
+     content / company     brand blue closed by a blue–orange brand strip —
+                           the pair side by side, never blended into brown
+   Glows stay in the ground's own hue: orange light over blue (or blue
+   over orange) mixes to a muddy grey. White text holds 5.6:1 or better
+   on every ground, so side panels share one glass surface: HERO_PANEL. */
 export type HeroTone = NavLens | "report";
 
 type ToneStyle = { section: string; layers: ReactNode; accent: string; eyebrow: string; lead: string; /** extra room when the motif is tall */ pad?: string };
 
+const BLUE_GROUND = (
+  <>
+    <div className="absolute inset-0 grid-dark grid-fade opacity-80" />
+    <div className="absolute -top-40 right-[4%] h-[440px] w-[640px] rounded-full bg-blue-400/35 blur-3xl glow-a" />
+    <div className="absolute -bottom-40 left-[6%] h-[360px] w-[520px] rounded-full bg-blue-400/25 blur-3xl glow-b" />
+  </>
+);
+
+const ON_BRAND = { accent: "text-orange-200", eyebrow: "border-white/25 bg-white/12 text-white", lead: "text-blue-50" };
+
 const EDITORIAL: ToneStyle = {
-  /* the brand pair itself: blue behind the headline, orange behind the
-     panel, navy between them so the two never mix into brown */
-  section: "bg-gradient-to-bl from-blue-700 via-blue-950 to-orange-900 border-blue-900",
+  section: "bg-gradient-to-bl from-blue-700 via-blue-600 to-blue-600 border-blue-700",
   layers: (
     <>
-      <div className="absolute inset-0 grid-dark opacity-50" />
-      <div className="absolute -top-40 right-[2%] h-[440px] w-[640px] rounded-full bg-blue-500/40 blur-3xl glow-a" />
-      <div className="absolute -bottom-44 left-[4%] h-[380px] w-[540px] rounded-full bg-orange-500/35 blur-3xl glow-b" />
+      {BLUE_GROUND}
+      {/* the brand pair, side by side: a strip at the foot of the hero */}
+      <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-l from-blue-400 via-primary to-blue-400" />
     </>
   ),
-  accent: "text-orange-300",
-  eyebrow: "border-white/20 bg-white/10 text-white",
-  lead: "text-blue-50",
+  ...ON_BRAND,
 };
 
 const HERO_TONES: Record<HeroTone, ToneStyle> = {
   feature: {
-    section: "bg-gradient-to-b from-blue-950 via-blue-900 to-blue-800 border-blue-800",
-    layers: (
-      <>
-        <div className="absolute inset-0 grid-dark opacity-60" />
-        <div className="absolute -top-40 right-[4%] h-[440px] w-[640px] rounded-full bg-blue-500/45 blur-3xl glow-a" />
-        <div className="absolute -bottom-40 left-[6%] h-[360px] w-[500px] rounded-full bg-orange-500/22 blur-3xl glow-b" />
-      </>
-    ),
-    accent: "text-orange-300",
-    eyebrow: "border-blue-300/30 bg-blue-300/12 text-blue-100",
-    lead: "text-blue-100",
+    section: "bg-gradient-to-b from-blue-600 via-blue-600 to-blue-700 border-blue-700",
+    layers: BLUE_GROUND,
+    ...ON_BRAND,
   },
   report: {
-    section: "bg-gradient-to-b from-blue-600 via-blue-700 to-blue-900 border-blue-900",
+    section: "bg-gradient-to-b from-blue-600 via-blue-700 to-blue-800 border-blue-800",
     layers: (
       <>
         {/* one grid, strongest behind the headline and fading out toward the
             panel and the chart, so it frames the text instead of crossing it */}
         <div className="absolute inset-0 opacity-[0.14] [background-image:linear-gradient(to_left,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:44px_44px] [mask-image:radial-gradient(ellipse_70%_80%_at_80%_25%,#000_15%,transparent_75%)]" />
         <div className="absolute -top-48 right-[2%] h-[480px] w-[700px] rounded-full bg-blue-400/45 blur-3xl glow-a" />
-        <div className="absolute -bottom-32 left-[18%] h-[260px] w-[520px] rounded-full bg-orange-500/25 blur-3xl glow-b" />
+        <div className="absolute -bottom-32 left-[18%] h-[260px] w-[520px] rounded-full bg-blue-400/25 blur-3xl glow-b" />
         {/* hairline across the top edge — reads as the rule on a printed report */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-l from-transparent via-white/40 to-transparent" />
       </>
     ),
-    accent: "text-orange-200",
-    eyebrow: "border-white/25 bg-white/12 text-white",
-    lead: "text-blue-50",
+    ...ON_BRAND,
     pad: "pb-24 md:pb-40",
   },
   outcome: {
-    section: "bg-gradient-to-b from-green-950 via-green-900 to-green-800 border-green-900",
+    section: "bg-green-700 border-green-800",
     layers: (
       <>
         <div className="absolute inset-0 dots-dark opacity-80" />
-        <div className="absolute -top-40 right-[6%] h-[420px] w-[600px] rounded-full bg-green-500/35 blur-3xl glow-a" />
-        <div className="absolute -bottom-40 left-[8%] h-[340px] w-[480px] rounded-full bg-orange-500/20 blur-3xl glow-b" />
+        <div className="absolute -top-40 right-[6%] h-[420px] w-[600px] rounded-full bg-green-400/35 blur-3xl glow-a" />
+        <div className="absolute -bottom-40 left-[8%] h-[340px] w-[480px] rounded-full bg-blue-500/25 blur-3xl glow-b" />
       </>
     ),
-    accent: "text-orange-300",
-    eyebrow: "border-green-300/30 bg-green-300/12 text-green-100",
-    lead: "text-green-100",
+    accent: "text-orange-200",
+    eyebrow: "border-white/25 bg-white/12 text-white",
+    lead: "text-green-50",
   },
   vertical: {
-    section: "bg-gradient-to-b from-orange-950 via-orange-900 to-orange-800 border-orange-900",
+    section: "bg-gradient-to-b from-orange-700 via-orange-700 to-orange-800 border-orange-800",
     layers: (
       <>
-        <div className="absolute inset-0 opacity-70 [background-image:radial-gradient(rgb(254_184_155/0.22)_1px,transparent_1px)] [background-size:22px_22px]" />
-        <div className="absolute -top-40 right-[6%] h-[420px] w-[600px] rounded-full bg-orange-500/40 blur-3xl glow-a" />
-        <div className="absolute -bottom-40 left-[6%] h-[340px] w-[480px] rounded-full bg-blue-500/22 blur-3xl glow-b" />
+        <div className="absolute inset-0 opacity-70 [background-image:radial-gradient(rgb(254_211_194/0.22)_1px,transparent_1px)] [background-size:22px_22px]" />
+        <div className="absolute -top-40 right-[6%] h-[420px] w-[600px] rounded-full bg-orange-400/40 blur-3xl glow-a" />
+        <div className="absolute -bottom-40 left-[6%] h-[340px] w-[480px] rounded-full bg-orange-500/35 blur-3xl glow-b" />
       </>
     ),
-    accent: "text-blue-300",
-    eyebrow: "border-orange-300/35 bg-orange-300/12 text-orange-100",
-    lead: "text-orange-100",
+    accent: "text-orange-200",
+    eyebrow: "border-white/25 bg-white/12 text-white",
+    lead: "text-orange-50",
   },
   content: EDITORIAL,
   company: EDITORIAL,
 };
 
 /** the glass surface for anything placed in a hero's side column */
-export const HERO_PANEL = "glass-panel rounded-md p-5 text-white";
+export const HERO_PANEL = "glass-panel glass-on-brand rounded-sheet p-5 text-white";
 
 /* Motifs are drawn right → left so the "latest" end of every line sits
    where an RTL reader finishes. `slice` keeps strokes uniform: desktop
@@ -283,7 +282,7 @@ function HeroMotif({ tone }: { tone: HeroTone }) {
       {tone === "vertical" && (
         <g fill="none" strokeWidth="2" strokeLinejoin="round" className="chart-line" style={{ "--dash": 1 } as CSSProperties}>
           <path pathLength={1} d="M1200 44 C1050 40 900 48 750 42 S450 46 300 40 S100 44 0 42" stroke="var(--color-orange-200)" strokeOpacity="0.55" />
-          <path pathLength={1} d="M1200 100 C1080 100 1020 60 900 56 S720 90 600 70 S420 40 300 66 S120 100 0 96" stroke="var(--color-orange-400)" strokeOpacity="0.9" />
+          <path pathLength={1} d="M1200 100 C1080 100 1020 60 900 56 S720 90 600 70 S420 40 300 66 S120 100 0 96" stroke="#fff" strokeOpacity="0.75" />
           <path pathLength={1} d="M1200 84 C1100 84 1060 72 980 74 S820 96 700 90 S520 60 400 62 S160 92 0 80" stroke="var(--color-blue-300)" strokeOpacity="0.85" />
         </g>
       )}
@@ -303,7 +302,7 @@ export function PageHero({ crumb, title, lead, eyebrow, tone = "content", childr
 }) {
   const t = HERO_TONES[tone];
   return (
-    <section className={cn("on-dark relative overflow-hidden border-b text-white", t.section)}>
+    <section className={cn("on-brand relative overflow-hidden border-b text-white", t.section)}>
       <div aria-hidden className="pointer-events-none absolute inset-0">{t.layers}</div>
       <HeroMotif tone={tone} />
       <div className={cn("relative mx-auto max-w-[1200px] px-5 md:px-8 pt-32 pb-20 md:pt-40 md:pb-28", t.pad)}>
@@ -317,7 +316,7 @@ export function PageHero({ crumb, title, lead, eyebrow, tone = "content", childr
                   {eyebrow.label}
                 </p>
               )}
-              <h1 className="font-display font-black text-[30px] md:text-[44px] leading-[1.4] tracking-tight text-white">
+              <h1 className="font-display font-black text-[30px] md:text-[44px] leading-[1.35] tracking-[-0.02em] text-white">
                 <AccentText text={title} accentClass={t.accent} />
               </h1>
               {lead && <p className={cn("mt-5 text-[15.5px] md:text-[17px] leading-8 md:leading-9 max-w-2xl", t.lead)}>{lead}</p>}
@@ -330,31 +329,97 @@ export function PageHero({ crumb, title, lead, eyebrow, tone = "content", childr
   );
 }
 
+/* ── Side navigation card ──
+   The "more in this section" rail that landing and report pages both
+   carry: the page's tone for the card, boxed icons as in the mega menu,
+   the tone for hover and the closing link. */
+export function SideNav({ title, items, more, tone = "tone-blue" }: {
+  title: string;
+  items: { key: string | number; href: string; label: string; icon?: IconName }[];
+  more: { href: string; label: string };
+  tone?: string;
+}) {
+  return (
+    <div className={cn(tone, "kpi-card p-6 lg:sticky lg:top-32")}>
+      <p className="flex items-center gap-2.5 font-display font-bold text-[15px] text-ink">
+        <span className="h-4 w-1 rounded-full bg-(--tone-500)" />
+        {title}
+      </p>
+      {items.length > 0 && (
+        <ul className="mt-4 space-y-1">
+          {items.map((it) => (
+            <li key={it.key}>
+              <SmartLink href={it.href} className="group flex items-center gap-3 rounded-control px-2.5 py-2 text-[13.5px] font-semibold text-ink2 transition-colors hover:bg-(--tone-50) hover:text-(--tone-700)">
+                {it.icon && (
+                  <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-(--tone-200) bg-surface text-(--tone-700)">
+                    <Icon name={it.icon} size={15} />
+                  </span>
+                )}
+                {it.label}
+                <Icon name="arrowL" size={12} className="mr-auto shrink-0 opacity-0 transition-all group-hover:-translate-x-0.5 group-hover:opacity-70" />
+              </SmartLink>
+            </li>
+          ))}
+        </ul>
+      )}
+      <SmartLink href={more.href} className="mt-4 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-(--tone-700) transition-all hover:gap-3">
+        {more.label} <Icon name="arrowL" size={13} sw={2.2} />
+      </SmartLink>
+    </div>
+  );
+}
+
+/* ── The CTA load curve ──
+   The homepage CTA's one ornament: a load profile that draws itself as
+   its Reveal arrives (.cta-line in index.css) and, optionally, ends on a
+   lit point — the bill, seen before it is issued. RTL: time runs right
+   to left, so the point sits on the left. */
+export function CtaCurve({ dot = true }: { dot?: boolean }) {
+  return (
+    <>
+      <svg aria-hidden="true" viewBox="0 0 1200 200" preserveAspectRatio="none" className="absolute inset-x-0 bottom-0 -z-10 h-[45%] w-full">
+        <defs>
+          <linearGradient id="cta-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#fff" stopOpacity="0.14" />
+            <stop offset="1" stopColor="#fff" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <path d="M1200 160 C 1110 150, 1060 100, 980 120 S 840 175, 750 130 S 600 50, 500 95 S 340 160, 240 90 S 110 60, 60 40 L 0 40 L 0 200 L 1200 200 Z" fill="url(#cta-fill)" />
+        <path d="M1200 160 C 1110 150, 1060 100, 980 120 S 840 175, 750 130 S 600 50, 500 95 S 340 160, 240 90 S 110 60, 60 40" fill="none" stroke="rgb(255 255 255 / 0.45)" strokeWidth="2" vectorEffect="non-scaling-stroke" pathLength={1} className="cta-line" />
+      </svg>
+      {dot && <span aria-hidden="true" className="cta-dot absolute left-[5%] top-[64%] -z-10 -ml-1.5 -mt-1.5 h-3 w-3 rounded-full bg-orange-300 shadow-[0_0_0_6px_rgb(250_100_0/0.3),0_0_28px_rgb(250_100_0/0.9)]" />}
+    </>
+  );
+}
+
 /* ── Closing call-to-action banner ──
-   An inset dark card, not another full-bleed band: it has to stand apart
-   from the light content above and the light footer below. Same shape on
-   every page, so the one action the site asks for is learnt once. */
+   The homepage CTA in the inner pages' horizontal shape: a contained
+   brand-blue surface (not navy) on a light ground, lit edge, the same
+   drawing load curve. Same shape on every page, so the one action the
+   site asks for is learnt once. */
 export function CtaBanner({ title, lead, children }: { title: string; lead?: string; children: ReactNode }) {
   return (
-    <section className="relative bg-bg py-16 md:py-20">
+    <section className="relative bg-gradient-to-b from-bg to-blue-50 py-16 md:py-20">
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
         <Reveal>
-          <div className="on-dark relative overflow-hidden rounded-lg border border-blue-700/60 bg-gradient-to-l from-blue-900 via-blue-800 to-blue-950 px-6 py-10 text-white shadow-lift md:px-12 md:py-14">
-            <div aria-hidden className="pointer-events-none absolute inset-0">
-              <div className="absolute inset-0 grid-dark opacity-50" />
-              <div className="absolute -top-28 right-[6%] h-64 w-[420px] rounded-full bg-blue-500/25 blur-3xl glow-a" />
-              <div className="absolute -bottom-28 left-[4%] h-64 w-[420px] rounded-full bg-blue-400/20 blur-3xl glow-b" />
+          <div className="on-brand relative isolate overflow-hidden rounded-surface bg-gradient-to-bl from-blue-600 via-blue-600 to-blue-700 px-6 py-10 text-white shadow-[0_40px_80px_-32px_rgb(0_98_189/0.65)] md:px-12 md:py-14">
+            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+              <div className="absolute inset-0 opacity-[0.14] [background-image:linear-gradient(to_left,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:44px_44px] [mask-image:radial-gradient(ellipse_70%_80%_at_70%_30%,#000_10%,transparent_75%)]" />
+              <div className="absolute -top-40 -right-24 h-80 w-[460px] rounded-full bg-blue-400/40 blur-3xl" />
+              <div className="absolute -bottom-40 -left-24 h-80 w-[460px] rounded-full bg-blue-400/35 blur-3xl" />
+              <div className="absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/20" />
             </div>
+            <CtaCurve dot={false} />
             <div className="relative grid items-center gap-8 lg:grid-cols-12">
               <div className="lg:col-span-7">
-                <p className="inline-flex items-center gap-2.5 text-[12.5px] font-bold text-orange-300">
+                <p className="inline-flex items-center gap-2.5 text-[12.5px] font-bold text-orange-100">
                   <span className="h-2 w-2 rounded-full bg-green-400 pulse-dot" />
                   سامانه هوشمند مدیریت انرژی بهسا
                 </p>
-                <h2 className="mt-4 font-display font-black text-[22px] md:text-[30px] leading-[1.55]">
-                  <AccentText text={title} accentClass="text-orange-300" />
+                <h2 className="mt-4 font-display font-black text-[22px] md:text-[30px] leading-[1.5] tracking-[-0.01em]">
+                  <AccentText text={title} accentClass="text-orange-200" />
                 </h2>
-                {lead && <p className="mt-3 max-w-xl text-[14.5px] leading-8 text-blue-100">{lead}</p>}
+                {lead && <p className="mt-3 max-w-xl text-[14.5px] leading-8 text-blue-50">{lead}</p>}
               </div>
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:col-span-5 lg:justify-end">{children}</div>
             </div>

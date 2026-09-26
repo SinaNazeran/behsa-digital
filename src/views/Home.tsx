@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useState, type KeyboardEvent } from "react";
 import { cn } from "@/utils/cn";
 import { Icon } from "@/components/icons";
-import { Reveal, Btn, SectionHead } from "@/components/ui";
+import { Reveal, Btn, SectionHead, CtaCurve } from "@/components/ui";
 import { Hero } from "@/components/hero/Hero";
 import { ArticleCard, type ArticleCardProps } from "@/components/ArticleCard";
 import { faNum } from "@/content/data";
 import { SmartLink } from "@/components/SmartLink";
 import { AccentText } from "@/components/AccentText";
+import { TONES, categoryToneClass } from "@/components/tones";
 import type { ContentMap, SectionView } from "@/lib/cms";
 
 /* ════════════════════════════════════════════════════════════════
@@ -42,6 +43,8 @@ export type HomeProps = {
   /** editable page sections, keyed by the section registry */
   content: ContentMap;
   panelUrl: string;
+  /** report href → its category's tone class */
+  reportTones: Record<string, string>;
 };
 
 const EMPTY_SECTION: SectionView = {
@@ -53,43 +56,12 @@ const EMPTY_SECTION: SectionView = {
    read as «• ۱» — a bullet, not a number */
 const ordinal = (i: number) => faNum(i + 1);
 
-/* card colour identities (tone-* in index.css), cycled where a grid's
-   cards are peers rather than one idea */
-const TONES = ["tone-orange", "tone-blue", "tone-green"] as const;
-
-/* a report card's colour follows what the report is about, not its
-   position in the grid: money and supply orange, renewables green, the
-   measurement and quality reports blue. Tags are editor text, so this
-   matches on words; anything unmatched keeps the positional cycle.
-   ponytail: keyword match on the CMS tag — move to a tone field on the
-   report category if editors start inventing new tag wording. */
-function reportTone(tag: string | undefined, i: number) {
-  const t = tag ?? "";
-  if (/تجدید|خورشید/.test(t)) return "tone-green";
-  if (/هزینه|تأمین|خرید/.test(t)) return "tone-orange";
-  if (/کیفیت|پایش|داده|کنتور/.test(t)) return "tone-blue";
-  return TONES[i % TONES.length];
-}
-
 /* phones: a card grid becomes one swipeable row (the next card peeks in
    from the left), which takes ~2,000px off the page; sm+ is the grid */
 const SNAP_ROW = "-mx-5 flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-px-5 px-5 pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0";
 const SNAP_ITEM = "h-full w-[82%] shrink-0 snap-start sm:w-auto";
 
-/* top rail of a kpi-card: a tick of its tone at rest, the full edge on hover */
-const RAIL = "absolute top-0 right-0 left-0 h-[3px] origin-right scale-x-[0.35] bg-gradient-to-l from-(--tone-500) via-(--tone-300) to-transparent transition-transform duration-500 ease-fluid group-hover:scale-x-100";
-
-/* feeds the pointer into the hovered card's light (.card-live, see
-   index.css) — one listener per grid rather than one per card */
-function trackSpot(e: PointerEvent<HTMLElement>) {
-  const card = (e.target as Element).closest<HTMLElement>(".card-live");
-  if (!card) return;
-  const r = card.getBoundingClientRect();
-  card.style.setProperty("--mx", `${e.clientX - r.left}px`);
-  card.style.setProperty("--my", `${e.clientY - r.top}px`);
-}
-
-export default function Home({ articles, testimonials, faqs, content, panelUrl }: HomeProps) {
+export default function Home({ articles, testimonials, faqs, content, panelUrl, reportTones }: HomeProps) {
   const [tab, setTab] = useState(0);
   const [faq, setFaq] = useState(0);
   const s = (key: string): SectionView => content[key] ?? EMPTY_SECTION;
@@ -144,11 +116,10 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
             )}
           </div>
 
-          <div onPointerMove={trackSpot} className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {pains.items.map((p, i) => (
               <Reveal key={p.id} delay={(i % 4) * 90} className="h-full">
                 <article className="tone-orange kpi-card card-live group h-full flex flex-col justify-between overflow-hidden p-6">
-                  <span className={RAIL} />
                   <div>
                     <div className="flex items-start justify-between">
                       <span className="kpi-icon h-13 w-13 group-hover:scale-110 group-hover:-rotate-6">
@@ -195,7 +166,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
         <div className="absolute -top-24 -right-32 h-[400px] w-[560px] rounded-full bg-blue-500/30 blur-3xl glow-b pointer-events-none" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
           <SectionHead eyebrow={regulations.eyebrow} title={regulations.title} lead={regulations.description} dark={true} />
-          <div onPointerMove={trackSpot} className="mt-12 grid gap-6 lg:grid-cols-2">
+          <div className="mt-12 grid gap-6 lg:grid-cols-2">
             {regulations.items.map((r, i) => (
               <Reveal key={r.id} delay={i * 110} className="grid grid-rows-subgrid row-span-4">
                 <article className="card-live glass-panel glass-on-brand group grid grid-rows-subgrid row-span-4 gap-0 p-7 md:p-8 [--spot:rgb(255_255_255/0.12)] hover:border-white/40">
@@ -356,14 +327,13 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
               </Reveal>
             )}
           </div>
-          <div onPointerMove={trackSpot} className={cn("mt-10 sm:mt-12", SNAP_ROW, "sm:grid-cols-2 lg:grid-cols-3")}>
+          <div className={cn("mt-10 sm:mt-12", SNAP_ROW, "sm:grid-cols-2 lg:grid-cols-3")}>
             {reports.items.map((r, i) => (
               <Reveal key={r.id} delay={(i % 3) * 100} className={SNAP_ITEM}>
                 <SmartLink
                   href={r.href || "/reports"}
-                  className={cn(reportTone(r.tag, i), "kpi-card card-live group h-full overflow-hidden p-6 flex flex-col justify-between")}
+                  className={cn(reportTones[r.href] ?? categoryToneClass(undefined), "kpi-card card-live group h-full overflow-hidden p-6 flex flex-col justify-between")}
                 >
-                  <span className={RAIL} />
                   <div>
                     <div className="flex items-start justify-between gap-3">
                       <span className="kpi-icon h-12 w-12 group-hover:scale-110 group-hover:-rotate-6">
@@ -491,7 +461,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
         <div className="absolute -bottom-40 right-[10%] h-[400px] w-[600px] rounded-full bg-orange-100/70 blur-3xl glow-b pointer-events-none" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
           <SectionHead eyebrow={industries.eyebrow} title={industries.title} lead={industries.description} align="center" />
-          <div onPointerMove={trackSpot} className={cn("mt-10 sm:mt-12", SNAP_ROW, "sm:grid-cols-2")}>
+          <div className={cn("mt-10 sm:mt-12", SNAP_ROW, "sm:grid-cols-2")}>
             {industries.items.map((ind, i) => {
               const Wrapper = ind.href ? SmartLink : "article";
               return (
@@ -500,7 +470,6 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                     {...(ind.href ? { href: ind.href } : {})}
                     className={cn(TONES[(i + 1) % TONES.length], "kpi-card card-live group h-full flex flex-col overflow-hidden p-6")}
                   >
-                    <span className={RAIL} />
                     <div className="flex items-center gap-4">
                       <span className="kpi-icon h-13 w-13 group-hover:scale-110 group-hover:-rotate-6">
                         <Icon name={ind.icon ?? "org"} size={25} />
@@ -551,7 +520,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
                 </Reveal>
               </div>
             </div>
-            <div onPointerMove={trackSpot} className="lg:col-span-8 grid gap-4 sm:grid-cols-2">
+            <div className="lg:col-span-8 grid gap-4 sm:grid-cols-2">
               {benefits.items.map((b, i) => (
                 <Reveal key={b.id} delay={(i % 2) * 100} className="h-full">
                   <div className="card-live glass-panel glass-on-brand group h-full p-6 [--spot:rgb(255_255_255/0.12)] hover:border-white/40">
@@ -613,7 +582,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
               </Reveal>
             )}
           </div>
-          <div onPointerMove={trackSpot} className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
             {articles.slice(0, 3).map((a, i) => (
               <Reveal key={a.slug} delay={i * 100} className="h-full">
                 <ArticleCard {...a} />
@@ -716,17 +685,7 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl }
               {/* inner edge light, so the banner reads as a lit surface */}
               <div className="absolute inset-0 -z-10 rounded-[inherit] ring-1 ring-inset ring-white/20" />
 
-              <svg aria-hidden="true" viewBox="0 0 1200 200" preserveAspectRatio="none" className="absolute inset-x-0 bottom-0 -z-10 h-[45%] w-full">
-                <defs>
-                  <linearGradient id="cta-fill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stopColor="#fff" stopOpacity="0.14" />
-                    <stop offset="1" stopColor="#fff" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path d="M1200 160 C 1110 150, 1060 100, 980 120 S 840 175, 750 130 S 600 50, 500 95 S 340 160, 240 90 S 110 60, 60 40 L 0 40 L 0 200 L 1200 200 Z" fill="url(#cta-fill)" />
-                <path d="M1200 160 C 1110 150, 1060 100, 980 120 S 840 175, 750 130 S 600 50, 500 95 S 340 160, 240 90 S 110 60, 60 40" fill="none" stroke="rgb(255 255 255 / 0.45)" strokeWidth="2" vectorEffect="non-scaling-stroke" pathLength={1} className="cta-line" />
-              </svg>
-              <span aria-hidden="true" className="cta-dot absolute left-[5%] top-[64%] -z-10 -ml-1.5 -mt-1.5 h-3 w-3 rounded-full bg-orange-300 shadow-[0_0_0_6px_rgb(250_100_0/0.3),0_0_28px_rgb(250_100_0/0.9)]" />
+              <CtaCurve />
 
               <span className="tone-orange kpi-icon mx-auto mb-7 h-16 w-16 rounded-lg!">
                 <Icon name="bolt" size={30} />

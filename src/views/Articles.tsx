@@ -48,10 +48,10 @@ export default function Articles({ articles, categories }: { articles: ListArtic
       {/* ── Featured article ── */}
       {featured && (
       <section className="py-16 md:py-20 bg-bg relative">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
           <Reveal>
-            <article className="group grid overflow-hidden rounded-lg border border-line bg-surface transition-all duration-300 hover:shadow-lift hover:border-primary/40 lg:grid-cols-2">
+            <article className="card-live group grid overflow-hidden rounded-lg border border-line bg-surface shadow-card hover:shadow-lift hover:border-orange-200 lg:grid-cols-2">
               <SmartLink href={`/articles/${featured.slug}`} className="block overflow-hidden">
                 <div className="transition-transform duration-500 group-hover:scale-[1.03]">
                   {featured.coverUrl ? <img src={featured.coverUrl} alt="" className="aspect-[40/22] w-full h-full object-cover" /> : <Thumb chart={featured.chart} cat={featured.cat} />}
@@ -86,7 +86,7 @@ export default function Articles({ articles, categories }: { articles: ListArtic
         <div className="mx-auto max-w-[1200px] px-5 md:px-8">
           {/* filter bar */}
           <Reveal>
-            <div className="rounded-lg border border-line bg-surface p-5 md:p-6 flex flex-col xl:flex-row gap-5 xl:items-center xl:justify-between">
+            <div className="rounded-sheet border border-line bg-surface p-5 md:p-6 shadow-card flex flex-col xl:flex-row gap-5 xl:items-center xl:justify-between">
               <div className="scroll-slim flex gap-2.5 overflow-x-auto pb-1 xl:pb-0" role="tablist" aria-label="دسته‌بندی مقالات">
                 {ARTICLE_CATS.map((c) => (
                   <button key={c} onClick={() => pick(c)}
@@ -104,7 +104,7 @@ export default function Articles({ articles, categories }: { articles: ListArtic
                   onChange={(e) => search(e.target.value)}
                   placeholder="جستجو در مقالات…"
                   aria-label="جستجوی مقالات"
-                  className="w-full h-11 rounded-sm border border-line bg-bg pr-11 pl-4 text-[13.5px] font-medium text-ink placeholder:text-ink3 transition-colors focus:border-primary focus:bg-surface outline-none"
+                  className="w-full h-11 rounded-control border border-line bg-bg pr-11 pl-4 text-[13.5px] font-medium text-ink placeholder:text-ink3 transition-colors focus:border-primary focus:bg-surface outline-none"
                 />
                 <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink3 pointer-events-none"><Icon name="search" size={17} /></span>
               </div>
@@ -128,7 +128,7 @@ export default function Articles({ articles, categories }: { articles: ListArtic
           ) : (
             /* ── Empty state ── */
             <Reveal>
-              <div className="mt-6 rounded-lg border-2 border-dashed border-line bg-surface px-6 py-16 text-center">
+              <div className="mt-6 rounded-sheet border-2 border-dashed border-line bg-surface px-6 py-16 text-center">
                 <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-soft text-orange-700">
                   <Icon name="search" size={28} />
                 </span>
@@ -145,7 +145,7 @@ export default function Articles({ articles, categories }: { articles: ListArtic
               <button
                 onClick={() => setPage(Math.max(1, pageSafe - 1))}
                 disabled={pageSafe === 1}
-                className="inline-flex h-11 items-center gap-2 rounded-sm border border-line bg-surface px-4 text-[13px] font-bold text-ink2 transition-all hover:border-primary/40 hover:text-orange-700 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+                className="inline-flex h-11 items-center gap-2 rounded-control border border-line bg-surface px-4 text-[13px] font-bold text-ink2 transition-all hover:border-primary/40 hover:text-orange-700 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
               >
                 <Icon name="arrowR" size={15} /> قبلی
               </button>
@@ -162,7 +162,7 @@ export default function Articles({ articles, categories }: { articles: ListArtic
               <button
                 onClick={() => setPage(Math.min(pages, pageSafe + 1))}
                 disabled={pageSafe === pages}
-                className="inline-flex h-11 items-center gap-2 rounded-sm border border-line bg-surface px-4 text-[13px] font-bold text-ink2 transition-all hover:border-primary/40 hover:text-orange-700 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+                className="inline-flex h-11 items-center gap-2 rounded-control border border-line bg-surface px-4 text-[13px] font-bold text-ink2 transition-all hover:border-primary/40 hover:text-orange-700 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
               >
                 بعدی <Icon name="arrowL" size={15} />
               </button>
@@ -173,7 +173,7 @@ export default function Articles({ articles, categories }: { articles: ListArtic
 
       {/* ── CTA ── */}
       <section className="relative overflow-hidden border-t border-line bg-surface text-ink">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 py-16 text-center">
           <Reveal>
             <h2 className="font-display font-black text-[24px] md:text-[32px] leading-[1.45]">خواندن کافی نیست؛ <span className="text-orange-700">عمل کنید.</span></h2>

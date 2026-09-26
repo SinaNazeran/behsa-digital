@@ -1,5 +1,5 @@
 import { Icon } from "@/components/icons";
-import { Reveal, PageHero, HERO_PANEL } from "@/components/ui";
+import { Reveal, PageHero, HERO_PANEL, SideNav } from "@/components/ui";
 import { cn } from "@/utils/cn";
 import { ContentBlocks } from "@/components/capabilities/CapabilityFeatureList";
 import { SmartLink } from "@/components/SmartLink";
@@ -18,6 +18,8 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
   pages: { href: string; label: string }[];
   panelUrl: string;
 }) {
+  /* the report wears its category's colour, as on the catalogue page */
+  const tone = report.category.toneClass;
   return (
     <>
       <PageHero
@@ -28,7 +30,7 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
         eyebrow={{ label: "گزارش سامانه", icon: report.icon ?? "chart" }}
       >
         <Reveal dir="l" delay={150}>
-          <div className={cn(HERO_PANEL, "bg-blue-950/40! space-y-4")}>
+          <div className={cn(HERO_PANEL, "space-y-4")}>
             <SmartLink href={`/reports#${report.category.slug}`} className="group -m-1.5 flex items-center gap-3 rounded-md p-1.5 transition-colors hover:bg-white/10">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-primary text-on-primary shadow-[0_6px_16px_rgb(250_100_0/0.35)]">
                 <Icon name={report.category.icon ?? "chart"} size={20} />
@@ -59,7 +61,7 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
       </PageHero>
 
       <section className="py-16 md:py-20 bg-bg relative">
-        <div className="absolute inset-0 grid-light" />
+        <div className="absolute inset-0 grid-light grid-fade" />
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-8">
             {report.lead && (
@@ -73,7 +75,7 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
               <div className="mt-8 space-y-6">
                 {report.gallery.map((g, i) => (
                   <Reveal key={g.url + i}>
-                    <figure className="overflow-hidden rounded-md border border-line bg-surface">
+                    <figure className="overflow-hidden rounded-sheet border border-line bg-surface shadow-card">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={g.url} alt={g.caption || `نمونهٔ خروجی ${report.label}`} loading={i === 0 ? "eager" : "lazy"} className="w-full" />
                       {g.caption && <figcaption className="border-t border-linesoft px-5 py-3 text-[13px] leading-7 text-ink2">{g.caption}</figcaption>}
@@ -83,18 +85,18 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
               </div>
             )}
 
-            {report.sections.length > 0 && <ContentBlocks blocks={report.sections} className="mt-8" />}
+            {report.sections.length > 0 && <ContentBlocks blocks={report.sections} tone={tone} className="mt-8" />}
 
             {pages.length > 0 && (
               <Reveal className="mt-8">
-                <div className="rounded-md border border-accent/25 bg-accent-soft/40 p-6">
+                <div className="tone-green kpi-card p-6">
                   <p className="flex items-center gap-2.5 font-display font-bold text-[15px] text-ink">
                     <Icon name="central" size={18} className="text-accent" />
                     این گزارش کجا به‌کار می‌آید؟
                   </p>
                   <div className="mt-4 flex flex-wrap gap-3">
                     {pages.map((p) => (
-                      <SmartLink key={p.href} href={p.href} className="inline-flex items-center gap-2 rounded-sm border border-line bg-surface px-4 py-2.5 text-[13px] font-bold text-ink transition-all hover:border-accent/50 hover:text-accent">
+                      <SmartLink key={p.href} href={p.href} className="inline-flex items-center gap-2 rounded-control border border-(--tone-200) bg-surface px-4 py-2.5 text-[13px] font-bold text-ink transition-all hover:border-(--tone-300) hover:bg-(--tone-50) hover:text-(--tone-700)">
                         {p.label}
                         <Icon name="arrowL" size={13} sw={2.2} />
                       </SmartLink>
@@ -106,25 +108,12 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
           </div>
 
           <aside className="lg:col-span-4">
-            <div className="lg:sticky lg:top-32 rounded-md border border-line bg-surface p-6">
-              <p className="font-display font-bold text-[15px] text-ink">گزارش‌های مرتبط</p>
-              {related.length > 0 && (
-                <ul className="mt-4 space-y-1">
-                  {related.map((r) => (
-                    <li key={r.id}>
-                      <SmartLink href={r.href} className="group flex items-center gap-3 rounded-sm px-3 py-2.5 text-[13.5px] font-semibold text-ink2 transition-colors hover:bg-bg hover:text-orange-700">
-                        {r.icon && <Icon name={r.icon} size={16} className="shrink-0 text-ink3 group-hover:text-orange-700" />}
-                        {r.label}
-                        <Icon name="arrowL" size={12} className="mr-auto shrink-0 opacity-0 transition-opacity group-hover:opacity-60" />
-                      </SmartLink>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <SmartLink href="/reports" className="mt-4 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-orange-700 hover:gap-3 transition-all">
-                همهٔ گزارش‌ها <Icon name="arrowL" size={13} sw={2.2} />
-              </SmartLink>
-            </div>
+            <SideNav
+              title="گزارش‌های مرتبط"
+              items={related.map((r) => ({ key: r.id, href: r.href, label: r.label, icon: r.icon ?? undefined }))}
+              more={{ href: "/reports", label: "همهٔ گزارش‌ها" }}
+              tone={tone}
+            />
           </aside>
         </div>
       </section>

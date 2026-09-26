@@ -5,9 +5,12 @@ import {
   CAPABILITY_CATEGORIES, STAGE_META, featureCount, type NarrativeStage,
 } from "@/content/capabilities";
 import { SmartLink } from "@/components/SmartLink";
+import { TONES } from "@/components/tones";
 
 /* «معرفی پلتفرم» — overview grid of the 7 real capability categories.
    Naming only (no marketing copy); narrative stage + counts + links. */
+
+const TILE = "kpi-icon h-12 w-12 group-hover:scale-110 group-hover:-rotate-6";
 
 const STAGE_ORDER: NarrativeStage[] = ["data", "intelligence", "decision", "optimization", "outcome"];
 
@@ -16,13 +19,13 @@ export function CapabilitiesOverview() {
     <div>
       {/* narrative pipeline legend */}
       <Reveal>
-        <div className="rounded-md border border-line bg-surface p-5">
+        <div className="tone-blue kpi-card p-5">
           <p className="text-[12.5px] font-bold text-ink3">جای‌گذاری قابلیت‌ها در روایت بهسا</p>
           <div className="mt-4 flex flex-wrap items-center gap-y-3" aria-label="مراحل روایت: داده، هوشمندی، تصمیم، بهینه‌سازی، نتیجه کسب و کار">
             {STAGE_ORDER.map((s, i) => (
               <span key={s} className="flex items-center gap-2">
                 <span
-                  className="inline-flex items-center gap-2 rounded-sm px-3.5 py-2 text-[12.5px] font-bold"
+                  className="inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[12.5px] font-bold"
                   style={{ background: STAGE_META[s].soft, color: STAGE_META[s].color }}
                 >
                   <span className="h-1.5 w-1.5 rounded-full" style={{ background: STAGE_META[s].color }} />
@@ -47,29 +50,29 @@ export function CapabilitiesOverview() {
             <Reveal key={c.id} delay={(i % 3) * 90}>
               <article
                 className={cn(
-                  "group relative flex h-full flex-col rounded-md border bg-surface p-6 transition-all duration-300",
+                  "group flex h-full flex-col p-6",
+                  /* coming-soon stays neutral and dashed: a state, not a colour */
                   soon
-                    ? "border-dashed border-line bg-bg/60"
-                    : "border-line hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35",
+                    ? "relative rounded-lg border border-dashed border-line bg-bg/60"
+                    : cn(TONES[i % TONES.length], "kpi-card card-live"),
                 )}
               >
                 <div className="flex items-start justify-between gap-3">
                   <span
                     className={cn(
-                      "inline-flex h-12 w-12 items-center justify-center rounded-sm transition-colors duration-300",
-                      soon ? "bg-linesoft text-ink3" : "bg-primary-soft text-orange-700 group-hover:bg-primary group-hover:text-on-primary",
+                      soon ? "inline-flex h-12 w-12 items-center justify-center rounded-md bg-linesoft text-ink3" : TILE,
                     )}
                   >
                     <Icon name={c.icon} size={23} />
                   </span>
                   {soon ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-xs border border-line bg-linesoft px-2.5 py-1 text-[11.5px] font-bold text-ink3">
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-linesoft px-2.5 py-1 text-[11.5px] font-bold text-ink3">
                       <Icon name="clock" size={12} sw={2} />
                       به‌زودی
                     </span>
                   ) : (
                     <span
-                      className="inline-flex items-center gap-1.5 rounded-xs px-2.5 py-1 text-[11.5px] font-bold"
+                      className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-bold"
                       style={{ background: stage.soft, color: stage.color }}
                     >
                       {stage.label}
@@ -92,7 +95,7 @@ export function CapabilitiesOverview() {
                   ) : (
                     <SmartLink
                       href={c.href}
-                      className="inline-flex items-center gap-1.5 text-[13px] font-bold text-orange-700 hover:gap-3 transition-all"
+                      className="inline-flex items-center gap-1.5 text-[13px] font-bold text-(--tone-700) hover:gap-3 transition-all"
                     >
                       مشاهدهٔ فهرست قابلیت‌ها
                       <Icon name="arrowL" size={14} sw={2.2} />

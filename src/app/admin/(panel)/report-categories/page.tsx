@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listReportCategories } from "@/lib/admin-data";
 import { AdminForm, Card, ConfirmSubmit, Field, PageTitle, SubmitButton } from "@/components/admin/ui";
 import { IconPicker } from "@/components/admin/IconPicker";
+import { TonePicker } from "@/components/admin/TonePicker";
 import { inputCls } from "@/components/admin/styles";
 import { deleteReportCategory, saveReportCategory } from "../../_actions/reports";
 
@@ -9,6 +10,8 @@ export const metadata = { title: "دسته‌بندی گزارش‌ها" };
 
 export default async function ReportCategoriesAdmin() {
   const rows = await listReportCategories();
+  /* which other category wears each colour, so the picker can say so */
+  const takenBy = (id: number) => Object.fromEntries(rows.filter(({ c }) => c.id !== id && c.tone).map(({ c }) => [c.tone, c.name]));
 
   return (
     <>
@@ -29,6 +32,7 @@ export default async function ReportCategoriesAdmin() {
                   <input id={`q-${c.id}`} name="question" defaultValue={c.question} className={inputCls} placeholder="چرا قبض برق این‌قدر است؟" />
                 </Field>
                 <Field label="آیکون" className="md:col-span-3"><IconPicker name="icon" defaultValue={c.icon} /></Field>
+                <div className="md:col-span-3"><TonePicker defaultValue={c.tone} takenBy={takenBy(c.id)} idPrefix={`tone-${c.id}`} /></div>
                 <div className="flex items-center justify-between gap-2 md:col-span-3">
                   <Link href="/admin/reports" className="text-[12px] text-ink3 hover:text-orange-700">{n.toLocaleString("fa-IR")} گزارش</Link>
                   <SubmitButton variant="secondary">ذخیره</SubmitButton>
@@ -47,6 +51,7 @@ export default async function ReportCategoriesAdmin() {
             <Field label="نام" htmlFor="new-name"><input id="new-name" name="name" className={inputCls} /></Field>
             <Field label="نامک انگلیسی" htmlFor="new-slug" hint="مثل power-quality — در آدرس بخش دسته استفاده می‌شود."><input id="new-slug" name="slug" dir="ltr" className={inputCls} /></Field>
             <Field label="سؤال مشترک" htmlFor="new-question"><input id="new-question" name="question" className={inputCls} /></Field>
+            <p className="text-[12px] leading-5 text-ink3">رنگ دستهٔ جدید خودکار از رنگ‌های آزاد انتخاب می‌شود و بعداً قابل تغییر است.</p>
             <input type="hidden" name="sortOrder" value={rows.length} />
             <SubmitButton>افزودن</SubmitButton>
           </AdminForm>

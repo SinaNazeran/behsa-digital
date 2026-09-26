@@ -12,6 +12,7 @@ import { SECTIONS, SECTION_BY_KEY } from "@/content/sections";
 import { REPORT_MENU_LIMIT, audienceLabels, searchText } from "@/content/reports";
 import type { IconName } from "@/components/icons";
 import { formatJalali, readingTime } from "@/lib/format";
+import { categoryToneClass } from "@/components/tones";
 
 /* ════════════════════════════════════════════════════════════════
    Public read layer. Every query is cached and tagged; admin Server
@@ -522,7 +523,11 @@ export async function getSection(key: string): Promise<SectionView> {
    page, cross-links and the sitemap. The catalogue is small (tens of
    rows), so a single query beats one query per page. */
 
-export type ReportCategoryView = { id: number; slug: string; name: string; question: string; icon?: IconName };
+export type ReportCategoryView = {
+  id: number; slug: string; name: string; question: string; icon?: IconName;
+  /** the tone-* class of the category's stored colour (components/tones) */
+  toneClass: string;
+};
 
 export type ReportView = {
   id: number;
@@ -559,7 +564,7 @@ export type ReportView = {
 };
 
 const toCategoryView = (c: typeof schema.reportCategories.$inferSelect): ReportCategoryView => ({
-  id: c.id, slug: c.slug, name: c.name, question: c.question, icon: asIcon(c.icon),
+  id: c.id, slug: c.slug, name: c.name, question: c.question, icon: asIcon(c.icon), toneClass: categoryToneClass(c.tone),
 });
 
 function toReportView(r: typeof schema.reports.$inferSelect, c: typeof schema.reportCategories.$inferSelect): ReportView {

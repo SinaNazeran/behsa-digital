@@ -191,6 +191,37 @@
   --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+:root {
+  /* ── Categorical · report categories ─────────────────────────────
+     Four more hue families so every report category can own a colour.
+     Built like the brand ramps, in OKLCH: every step copies the brand
+     blue ramp's lightness and chroma (×1.15) at its own hue, chroma
+     clamped into sRGB. Where sRGB cannot hold a hue at blue's lightness
+     (teal, olive, violet) the identity steps 500+ sit lighter (+0.09 /
+     +0.06 / +0.06 L, half that at 400) — a lightness nudge, never a hue
+     change. Tints 50–300 stay on the ladder so washes match the brand.
+
+     Slot order blue → orange → green → violet → magenta → olive → teal
+     (components/tones.ts) passes the six categorical checks on the 600
+     steps against white: L 0.43–0.77, chroma ≥ 0.10, adjacent CVD
+     ΔE ≥ 9.3 (protan/deutan, Machado 2009), normal-vision ΔE ≥ 15.7,
+     all ≥ 3:1. Every 700 step is text-safe on white and on its own 50
+     (≥ 4.92:1); white icons on every 600 clear 3:1 (≥ 3.87:1).
+     Not status colours: red and amber stay reserved for state.
+     Declared on :root, not in @theme: Tailwind emits a theme variable only
+     when a utility uses it, and these are read through var() by the
+     tone-* classes alone — inside @theme they were dropped from the build. */
+  --color-violet-50: #f9f4fe; --color-violet-100: #f2e8fb; --color-violet-200: #e8d3f9; --color-violet-300: #dbb8f6; --color-violet-400: #d19af9; --color-violet-500: #bd73ef;
+  --color-violet-600: #964cc5; --color-violet-700: #7c40a2; --color-violet-800: #643483; --color-violet-900: #4f2867; --color-violet-950: #3d1f51;
+  --color-magenta-50: #fff3f6; --color-magenta-100: #fee5ec; --color-magenta-200: #fdcedb; --color-magenta-300: #fcb0c6; --color-magenta-400: #f483a8; --color-magenta-500: #dc4a83;
+  --color-magenta-600: #b01b5f; --color-magenta-700: #8e184d; --color-magenta-800: #710f3b; --color-magenta-900: #55092b; --color-magenta-950: #40051f;
+  --color-olive-50: #f9f7ed; --color-olive-100: #f1eed9; --color-olive-200: #e5deb4; --color-olive-300: #d7cb83; --color-olive-400: #cbb737; --color-olive-500: #af9b00;
+  --color-olive-600: #857600; --color-olive-700: #6f6100; --color-olive-800: #5a4f00; --color-olive-900: #463d00; --color-olive-950: #373000;
+  --color-teal-50: #edfaf9; --color-teal-100: #d9f3f1; --color-teal-200: #b2e9e5; --color-teal-300: #7bdcd6; --color-teal-400: #00d5cd; --color-teal-500: #00bbb4;
+  --color-teal-600: #00918b; --color-teal-700: #007975; --color-teal-800: #006460; --color-teal-900: #00504d; --color-teal-950: #00403e;
+
+}
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -289,20 +320,60 @@ body {
   --tone-600: var(--color-green-600); --tone-700: var(--color-green-700); --tone-rgb: 15 143 90;
 }
 
+/* the categorical families (report categories — see the ramp note in @theme) */
+.tone-violet {
+  --tone-50: var(--color-violet-50); --tone-100: var(--color-violet-100); --tone-200: var(--color-violet-200);
+  --tone-300: var(--color-violet-300); --tone-400: var(--color-violet-400); --tone-500: var(--color-violet-500);
+  --tone-600: var(--color-violet-600); --tone-700: var(--color-violet-700); --tone-rgb: 150 76 197;
+}
+.tone-magenta {
+  --tone-50: var(--color-magenta-50); --tone-100: var(--color-magenta-100); --tone-200: var(--color-magenta-200);
+  --tone-300: var(--color-magenta-300); --tone-400: var(--color-magenta-400); --tone-500: var(--color-magenta-500);
+  --tone-600: var(--color-magenta-600); --tone-700: var(--color-magenta-700); --tone-rgb: 176 27 95;
+}
+.tone-olive {
+  --tone-50: var(--color-olive-50); --tone-100: var(--color-olive-100); --tone-200: var(--color-olive-200);
+  --tone-300: var(--color-olive-300); --tone-400: var(--color-olive-400); --tone-500: var(--color-olive-500);
+  --tone-600: var(--color-olive-600); --tone-700: var(--color-olive-700); --tone-rgb: 133 118 0;
+}
+.tone-teal {
+  --tone-50: var(--color-teal-50); --tone-100: var(--color-teal-100); --tone-200: var(--color-teal-200);
+  --tone-300: var(--color-teal-300); --tone-400: var(--color-teal-400); --tone-500: var(--color-teal-500);
+  --tone-600: var(--color-teal-600); --tone-700: var(--color-teal-700); --tone-rgb: 0 145 139;
+}
+
 /* L1 card with colour in it: white, washed with its tone from the
    start corner, edged and shadowed in the same tone — the shadow is
    coloured, so the card sits in its own light rather than on grey */
 @utility kpi-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
   background: radial-gradient(130% 85% at 100% 0%, var(--tone-100) 0%, transparent 58%), var(--color-surface);
   border: 1px solid var(--tone-200);
   box-shadow: 0 1px 2px rgb(22 33 46 / 0.04), 0 14px 34px -18px rgb(var(--tone-rgb) / 0.4);
   --spot: rgb(var(--tone-rgb) / 0.13);
+
+  /* top rail: a tick of the tone at rest, the full edge on hover (it used
+     to be a span repeated in every card's markup) */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    pointer-events: none;
+    background: linear-gradient(to left, var(--tone-500), var(--tone-300), transparent);
+    transform-origin: right;
+    transform: scaleX(0.35);
+    transition: transform 0.5s var(--ease-fluid);
+  }
 
   @media (hover: hover) {
     &:hover {
       border-color: var(--tone-300);
       box-shadow: 0 2px 4px rgb(22 33 46 / 0.05), 0 30px 56px -22px rgb(var(--tone-rgb) / 0.5);
     }
+    &:hover::after { transform: scaleX(1); }
   }
 }
 

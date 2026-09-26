@@ -268,6 +268,8 @@ export const reportCategories = pgTable("report_categories", {
   /** the management question every report in the category answers */
   question: varchar("question", { length: 255 }).notNull().default(""),
   icon: varchar("icon", { length: 40 }).notNull().default(""),
+  /** colour identity on the site — one of CATEGORY_TONES (components/tones.ts) */
+  tone: varchar("tone", { length: 20 }).notNull().default(""),
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: createdAt(),
   updatedAt: updatedAt(),

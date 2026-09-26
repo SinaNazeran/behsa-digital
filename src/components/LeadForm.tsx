@@ -14,7 +14,7 @@ import { submitLead, type LeadState } from "@/app/(site)/_actions/lead";
    pre-filled from the ?subject= parameter that pages already pass. */
 
 const FIELD =
-  "w-full rounded-sm border bg-bg px-4 py-3 text-[14px] text-ink outline-none transition-colors placeholder:text-ink3 focus:border-primary/60 focus:ring-2 focus:ring-primary/15";
+  "w-full rounded-control border bg-bg px-4 py-3 text-[14px] text-ink outline-none transition-colors placeholder:text-ink3 focus:border-primary/60 focus:ring-2 focus:ring-primary/15";
 
 const POWER_BANDS: { value: string; label: string }[] = [
   { value: "unknown", label: "نمی‌دانم" },
@@ -41,7 +41,7 @@ function Submit({ label }: { label: string }) {
       type="submit"
       disabled={pending}
       className={cn(
-        "inline-flex h-12 w-full items-center justify-center gap-2 rounded-sm bg-primary px-6 text-[14.5px] font-bold text-on-primary transition-all",
+        "inline-flex h-12 w-full items-center justify-center gap-2 rounded-control bg-primary px-6 text-[14.5px] font-bold text-on-primary transition-all",
         "hover:bg-primary-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
         pending ? "cursor-wait opacity-70" : "cursor-pointer active:translate-y-px",
       )}
@@ -94,7 +94,7 @@ export function LeadForm({
 
   if (state?.ok) {
     return (
-      <div className="rounded-md border border-accent/30 bg-accent-soft/40 p-8 text-center">
+      <div className="tone-green kpi-card p-8 text-center">
         <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/15 text-accent">
           <Icon name="check" size={28} sw={2.4} />
         </span>
@@ -180,7 +180,7 @@ export function LeadForm({
       </Field>
 
       {state?.ok === false && state.message && (
-        <p role="alert" className="rounded-sm border border-err/30 bg-err/5 px-4 py-3 text-[13.5px] font-semibold text-err">
+        <p role="alert" className="rounded-control border border-err/30 bg-err/5 px-4 py-3 text-[13.5px] font-semibold text-err">
           {state.message}
         </p>
       )}

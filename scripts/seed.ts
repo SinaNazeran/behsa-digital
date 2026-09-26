@@ -9,6 +9,7 @@ import { DEFAULT_SETTINGS } from "../src/content/defaults";
 import { DEFAULT_NAV } from "../src/content/navigation";
 import { SECTIONS } from "../src/content/sections";
 import { REPORT_AUDIENCE, REPORT_CATEGORIES, REPORT_MENU, REPORT_PAGES } from "./seed-reports";
+import { nextCategoryTone } from "../src/components/tones";
 
 const CAT_SLUGS: Record<string, string> = {
   "مدیریت انرژی": "energy-management",
@@ -85,9 +86,12 @@ await db.transaction(async (tx) => {
   const [{ n: reportCount }] = await tx.select({ n: sql<number>`count(*)::int` }).from(schema.reports);
   if (catCount === 0 && reportCount === 0) {
     const now = new Date();
+    const tones: string[] = [];
     for (const [ci, cat] of REPORT_CATEGORIES.entries()) {
+      const tone = nextCategoryTone(tones);
+      tones.push(tone);
       const [row] = await tx.insert(schema.reportCategories)
-        .values({ slug: cat.slug, name: cat.name, question: cat.question, icon: cat.icon, sortOrder: ci })
+        .values({ slug: cat.slug, name: cat.name, question: cat.question, icon: cat.icon, tone, sortOrder: ci })
         .returning({ id: schema.reportCategories.id });
       for (const [ri, id] of cat.reports.entries()) {
         const page = REPORT_PAGES.find((p) => p.id === id);
