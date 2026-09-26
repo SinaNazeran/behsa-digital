@@ -6,9 +6,9 @@ export type ArticleCardProps = { slug: string; cat: string; title: string; excer
 
 export function ArticleCard({ slug, cat, title, excerpt, date, read, chart, coverUrl }: ArticleCardProps) {
   return (
-    <article className="group h-full flex flex-col rounded-md border border-line bg-surface overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-lift hover:border-primary/35">
+    <article className="card-live group h-full flex flex-col border border-line bg-surface overflow-hidden shadow-card hover:shadow-lift hover:border-orange-200">
       <SmartLink href={`/articles/${slug}`} className="block overflow-hidden">
-        <div className="transition-transform duration-500 group-hover:scale-[1.04]">
+        <div className="transition-transform duration-700 ease-fluid group-hover:scale-[1.04]">
           {coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={coverUrl} alt="" loading="lazy" decoding="async" className="aspect-[40/22] w-full object-cover" />

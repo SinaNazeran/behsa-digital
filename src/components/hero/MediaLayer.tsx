@@ -203,9 +203,14 @@ export function MediaLayer({
         </>
       ) : (
         <>
-          {/* moderate cinematic scrim — footage stays clearly visible, text stays razor-sharp and legible */}
+          {/* focal scrim, multiplied rather than laid over: a normal-blend dark
+              veil turns the footage's bright frames milky grey, while multiply
+              darkens them and keeps their colour. Brand blue-950, held deep
+              across the whole text block (the description's line ends were
+              the weakest point, 4.1:1 on the brightest frame), fading out
+              toward the edges. The footage itself is not altered. */}
           <div
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_65%_at_50%_46%,rgb(4_12_24/0.65)_0%,rgb(4_12_24/0.32)_55%,transparent_85%)]"
+            className="pointer-events-none absolute inset-0 mix-blend-multiply bg-[radial-gradient(ellipse_80%_68%_at_50%_48%,rgb(0_32_69/0.8)_0%,rgb(0_32_69/0.6)_50%,transparent_88%)]"
             aria-hidden="true"
           />
           <div

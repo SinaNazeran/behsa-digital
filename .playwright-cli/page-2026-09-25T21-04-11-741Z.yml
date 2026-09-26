@@ -1,0 +1,543 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - link "پرش به محتوای اصلی" [ref=e3] [cursor=pointer]:
+      - /url: "#main"
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "بهسا دیجیتال — بازگشت به صفحه اصلی" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e29]:
+            - generic [ref=e30]: بهسا دیجیتال
+            - generic [ref=e31]: سامانه هوشمند مدیریت انرژی
+        - navigation "ناوبری اصلی" [ref=e32]:
+          - link "محصول" [ref=e34] [cursor=pointer]:
+            - /url: /product
+          - link "گزارش‌ها" [ref=e38] [cursor=pointer]:
+            - /url: /reports
+          - link "راهکارها" [ref=e42] [cursor=pointer]:
+            - /url: /solutions
+          - link "صنایع" [ref=e46] [cursor=pointer]:
+            - /url: /industries
+          - link "منابع" [ref=e50] [cursor=pointer]:
+            - /url: /resources
+          - link "درباره ما" [ref=e54] [cursor=pointer]:
+            - /url: /about
+        - generic [ref=e55]:
+          - link "تماس با ما" [ref=e56] [cursor=pointer]:
+            - /url: /contact
+          - link "ورود به سامانه (باز شدن در پنجره جدید)" [ref=e60] [cursor=pointer]:
+            - /url: https://panel.behsa-digital.ir/login
+            - text: ورود به سامانه
+    - main [ref=e64]:
+      - generic [ref=e65]:
+        - generic [ref=e68]:
+          - paragraph [ref=e70]:
+            - generic [ref=e72]: پایش و بهینه‌سازی مصرف برق صنعتی
+          - heading "کنترل هزینه انرژی، از کنتور تا قرارداد." [level=1] [ref=e79]:
+            - generic [ref=e80]: کنترل هزینه انرژی،
+            - generic [ref=e81]: از کنتور تا قرارداد.
+          - paragraph [ref=e83]: بهسا دیجیتال با پایش لحظه‌ای، تحلیل پیشرفته و بهینه‌سازی هوشمند، هزینه‌های پنهان انرژی را برای صنایع و سازمان‌ها شناسایی و حذف می‌کند.
+          - generic [ref=e85]:
+            - link "ورود به سامانه (باز شدن در پنجره جدید)" [ref=e86] [cursor=pointer]:
+              - /url: https://panel.behsa-digital.ir/login
+              - text: ورود به سامانه
+            - link "آشنایی با پلتفرم" [ref=e90] [cursor=pointer]:
+              - /url: /product/platform
+        - generic "مورد اعتماد سازمان‌های پیشرو" [ref=e93]:
+          - paragraph [ref=e94]: مورد اعتماد سازمان‌های پیشرو
+          - list [ref=e96]:
+            - listitem [ref=e97]:
+              - img "بانک ملی ایران" [ref=e98]
+            - listitem [ref=e99]:
+              - img "ایران خودرو" [ref=e100]
+            - listitem [ref=e101]:
+              - img "بنیاد مستضعفان انقلاب اسلامی" [ref=e102]
+            - listitem [ref=e103]:
+              - img "سایپا" [ref=e104]
+            - listitem [ref=e105]:
+              - img "شستا" [ref=e106]
+            - listitem [ref=e107]:
+              - img "بانک سینا" [ref=e108]
+            - listitem [ref=e109]:
+              - img "فرودگاه بین‌المللی مشهد" [ref=e110]
+            - listitem [ref=e111]:
+              - img "گلرنگ" [ref=e112]
+            - listitem [ref=e113]:
+              - img "بیمه سینا" [ref=e114]
+            - listitem [ref=e115]:
+              - img "آب و فاضلاب خراسان رضوی" [ref=e116]
+            - listitem [ref=e117]:
+              - img "افق کوروش" [ref=e118]
+            - listitem [ref=e119]:
+              - img "بانک مهر ایران" [ref=e120]
+            - listitem [ref=e121]:
+              - img "مگفا" [ref=e122]
+            - listitem [ref=e123]:
+              - img "فروکروم جغتای" [ref=e124]
+            - listitem [ref=e125]:
+              - img "عالیس" [ref=e126]
+            - listitem [ref=e127]:
+              - img "نوری تازه" [ref=e128]
+            - listitem [aria-hidden] [ref=e129]
+            - listitem [aria-hidden] [ref=e131]
+            - listitem [aria-hidden] [ref=e133]
+            - listitem [aria-hidden] [ref=e135]
+            - listitem [aria-hidden] [ref=e137]
+            - listitem [aria-hidden] [ref=e139]
+            - listitem [aria-hidden] [ref=e141]
+            - listitem [aria-hidden] [ref=e143]
+            - listitem [aria-hidden] [ref=e145]
+            - listitem [aria-hidden] [ref=e147]
+            - listitem [aria-hidden] [ref=e149]
+            - listitem [aria-hidden] [ref=e151]
+            - listitem [aria-hidden] [ref=e153]
+            - listitem [aria-hidden] [ref=e155]
+            - listitem [aria-hidden] [ref=e157]
+            - listitem [aria-hidden] [ref=e159]
+      - generic [ref=e163]:
+        - generic [ref=e164]:
+          - generic [ref=e165]:
+            - generic [ref=e166]: چالش مشترک صنایع
+            - heading "هزینهٔ برق شما از کجا اضافه می‌شود؟" [level=2] [ref=e169]
+            - paragraph [ref=e170]: چهار قلم که در قبض‌های صنعتی تکرار می‌شوند. هر چهار مورد قابل محاسبه‌اند — اما نه از روی قبض ماهانه.
+          - link "مشاهدهٔ راهکارها" [ref=e172] [cursor=pointer]:
+            - /url: /solutions
+        - generic [ref=e175]:
+          - article [ref=e177]:
+            - generic [ref=e179]:
+              - generic [ref=e180]: ۰۱
+              - heading "تجاوز از دیماند" [level=3] [ref=e186]
+              - paragraph [ref=e187]: دیماند، بیشینهٔ توان شما در پنجره‌های ۱۵ دقیقه‌ای است. عبور از قدرت قراردادی، مازاد را با نرخی چندبرابر محاسبه می‌کند — و شما آن را اولین‌بار در قبض ماه بعد می‌بینید.
+            - link "گزارش بهینه‌سازی قدرت قراردادی" [ref=e189] [cursor=pointer]:
+              - /url: /reports/contracted-power
+          - article [ref=e193]:
+            - generic [ref=e195]:
+              - generic [ref=e196]: ۰۲
+              - heading "جریمهٔ توان راکتیو" [level=3] [ref=e201]
+              - paragraph [ref=e202]: ضریب توان پایین‌تر از حد مقرر، در هر قبض جریمه ایجاد می‌کند؛ جریمه‌ای که منشأ آن از روی قبض قابل تشخیص نیست. با تغییر محاسبهٔ ضریب زیان، وزن این قلم بیشتر هم شده است.
+            - link "گزارش توان راکتیو جبرانی" [ref=e204] [cursor=pointer]:
+              - /url: /reports/capacitor-bank-design
+          - article [ref=e208]:
+            - generic [ref=e210]:
+              - generic [ref=e211]: ۰۳
+              - heading "کسری یا مازاد خرید برق" [level=3] [ref=e219]
+              - paragraph [ref=e220]: "وقتی مصرف واقعی از مقدار خریداری‌شده فاصله می‌گیرد، هر دو جهتِ انحراف هزینه دارد: کسری جریمه می‌شود و مازاد روی دست می‌ماند."
+            - link "گزارش خرید بهینه انرژی" [ref=e222] [cursor=pointer]:
+              - /url: /reports/optimal-purchase
+          - article [ref=e226]:
+            - generic [ref=e228]:
+              - generic [ref=e229]: ۰۴
+              - heading "نبود دید لحظه‌ای" [level=3] [ref=e236]
+              - paragraph [ref=e237]: تا وقتی تنها منبع اطلاع شما قبض ماهانه است، رویدادی که جریمه را ساخته سه هفته پیش رخ داده و دیگر قابل اصلاح نیست.
+            - link "گزارش پروفایل بار" [ref=e239] [cursor=pointer]:
+              - /url: /reports/load-profile
+      - generic [ref=e244]:
+        - generic [ref=e245]:
+          - generic [ref=e246]: الزامات قانونی
+          - heading "دو قانون که نحوهٔ تأمین برق صنایع را تغییر داده‌اند" [level=2] [ref=e249]
+          - paragraph [ref=e250]: رعایت هر دو به محاسبه نیاز دارد، نه به برآورد. بهسا هر دو را از دادهٔ مصرف خود شما محاسبه می‌کند.
+        - generic [ref=e251]:
+          - article [ref=e253]:
+            - heading "ماده ۱۶ قانون جهش تولید دانش‌بنیان" [level=3] [ref=e259]
+            - paragraph [ref=e260]: صنایع بالای یک مگاوات موظف‌اند بخشی از برق سالانهٔ خود را از منابع تجدیدپذیر تأمین کنند — با احداث نیروگاه یا خرید برق سبز از بورس انرژی. در صورت عدم اقدام، آن سهم با تعرفهٔ تجدیدپذیر محاسبه و دریافت می‌شود و مجموعه در زمان کمبود، در اولویت قطع قرار می‌گیرد.
+            - generic [ref=e261]:
+              - paragraph [ref=e262]: نقش بهسا دیجیتال
+              - list [ref=e263]:
+                - listitem [ref=e264]: سهم واقعی خورشید در مصرف، نه ظرفیت اسمی پنل
+                - listitem [ref=e266]: بررسی خودکار وضعیت انطباق
+                - listitem [ref=e268]: تشخیص کسری یا مازاد تولید، روزانه و ماهانه و سالانه
+            - link "بررسی سهم خورشیدی شما" [ref=e271] [cursor=pointer]:
+              - /url: /solutions/article-16
+          - article [ref=e275]:
+            - heading "بند «ب» ماده ۴۳ قانون برنامهٔ هفتم" [level=3] [ref=e281]
+            - paragraph [ref=e282]: "مشترکان با قدرت قراردادی ۱۵۰ کیلووات و بالاتر بخشی از برق خود را باید از بازار تأمین کنند: بورس انرژی، خرده‌فروش یا قرارداد دوجانبه. خطا در برآورد مقدار، از هر دو طرف هزینه دارد."
+            - generic [ref=e283]:
+              - paragraph [ref=e284]: نقش بهسا دیجیتال
+              - list [ref=e285]:
+                - listitem [ref=e286]: پیش‌بینی مصرف روزهای باقی‌ماندهٔ ماه بر اساس الگوی بار
+                - listitem [ref=e288]: مقدار بهینهٔ خرید با هدف کمترین هزینهٔ نهایی
+                - listitem [ref=e290]: تفکیک خرید از بورس انرژی و قراردادهای دوجانبه
+            - link "محاسبهٔ خرید بهینه" [ref=e293] [cursor=pointer]:
+              - /url: /solutions/market-purchase
+      - generic [ref=e297]:
+        - generic [ref=e298]:
+          - generic [ref=e299]: چرا روش فعلی کافی نیست
+          - heading "قبض ماهانه، میانگین است. جریمه، لحظه‌ای." [level=2] [ref=e302]
+        - generic [ref=e303]:
+          - generic [ref=e305]:
+            - heading "مدیریت از روی قبض" [level=3] [ref=e306]
+            - paragraph [ref=e307]: قبض یک عدد تجمیعی ماهانه است. رویدادی که جریمه را ساخت، یک پنجرهٔ ۱۵ دقیقه‌ای بود که در آن عدد گم شده است.
+          - generic [ref=e309]:
+            - heading "طراحی از روی دادهٔ میانگین" [level=3] [ref=e310]
+            - paragraph [ref=e311]: بانک خازنی که با بار میانگین طراحی شود، در ساعات کم‌باری اضافه‌جبران می‌کند و در پیک کم می‌آورد. بدون دیدن پیک‌های توان راکتیو، طراحی درست ممکن نیست.
+          - generic [ref=e313]:
+            - heading "اتکا به بازدید و محاسبهٔ دستی" [level=3] [ref=e314]
+            - paragraph [ref=e315]: بازدید میدانی هزینه و هفته‌ها زمان می‌برد، و خروجی آن یک عکس لحظه‌ای است — نه پروفایل یک سال.
+      - generic [ref=e318]:
+        - generic [ref=e319]:
+          - generic [ref=e320]: چطور کار می‌کند
+          - heading "از دادهٔ کنتور تا عددی که می‌شود بر اساس آن تصمیم گرفت" [level=2] [ref=e323]
+          - paragraph [ref=e324]: چهار گام. گام اول، در حالت معمول، به هیچ سخت‌افزار جدیدی نیاز ندارد.
+        - generic [ref=e325]:
+          - tablist "گام‌های کار با سامانه" [ref=e326]:
+            - tab "اتصال داده گام ۱ از ۴" [selected] [ref=e327] [cursor=pointer]:
+              - generic [ref=e333]:
+                - generic [ref=e334]: اتصال داده
+                - generic [ref=e335]: گام ۱ از ۴
+            - tab "محاسبه گام ۲ از ۴" [ref=e336] [cursor=pointer]:
+              - generic [ref=e342]:
+                - generic [ref=e343]: محاسبه
+                - generic [ref=e344]: گام ۲ از ۴
+            - tab "هشدار گام ۳ از ۴" [ref=e345] [cursor=pointer]:
+              - generic [ref=e350]:
+                - generic [ref=e351]: هشدار
+                - generic [ref=e352]: گام ۳ از ۴
+            - tab "اقدام گام ۴ از ۴" [ref=e353] [cursor=pointer]:
+              - generic [ref=e360]:
+                - generic [ref=e361]: اقدام
+                - generic [ref=e362]: گام ۴ از ۴
+          - generic [ref=e364]:
+            - generic [ref=e365]:
+              - generic [ref=e366]: اتصال داده
+              - paragraph [ref=e371]: اگر سایت شما کنتور هوشمند دارد، سامانه از طریق API به مرکز دادهٔ کنتورها متصل می‌شود.
+              - list [ref=e372]:
+                - listitem [ref=e373]: پروفایل بار با تناوب ۱۵ دقیقه‌ای
+                - listitem [ref=e378]: پارامترهای الکتریکی کنتور
+                - listitem [ref=e383]: قبض و مشخصات قرارداد تأمین
+                - listitem [ref=e388]: در حالت معمول، بدون نصب سخت‌افزار
+            - generic [ref=e393]:
+              - link "ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)" [ref=e394] [cursor=pointer]:
+                - /url: https://panel.behsa-digital.ir/login
+                - text: ورود به سامانه
+              - link "جزئیات پلتفرم" [ref=e398] [cursor=pointer]:
+                - /url: /product/platform
+      - generic [ref=e401]:
+        - generic [ref=e402]:
+          - generic [ref=e403]:
+            - generic [ref=e404]: گزارش‌ها
+            - heading "هر گزارش، پاسخ یک سؤال مدیریتی مشخص" [level=2] [ref=e407]
+            - paragraph [ref=e408]: گزارش‌ها بر اساس تصمیمی که باید گرفته شود دسته‌بندی شده‌اند، نه بر اساس نوع نمودار.
+          - link "همهٔ گزارش‌ها" [ref=e410] [cursor=pointer]:
+            - /url: /reports
+        - generic [ref=e413]:
+          - link "مدیریت هزینه بهینه‌سازی قدرت قراردادی قدرت قراردادی فعلی زیاد است یا کم؟ مشاهدهٔ گزارش" [ref=e415] [cursor=pointer]:
+            - /url: /reports/contracted-power
+            - generic [ref=e416]:
+              - generic [ref=e417]: مدیریت هزینه
+              - heading "بهینه‌سازی قدرت قراردادی" [level=3] [ref=e424]
+              - paragraph [ref=e425]: قدرت قراردادی فعلی زیاد است یا کم؟
+            - generic [ref=e426]: مشاهدهٔ گزارش
+          - link "کیفیت توان توان راکتیو جبرانی بانک خازنی چه ظرفیتی، در چند پله، با کدام فیوز و کابل؟ مشاهدهٔ گزارش" [ref=e430] [cursor=pointer]:
+            - /url: /reports/capacitor-bank-design
+            - generic [ref=e431]:
+              - generic [ref=e432]: کیفیت توان
+              - heading "توان راکتیو جبرانی بانک خازنی" [level=3] [ref=e437]
+              - paragraph [ref=e438]: چه ظرفیتی، در چند پله، با کدام فیوز و کابل؟
+            - generic [ref=e439]: مشاهدهٔ گزارش
+          - link "تأمین انرژی خرید بهینه انرژی ماه جاری تا پایان ماه چقدر برق بخریم که جریمه نشویم؟ مشاهدهٔ گزارش" [ref=e443] [cursor=pointer]:
+            - /url: /reports/optimal-purchase
+            - generic [ref=e444]:
+              - generic [ref=e445]: تأمین انرژی
+              - heading "خرید بهینه انرژی ماه جاری" [level=3] [ref=e453]
+              - paragraph [ref=e454]: تا پایان ماه چقدر برق بخریم که جریمه نشویم؟
+            - generic [ref=e455]: مشاهدهٔ گزارش
+          - link "تجدیدپذیر ارزیابی سهم انرژی خورشیدی سهم واقعی خورشید چقدر است و الزام رعایت شده؟ مشاهدهٔ گزارش" [ref=e459] [cursor=pointer]:
+            - /url: /reports/solar-share
+            - generic [ref=e460]:
+              - generic [ref=e461]: تجدیدپذیر
+              - heading "ارزیابی سهم انرژی خورشیدی" [level=3] [ref=e467]
+              - paragraph [ref=e468]: سهم واقعی خورشید چقدر است و الزام رعایت شده؟
+            - generic [ref=e469]: مشاهدهٔ گزارش
+          - link "پایش مصرف بیشینه مصرف اکتیو پیک مصرف دقیقاً چه زمانی رخ داده است؟ مشاهدهٔ گزارش" [ref=e473] [cursor=pointer]:
+            - /url: /reports/peak-demand
+            - generic [ref=e474]:
+              - generic [ref=e475]: پایش مصرف
+              - heading "بیشینه مصرف اکتیو" [level=3] [ref=e480]
+              - paragraph [ref=e481]: پیک مصرف دقیقاً چه زمانی رخ داده است؟
+            - generic [ref=e482]: مشاهدهٔ گزارش
+          - link "کیفیت داده رویت‌پذیری دادهٔ کنتور چه بخشی از داده واقعی است و چه بخشی تخمینی؟ مشاهدهٔ گزارش" [ref=e486] [cursor=pointer]:
+            - /url: /reports/observability
+            - generic [ref=e487]:
+              - generic [ref=e488]: کیفیت داده
+              - heading "رویت‌پذیری دادهٔ کنتور" [level=3] [ref=e494]
+              - paragraph [ref=e495]: چه بخشی از داده واقعی است و چه بخشی تخمینی؟
+            - generic [ref=e496]: مشاهدهٔ گزارش
+      - generic [ref=e501]:
+        - generic [ref=e502]:
+          - generic [ref=e503]:
+            - generic [ref=e504]: تفاوت اصلی
+            - heading "طراحی بانک خازنی، از سریال کنتور — بدون بازدید میدانی" [level=2] [ref=e507]
+            - paragraph [ref=e508]: طراحی بانک خازنی با دادهٔ ماهانهٔ قبض، یعنی طراحی بدون دیدن پیک‌های توان راکتیو. گزارش توان راکتیو جبرانی، همان پروفایل ساعتی را می‌سازد و از روی آن طراحی کامل را محاسبه می‌کند.
+          - link "گزارش طراحی بانک خازنی" [ref=e510] [cursor=pointer]:
+            - /url: /reports/capacitor-bank-design
+        - generic [ref=e514]:
+          - generic [ref=e516]:
+            - generic [ref=e517]: ۱
+            - heading "پروفایل ساعتی توان راکتیو جبرانی" [level=3] [ref=e518]
+            - paragraph [ref=e519]: مقدار توان راکتیو موردنیاز در هر ساعت، تا رسیدن به ضریب توان بالای ۰٫۹۱.
+          - generic [ref=e521]:
+            - generic [ref=e522]: ۲
+            - heading "ظرفیت کل و پله‌بندی" [level=3] [ref=e523]
+            - paragraph [ref=e524]: ظرفیت کل بانک، تعداد پله‌ها، ظرفیت هر پله و خازن ثابت در صورت نیاز.
+          - generic [ref=e526]:
+            - generic [ref=e527]: ۳
+            - heading "فیوز، کنتاکتور و کابل" [level=3] [ref=e528]
+            - paragraph [ref=e529]: جریان هر پله، جریان فیوز و سطح مقطع کابل مناسب — محاسبه‌شده، نه تخمینی.
+          - generic [ref=e531]:
+            - generic [ref=e532]: ۴
+            - heading "پیشنهاد قطعهٔ استاندارد بازار" [level=3] [ref=e533]
+            - paragraph [ref=e534]: برای هر پله، فیوز و کابل استاندارد موجود در بازار پیشنهاد می‌شود.
+      - generic [ref=e536]:
+        - generic [ref=e537]:
+          - generic [ref=e538]: مخاطبان بهسا
+          - heading "برای چه مجموعه‌هایی ساخته شده است؟" [level=2] [ref=e541]
+          - paragraph [ref=e542]: الگوی بار، تعرفه و الزامات هر بخش متفاوت است — و گزارش‌هایی که برایش اهمیت دارند هم متفاوت‌اند.
+        - generic [ref=e543]:
+          - link [ref=e545] [cursor=pointer]:
+            - /url: /industries/heavy-industry
+            - heading "صنایع پرمصرف" [level=3] [ref=e551]
+            - paragraph [ref=e552]: فولاد، سیمان، پتروشیمی، ریخته‌گری و غذایی؛ با قبض‌های سنگین و ریسک دائمی جریمهٔ دیماند.
+            - generic [ref=e553]: گزارش‌های این بخش
+          - link [ref=e557] [cursor=pointer]:
+            - /url: /industries/holdings
+            - heading "هلدینگ‌ها و گروه‌های چندسایتی" [level=3] [ref=e564]
+            - paragraph [ref=e565]: زیرمجموعه‌های متنوع با کنتور، تعرفه و فرمت گزارش متفاوت — و گزارش‌هایی که با هم قابل مقایسه نیستند.
+            - generic [ref=e566]: گزارش‌های این بخش
+          - link [ref=e570] [cursor=pointer]:
+            - /url: /industries/consultants
+            - heading "مشاوران و طراحان برق" [level=3] [ref=e577]
+            - paragraph [ref=e578]: طراحی بانک خازنی و تحلیل پروفایل بار، بدون نیاز به اندازه‌گیری میدانی.
+            - generic [ref=e579]: گزارش‌های این بخش
+          - link [ref=e583] [cursor=pointer]:
+            - /url: /industries/electricity-retailers
+            - heading "خرده‌فروشان و توزیع برق" [level=3] [ref=e591]
+            - paragraph [ref=e592]: پایش سلامت کنتورهای سبد مشترکان و پیش‌بینی مصرف برای مدیریت خرید.
+            - generic [ref=e593]: گزارش‌های این بخش
+      - generic [ref=e599]:
+        - generic [ref=e601]:
+          - generic [ref=e602]:
+            - generic [ref=e603]: دستاوردها
+            - heading "بهسا دیجیتال چه چیزی را برای شما تغییر می‌دهد؟" [level=2] [ref=e606]
+            - paragraph [ref=e607]: شش اثری که مستقیماً از قابلیت‌های سامانه به دست می‌آیند.
+          - generic [ref=e609]:
+            - paragraph [ref=e610]: اثر مالی را چطور اندازه می‌گیریم؟
+            - paragraph [ref=e615]: مبنای سنجش، قبض دورهٔ پیش از استقرار است. اقلام جریمه‌پذیر پیش و پس از اقدام مقایسه می‌شوند و اثر تغییرات تعرفه از محاسبه کنار گذاشته می‌شود.
+        - generic [ref=e616]:
+          - generic [ref=e618]:
+            - heading "دیدن هزینه پیش از وقوع" [level=3] [ref=e623]
+            - paragraph [ref=e624]: اقلام جریمه‌پذیر قبض، پیش از پایان دوره محاسبه و نمایش داده می‌شوند.
+          - generic [ref=e626]:
+            - heading "هشدار پیش از عبور از آستانه" [level=3] [ref=e631]
+            - paragraph [ref=e632]: هشدار دیماند و ضریب توان پیش از رسیدن به حد، از طریق نوتیفیکیشن و پیامک.
+          - generic [ref=e634]:
+            - heading "تصمیم بر اساس عدد، نه برآورد" [level=3] [ref=e640]
+            - paragraph [ref=e641]: "خروجی هر گزارش یک مقدار مشخص است: قدرت قراردادی، ظرفیت خازن، مقدار خرید."
+          - generic [ref=e643]:
+            - heading "حذف رفت‌وبرگشت طراحی" [level=3] [ref=e648]
+            - paragraph [ref=e649]: طراحی بانک خازنی بدون بازدید میدانی و بدون آزمون و خطا انجام می‌شود.
+          - generic [ref=e651]:
+            - heading "یک زبان مشترک برای همهٔ سایت‌ها" [level=3] [ref=e660]
+            - paragraph [ref=e661]: همهٔ زیرمجموعه‌ها با شاخص‌های یکسان، روی یک داشبورد.
+          - generic [ref=e663]:
+            - heading "انطباق قابل‌اثبات با الزامات" [level=3] [ref=e668]
+            - paragraph [ref=e669]: وضعیت الزام تأمین برق تجدیدپذیر، محاسبه‌شده و قابل ارائه.
+      - generic [ref=e672]:
+        - generic [ref=e673]:
+          - generic [ref=e674]:
+            - generic [ref=e675]: مقالات
+            - heading "دانش و تحلیل انرژی" [level=2] [ref=e678]
+            - paragraph [ref=e679]: محتوای تخصصی تیم تحلیل بهسا برای مدیران انرژی و مهندسان برق.
+          - link "مشاهده همه مقالات" [ref=e681] [cursor=pointer]:
+            - /url: /articles
+        - generic [ref=e684]:
+          - article [ref=e686]:
+            - link "مدیریت دیماند" [ref=e687] [cursor=pointer]:
+              - /url: /articles/demand-penalty
+            - generic [ref=e695]:
+              - generic [ref=e696]:
+                - text: ۱۸ آبان ۱۴۰۴
+                - generic [ref=e700]: •
+                - text: ۱ دقیقه مطالعه
+              - heading [level=3] [ref=e704]:
+                - link "دیماند چیست و جریمه تجاوز از دیماند چگونه محاسبه می‌شود؟" [ref=e705] [cursor=pointer]:
+                  - /url: /articles/demand-penalty
+              - paragraph [ref=e706]: دیماند یا قدرت قراردادی، یکی از مهم‌ترین پارامترهای قبض برق صنعتی است. در این مقاله سازوکار محاسبه جریمه و روش‌های جلوگیری از آن را بررسی می‌کنیم.
+              - link "ادامه مطلب" [ref=e707] [cursor=pointer]:
+                - /url: /articles/demand-penalty
+          - article [ref=e711]:
+            - link "توان راکتیو" [ref=e712] [cursor=pointer]:
+              - /url: /articles/power-factor-capacitor
+            - generic [ref=e720]:
+              - generic [ref=e721]:
+                - text: ۹ آبان ۱۴۰۴
+                - generic [ref=e725]: •
+                - text: ۱ دقیقه مطالعه
+              - heading [level=3] [ref=e729]:
+                - link "راهنمای کامل اصلاح ضریب توان و طراحی بانک خازنی" [ref=e730] [cursor=pointer]:
+                  - /url: /articles/power-factor-capacitor
+              - paragraph [ref=e731]: ضریب توان پایین یعنی جریمه پنهان در هر قبض. از محاسبه توان راکتیو موردنیاز تا پله‌بندی بانک خازنی، همه‌چیز را توضیح می‌دهیم.
+              - link "ادامه مطلب" [ref=e732] [cursor=pointer]:
+                - /url: /articles/power-factor-capacitor
+          - article [ref=e736]:
+            - link "مدیریت انرژی" [ref=e737] [cursor=pointer]:
+              - /url: /articles/reduce-industrial-cost
+            - generic [ref=e754]:
+              - generic [ref=e755]:
+                - text: ۲ آبان ۱۴۰۴
+                - generic [ref=e759]: •
+                - text: ۱ دقیقه مطالعه
+              - heading [level=3] [ref=e763]:
+                - link "۷ راهکار عملی برای کاهش هزینه برق صنعتی" [ref=e764] [cursor=pointer]:
+                  - /url: /articles/reduce-industrial-cost
+              - paragraph [ref=e765]: از جابه‌جایی بار به ساعات کم‌باری تا اصلاح قدرت قراردادی؛ هفت اقدام که بدون سرمایه‌گذاری سنگین، قبض شما را کوچک می‌کنند.
+              - link "ادامه مطلب" [ref=e766] [cursor=pointer]:
+                - /url: /articles/reduce-industrial-cost
+      - generic [ref=e771]:
+        - generic [ref=e773]:
+          - generic [ref=e774]:
+            - generic [ref=e775]: سوالات متداول
+            - heading "پاسخ ابهام‌های رایج، پیش از شروع" [level=2] [ref=e778]
+            - paragraph [ref=e779]: نُه سؤالی که تقریباً در هر جلسهٔ معارفه پرسیده می‌شود.
+          - generic [ref=e781]:
+            - paragraph [ref=e787]: پاسخ خود را پیدا نکردید؟
+            - paragraph [ref=e788]: سؤال فنی یا شرایط خاص مجموعه‌تان را بپرسید؛ در ساعات کاری پاسخ می‌دهیم.
+            - link "تماس با ما" [ref=e789] [cursor=pointer]:
+              - /url: /contact
+        - generic [ref=e792]:
+          - generic [ref=e794]:
+            - button "۰۱ این سامانه برای چه مجموعه‌هایی مناسب است؟" [expanded] [ref=e795] [cursor=pointer]:
+              - generic [ref=e796]: ۰۱
+              - generic [ref=e797]: این سامانه برای چه مجموعه‌هایی مناسب است؟
+            - paragraph [ref=e803]: "هر مصرف‌کنندهٔ صنعتی، سازمانی یا تجاری که قدرت قراردادی و هزینهٔ انرژی قابل‌توجهی دارد: صنایع پرمصرف، هلدینگ‌های چندسایتی، نیروگاه‌های خورشیدی، خرده‌فروشان برق و مشاوران برق. از قدرت قراردادی ۱۵۰ کیلووات به بالا، الزامات جدید تأمین برق هم اعمال می‌شود و مدیریت مصرف از حالت اختیاری خارج می‌شود."
+          - generic [ref=e805]:
+            - button "۰۲ سامانه به چه داده‌هایی نیاز دارد؟" [ref=e806] [cursor=pointer]:
+              - generic [ref=e807]: ۰۲
+              - generic [ref=e808]: سامانه به چه داده‌هایی نیاز دارد؟
+            - paragraph [ref=e812]: دادهٔ اصلی، مصرف کنتورهای هوشمند با تناوب ۱۵ دقیقه‌ای است. علاوه بر آن، قبض‌های برق و مشخصات قرارداد تأمین — قدرت قراردادی و نوع تعرفه — استفاده می‌شود. برای تحلیل‌های اولیه، دادهٔ دوازده ماه قبض هم کافی است.
+          - generic [ref=e814]:
+            - button "۰۳ آیا به کنتور هوشمند نیاز داریم؟" [ref=e815] [cursor=pointer]:
+              - generic [ref=e816]: ۰۳
+              - generic [ref=e817]: آیا به کنتور هوشمند نیاز داریم؟
+            - paragraph [ref=e821]: برای پایش لحظه‌ای و هشدارهای آنی، بله. اما تحلیل‌هایی مانند بهینه‌سازی قدرت قراردادی و بررسی توان راکتیو با دادهٔ قبض هم انجام می‌شوند. اگر کنتور هوشمند ندارید، در انتخاب و نصب کنتور موردتأیید شرکت توزیع همراهی می‌کنیم.
+          - generic [ref=e823]:
+            - button "۰۴ آیا نصب سخت‌افزار لازم است؟" [ref=e824] [cursor=pointer]:
+              - generic [ref=e825]: ۰۴
+              - generic [ref=e826]: آیا نصب سخت‌افزار لازم است؟
+            - paragraph [ref=e830]: در حالت معمول خیر. اگر سایت کنتور هوشمند دارد، اتصال از طریق API به مرکز دادهٔ کنتورها انجام می‌شود و بار عملیاتی برای تیم فنی شما ندارد. سخت‌افزار جدید فقط وقتی لازم است که کنتور هوشمند وجود نداشته باشد.
+          - generic [ref=e832]:
+            - button "۰۵ چه خروجی‌هایی دریافت می‌کنیم؟" [ref=e833] [cursor=pointer]:
+              - generic [ref=e834]: ۰۵
+              - generic [ref=e835]: چه خروجی‌هایی دریافت می‌کنیم؟
+            - paragraph [ref=e839]: داشبورد پایش لحظه‌ای، هشدارهای آستانهٔ دیماند و ضریب توان و کیفیت ولتاژ، و گزارش‌های تحلیلی سامانه — از پروفایل بار و بهای انرژی تا طراحی بانک خازنی و خرید بهینهٔ برق. خروجی گزارش‌ها به‌صورت PDF و اکسل قابل دریافت است. فهرست کامل گزارش‌ها در صفحهٔ /reports آمده است.
+          - generic [ref=e841]:
+            - button "۰۶ دادهٔ مصرف ما کجا نگهداری می‌شود و چه کسی دسترسی دارد؟" [ref=e842] [cursor=pointer]:
+              - generic [ref=e843]: ۰۶
+              - generic [ref=e844]: دادهٔ مصرف ما کجا نگهداری می‌شود و چه کسی دسترسی دارد؟
+            - paragraph [ref=e848]: اتصال به دادهٔ کنتور فقط برای مشترکانی انجام می‌شود که خودشان درخواست می‌دهند، و دسترسی به گزارش‌ها محدود به کاربران تعریف‌شدهٔ همان مجموعه است. برای جزئیات فنی با تیم ما تماس بگیرید.
+          - generic [ref=e850]:
+            - button "۰۷ از شروع همکاری تا اولین گزارش چقدر طول می‌کشد؟" [ref=e851] [cursor=pointer]:
+              - generic [ref=e852]: ۰۷
+              - generic [ref=e853]: از شروع همکاری تا اولین گزارش چقدر طول می‌کشد؟
+            - paragraph [ref=e857]: پس از برقراری اتصال به دادهٔ کنتور، گزارش‌های مبتنی بر دادهٔ تاریخی — مانند بهینه‌سازی قدرت قراردادی و توان راکتیو جبرانی — بلافاصله قابل تولیدند. زمان‌بندی دقیق در جلسهٔ معارفه و بر اساس وضعیت کنتورهای شما اعلام می‌شود.
+          - generic [ref=e859]:
+            - button "۰۸ مدل قیمت‌گذاری چگونه است؟" [ref=e860] [cursor=pointer]:
+              - generic [ref=e861]: ۰۸
+              - generic [ref=e862]: مدل قیمت‌گذاری چگونه است؟
+            - paragraph [ref=e866]: قیمت بر اساس تعداد کنتورهای تحت پایش و گزارش‌های موردنیاز تعیین می‌شود. برای دریافت پیشنهاد متناسب با مجموعهٔ خود با ما تماس بگیرید.
+          - generic [ref=e868]:
+            - button "۰۹ بانک خازنی داریم؛ باز هم به این گزارش نیاز داریم؟" [ref=e869] [cursor=pointer]:
+              - generic [ref=e870]: ۰۹
+              - generic [ref=e871]: بانک خازنی داریم؛ باز هم به این گزارش نیاز داریم؟
+            - paragraph [ref=e875]: نصب‌بودن بانک خازنی به‌معنای درست‌کارکردن آن نیست. بانکی با طراحی نادرست، رگولاتور بدتنظیم یا پله‌بندی نامناسب، جریمه را حذف نمی‌کند. گزارش نمودار ساعتی جبران‌ساز نشان می‌دهد مشکل از نصب است، از تنظیم، یا از ظرفیت.
+      - generic [ref=e879]:
+        - heading "قبض بعدی را پیش از صدور ببینید." [level=2] [ref=e883]
+        - paragraph [ref=e884]: در سامانهٔ بهسا، با دادهٔ واقعی مجموعهٔ خودتان ببینید کدام اقلام قبض قابل محاسبه و قابل حذف‌اند.
+        - generic [ref=e885]:
+          - link "ورود به سامانه (باز شدن در پنجره جدید)" [ref=e886] [cursor=pointer]:
+            - /url: https://panel.behsa-digital.ir/login
+            - text: ورود به سامانه
+          - link "تماس با ما" [ref=e889] [cursor=pointer]:
+            - /url: /contact
+    - contentinfo [ref=e890]:
+      - generic [ref=e893]:
+        - generic [ref=e894]:
+          - generic [ref=e895]:
+            - link "بهسا دیجیتال — بازگشت به صفحه اصلی" [ref=e896] [cursor=pointer]:
+              - /url: /
+              - generic [ref=e919]:
+                - generic [ref=e920]: بهسا دیجیتال
+                - generic [ref=e921]: سامانه هوشمند مدیریت انرژی
+            - paragraph [ref=e922]: پایش دقیق، تحلیل هوشمند و تصمیم‌گیری بهتر برای مدیریت انرژی صنایع، سازمان‌ها و هلدینگ‌ها.
+            - link "کانال بله بهسا دیجیتال" [ref=e924] [cursor=pointer]:
+              - /url: https://ble.ir/behsa_digital
+          - generic [ref=e933]:
+            - heading "صفحات اصلی" [level=3] [ref=e934]
+            - list [ref=e935]:
+              - listitem [ref=e936]:
+                - link "محصول" [ref=e937] [cursor=pointer]:
+                  - /url: /product
+              - listitem [ref=e939]:
+                - link "گزارش‌ها" [ref=e940] [cursor=pointer]:
+                  - /url: /reports
+              - listitem [ref=e942]:
+                - link "راهکارها" [ref=e943] [cursor=pointer]:
+                  - /url: /solutions
+              - listitem [ref=e945]:
+                - link "صنایع" [ref=e946] [cursor=pointer]:
+                  - /url: /industries
+              - listitem [ref=e948]:
+                - link "منابع" [ref=e949] [cursor=pointer]:
+                  - /url: /resources
+              - listitem [ref=e951]:
+                - link "درباره ما" [ref=e952] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e954]:
+                - link "تماس با ما" [ref=e955] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e957]:
+                - link "ورود به سامانه (پنل)" [ref=e958] [cursor=pointer]:
+                  - /url: https://panel.behsa-digital.ir/login
+          - generic [ref=e964]:
+            - heading "گزارش‌ها و منابع" [level=3] [ref=e965]
+            - list [ref=e966]:
+              - listitem [ref=e967]:
+                - link "هزینه و قدرت قراردادی" [ref=e968] [cursor=pointer]:
+                  - /url: /reports#cost
+              - listitem [ref=e970]:
+                - link "کیفیت توان و بانک خازنی" [ref=e971] [cursor=pointer]:
+                  - /url: /reports#power-quality
+              - listitem [ref=e973]:
+                - link "خرید انرژی و تجدیدپذیر" [ref=e974] [cursor=pointer]:
+                  - /url: /reports#procurement
+              - listitem [ref=e976]:
+                - link "پایش و دادهٔ مصرف" [ref=e977] [cursor=pointer]:
+                  - /url: /reports#monitoring
+              - listitem [ref=e979]:
+                - link "کنتورها و مجموعه‌های چندسایتی" [ref=e980] [cursor=pointer]:
+                  - /url: /reports#meters
+              - listitem [ref=e982]:
+                - link "الزامات قانونی تأمین برق" [ref=e983] [cursor=pointer]:
+                  - /url: /solutions/article-16
+              - listitem [ref=e985]:
+                - link "مقالات و تحلیل‌های انرژی" [ref=e986] [cursor=pointer]:
+                  - /url: /articles
+          - generic [ref=e988]:
+            - heading "تماس با ما" [level=3] [ref=e989]
+            - list [ref=e990]:
+              - listitem [ref=e991]:
+                - link "+98 51 35412240 - 1" [ref=e994] [cursor=pointer]:
+                  - /url: tel:+985135412240
+              - listitem [ref=e995]:
+                - link "info@bst.co.ir" [ref=e999] [cursor=pointer]:
+                  - /url: mailto:info@bst.co.ir
+              - listitem [ref=e1000]:
+                - generic [ref=e1004]: شنبه تا چهارشنبه — ساعات ۷ تا ۱۵:۳۰
+              - listitem [ref=e1005]:
+                - generic [ref=e1009]: مشهد - شهرک صنعتی توس - فاز یک - انتهای بلوار صنعت - پلاک ۳۷۰
+            - link "ورود به سامانه (باز شدن در پنجره جدید)" [ref=e1010] [cursor=pointer]:
+              - /url: https://panel.behsa-digital.ir/login
+              - text: ورود به سامانه
+        - generic [ref=e1014]:
+          - paragraph [ref=e1015]: © ۱۴۰۵ بهسا دیجیتال — کلیه حقوق محفوظ است.
+          - paragraph [ref=e1016]: محاسبه، پیش از صدور قبض.
+  - button "Open Next.js Dev Tools" [ref=e1023] [cursor=pointer]

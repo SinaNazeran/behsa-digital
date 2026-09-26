@@ -185,7 +185,7 @@ export function Thumb({ chart, cat, accent = SERIES.grid }: { chart: "line" | "b
   const seed = cat.length * 7 + cat.charCodeAt(0);
   const data = Array.from({ length: 12 }, (_, i) => 30 + Math.abs(Math.sin(seed + i * 1.7)) * 55 + (i % 3) * 6);
   return (
-    <div className="relative overflow-hidden bg-navy grid-dark" dir="ltr">
+    <div className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-surface grid-light" dir="ltr">
       <svg viewBox="0 0 400 220" className="w-full h-auto block" aria-hidden="true">
         <defs>
           <linearGradient id={`tg-${seed}`} x1="0" y1="0" x2="0" y2="1">
@@ -199,7 +199,7 @@ export function Thumb({ chart, cat, accent = SERIES.grid }: { chart: "line" | "b
           ))
         ) : chart === "donut" ? (
           <>
-            <circle cx="200" cy="110" r="62" fill="none" stroke="#3C4855" strokeWidth="22" />
+            <circle cx="200" cy="110" r="62" fill="none" stroke="var(--color-neutral-200)" strokeWidth="22" />
             <circle cx="200" cy="110" r="62" fill="none" stroke={accent} strokeWidth="22" strokeDasharray="245 144" transform="rotate(-90 200 110)" />
             <circle cx="200" cy="110" r="62" fill="none" stroke="#23AC6F" strokeWidth="22" strokeDasharray="78 311" strokeDashoffset="-245" transform="rotate(-90 200 110)" />
           </>
@@ -217,7 +217,7 @@ export function Thumb({ chart, cat, accent = SERIES.grid }: { chart: "line" | "b
           })()
         )}
       </svg>
-      <div dir="rtl" className="absolute top-3 right-3 rounded-xs bg-navy2/90 border border-navyline px-2.5 py-1 text-[11px] font-semibold text-neutral-200">
+      <div dir="rtl" className="absolute top-3 right-3 rounded-full bg-surface/90 border border-line px-2.5 py-1 text-[11px] font-semibold text-ink2 shadow-card backdrop-blur-sm">
         {cat}
       </div>
     </div>

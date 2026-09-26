@@ -27,6 +27,10 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
 }) {
   const route = usePathname() ?? "/";
   const [scrolled, setScrolled] = useState(false);
+  /* the home hero carries its own orange "ورود به سامانه": while it is on
+     screen the header's copy of that action stays soft, so the viewport
+     has one loud call to action, and takes the fill once the hero is left */
+  const [pastHero, setPastHero] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
   const [drawer, setDrawer] = useState(false);
 
@@ -39,6 +43,7 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 24);
+      setPastHero(window.scrollY > window.innerHeight * 0.7);
       setOpen(null); /* menu must not linger over scrolled content */
     };
     onScroll();
@@ -107,7 +112,7 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
       <div
         onMouseLeave={closeSoon}
         className={cn(
-          "relative mx-auto mt-3 flex max-w-[1280px] items-center gap-4 rounded-[16px] border px-4 transition-all duration-300 ease-out md:px-5",
+          "relative mx-auto mt-3 flex max-w-[1280px] items-center gap-4 rounded-lg border px-4 transition-all duration-300 ease-out md:px-5",
           /* scrolled: solid surface, tighter bar, subtle elevation that lifts it off the page */
           scrolled || open
             ? "h-[58px] border-line bg-surface/[0.97] shadow-[0_10px_30px_-14px_rgb(22_33_46/0.28)] backdrop-blur-md md:h-[62px]"
@@ -140,7 +145,7 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
                   aria-controls={hasPanel ? `nav-panel-${key}` : undefined}
                   aria-current={isActive ? "true" : undefined}
                   className={cn(
-                    "flex h-11 items-center gap-1.5 whitespace-nowrap rounded-[10px] px-3 text-[13.5px] font-bold transition-colors xl:px-3.5",
+                    "flex h-11 items-center gap-1.5 whitespace-nowrap rounded-control px-3 text-[13.5px] font-bold transition-colors xl:px-3.5",
                     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                     isActive ? "text-orange-700" : "text-ink2 hover:text-orange-700",
                     open === key && "bg-primary-soft text-orange-700",
@@ -162,7 +167,7 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
                 {/* simple dropdown — anchored to its trigger */}
                 {open === key && hasPanel && section.kind === "dropdown" && (
                   <div id={`nav-panel-${key}`} data-panel={key} role="region" aria-label={section.title} className="absolute top-full right-0 z-50 pt-3" onMouseEnter={() => openNow(key)}>
-                    <div className="nav-panel-enter overflow-hidden rounded-[14px] border border-line bg-white/97 shadow-lift backdrop-blur-xl">
+                    <div className="nav-panel-enter overflow-hidden rounded-lg border border-line bg-surface shadow-lift">
                       <DropdownMenu section={section} activePath={route} />
                     </div>
                   </div>
@@ -175,7 +180,7 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
         {/* mega panel — anchored to the full bar (not the nav) so it centers on the viewport */}
         {openSection && openSection.kind !== "dropdown" && openSection.items.length > 0 && (
           <div id={`nav-panel-${openSection.id}`} data-panel={openSection.id} role="region" aria-label={openSection.title} className="absolute top-full inset-x-0 z-50 flex justify-center pt-3" onMouseEnter={() => openNow(String(openSection.id))}>
-            <div className="nav-panel-enter max-h-[calc(100dvh-110px)] w-[min(1140px,calc(100vw-28px))] overflow-y-auto overscroll-contain rounded-[18px] border border-line bg-white/97 shadow-lift backdrop-blur-xl">
+            <div className="nav-panel-enter max-h-[calc(100dvh-110px)] w-[min(1140px,calc(100vw-28px))] overflow-y-auto overscroll-contain rounded-sheet border border-line bg-surface shadow-lift">
               <MegaMenu section={openSection} activePath={route} />
             </div>
           </div>
@@ -188,7 +193,7 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
             href={NAV_CONTACT.href}
             aria-label={NAV_CONTACT.title}
             className={cn(
-              "group hidden h-10 items-center gap-2 whitespace-nowrap rounded-[10px] border px-3 text-[13px] font-bold transition-all duration-200 active:translate-y-px",
+              "group hidden h-10 items-center gap-2 whitespace-nowrap rounded-control border px-3 text-[13px] font-bold transition-all duration-200 active:translate-y-px",
               "border-line bg-bg text-ink2 hover:-translate-y-px hover:border-primary/40 hover:text-orange-700 hover:shadow-card",
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:inline-flex",
             )}
@@ -204,11 +209,14 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
           <Button
             href={panelUrl}
             target="_blank"
-            variant="primary"
+            variant={route === "/" && !pastHero ? "soft" : "primary"}
             size="md"
             icon="login"
             ariaLabel={`${NAV_CTA_LABEL} (باز شدن در پنجره جدید)`}
-            className="hidden h-10 whitespace-nowrap px-4 text-[13px] shadow-[0_2px_10px_rgb(250_100_0/0.26)] hover:shadow-[0_4px_14px_rgb(250_100_0/0.36)] sm:inline-flex"
+            className={cn(
+              "hidden h-10 whitespace-nowrap px-4 text-[13px] sm:inline-flex",
+              !(route === "/" && !pastHero) && "shadow-[0_2px_10px_rgb(250_100_0/0.26)] hover:shadow-[0_4px_14px_rgb(250_100_0/0.36)]",
+            )}
           >
             {NAV_CTA_LABEL}
           </Button>
@@ -216,7 +224,7 @@ export function Navbar({ sections, panelUrl, phoneHref, phoneDisplay }: {
             onClick={() => setDrawer(true)}
             aria-label="باز کردن منو"
             aria-expanded={drawer}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-[10px] border border-line bg-bg text-ink transition-colors hover:text-orange-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-control border border-line bg-bg text-ink transition-colors hover:text-orange-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
           >
             <Icon name="menu" size={20} />
           </button>
