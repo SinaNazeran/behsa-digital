@@ -10,7 +10,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   if (!UUID_RE.test(id)) return new Response("Not found", { status: 404 });
 
   const etag = `"${id}"`;
-  if (req.headers.get("if-none-match") === etag) return new Response(null, { status: 304, headers: { ETag: etag } });
+  /* a revalidation must not resurrect a deleted image, so existence is
+     checked first — by id only, the bytes are not needed for a 304 */
+  if (req.headers.get("if-none-match") === etag) {
+    const [hit] = await db.select({ id: schema.media.id }).from(schema.media).where(eq(schema.media.id, id)).limit(1);
+    return hit ? new Response(null, { status: 304, headers: { ETag: etag } }) : new Response("Not found", { status: 404 });
+  }
 
   const [row] = await db
     .select({ data: schema.media.data, mime: schema.media.mime, filename: schema.media.filename })

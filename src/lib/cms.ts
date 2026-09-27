@@ -33,6 +33,11 @@ export const TAGS = {
 } as const;
 
 const HOUR = 3600;
+/* article reads compare publishedAt with "now" inside the cache, so a
+   scheduled post goes live when the entry next refreshes: this is the
+   worst-case delay. It also shortens the ISR period of every page that
+   lists articles (/, /articles), because unstable_cache lowers it. */
+const SCHEDULE_GRANULARITY = 5 * 60;
 
 /* `next build` runs with no database (the Dockerfile builds before any
    DATABASE_URL exists), and the public pages are prerendered. During the
@@ -158,7 +163,7 @@ export const getPublishedArticles = unstable_cache(
     return rows.map((r) => toView({ ...r.a, category: r.c }));
   },
   ["published-articles"],
-  { tags: [TAGS.articles, TAGS.categories], revalidate: HOUR },
+  { tags: [TAGS.articles, TAGS.categories], revalidate: SCHEDULE_GRANULARITY },
 );
 
 export const getArticleBySlug = unstable_cache(
@@ -172,7 +177,7 @@ export const getArticleBySlug = unstable_cache(
     return row ? toView({ ...row.a, category: row.c }) : null;
   },
   ["article-by-slug"],
-  { tags: [TAGS.articles, TAGS.categories], revalidate: HOUR },
+  { tags: [TAGS.articles, TAGS.categories], revalidate: SCHEDULE_GRANULARITY },
 );
 
 /** the current slug of a live article that was once published under `slug` */
@@ -186,7 +191,7 @@ export const getRenamedArticleSlug = unstable_cache(
     return row?.slug ?? null;
   },
   ["renamed-article-slug"],
-  { tags: [TAGS.articles], revalidate: HOUR },
+  { tags: [TAGS.articles], revalidate: SCHEDULE_GRANULARITY },
 );
 
 /** uncached, ignores status — only for authenticated draft preview */

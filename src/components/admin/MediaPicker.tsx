@@ -12,6 +12,13 @@ export function MediaPicker({ name, defaultValue, options, label = "انتخاب
 }) {
   const [value, setValue] = useState(defaultValue ?? "");
   const [open, setOpen] = useState(false);
+  /* follow the server when it changes the stored image underneath us (e.g.
+     "reset section"); otherwise the old pick would be re-saved silently */
+  const [seenDefault, setSeenDefault] = useState(defaultValue);
+  if (defaultValue !== seenDefault) {
+    setSeenDefault(defaultValue);
+    setValue(defaultValue ?? "");
+  }
   const selected = options.find((o) => o.id === value);
 
   return (
