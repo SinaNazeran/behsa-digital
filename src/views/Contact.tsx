@@ -1,18 +1,17 @@
 import { Icon } from "@/components/icons";
 import { Reveal, PageHero } from "@/components/ui";
-import { LeadForm } from "@/components/LeadForm";
 import type { SiteSettings } from "@/db/schema";
 import { SmartLink } from "@/components/SmartLink";
 import { COMPANY_NAME } from "@/content/defaults";
 
-export default function Contact({ settings, subject = "" }: { settings: SiteSettings; subject?: string }) {
+export default function Contact({ settings }: { settings: SiteSettings }) {
   return (
     <>
       <PageHero
         crumb={[{ label: "خانه", path: "/" }, { label: "تماس با ما" }]}
         title="راه‌های ارتباط با بهسا دیجیتال"
         eyebrow={{ label: "تماس با ما", icon: "phone" }}
-        lead="برای مشاوره، استقرار سامانه یا پرسش فنی می‌توانید مستقیماً تماس بگیرید یا فرم زیر را تکمیل کنید."
+        lead="برای مشاوره، استقرار سامانه یا پرسش فنی، از راه‌های زیر مستقیماً با ما در تماس باشید."
       />
 
       {/* ── Contact Info Cards Grid ── */}
@@ -190,34 +189,6 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
         </div>
       </section>
 
-      {/* ── Form — the only way a visitor without a panel account can
-          start a conversation. Until this shipped, the page offered
-          contact details and nothing else (docs/content-audit.md). */}
-      <section className="relative bg-surface border-b border-line py-16 md:py-20">
-        <div className="absolute inset-0 grid-light grid-fade" />
-        <div className="relative mx-auto max-w-[840px] px-5 md:px-8">
-          <Reveal>
-            <h2 className="font-display text-[22px] md:text-[26px] font-extrabold text-ink text-center">
-              پیام خود را بفرستید
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-center text-[14px] leading-8 text-ink2">
-              برای مشاوره، استقرار سامانه یا هر پرسش فنی دربارهٔ مجموعهٔ خودتان.
-            </p>
-          </Reveal>
-          <Reveal delay={120}>
-            <div className="mt-9 tone-blue kpi-card p-6 md:p-8">
-              <LeadForm
-                sourcePath="/contact"
-                subject={subject || "تماس عمومی"}
-                submitLabel="ارسال پیام"
-                phoneDisplay={settings.phoneDisplay}
-                phoneHref={settings.phoneHref}
-              />
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
       {/* ── Map · Location preview ── */}
       <section className="relative bg-surface border-t border-line py-14 md:py-16">
         <div className="absolute inset-0 grid-light grid-fade" />
@@ -229,7 +200,9 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                   {Array.from({ length: 24 }, (_, i) => <line key={`v${i}`} x1={i * 52} y1="0" x2={i * 52} y2="340" />)}
                   {Array.from({ length: 8 }, (_, i) => <line key={`h${i}`} x1="0" y1={i * 48} x2="1200" y2={i * 48} />)}
                 </g>
-                <g stroke="#fff" strokeWidth="14" strokeLinecap="round">
+                {/* fill="none": the bent road (M0 80 … L560 30 …) encloses an
+                    area, which SVG fills black by default */}
+                <g stroke="#fff" strokeWidth="14" strokeLinecap="round" fill="none">
                   <path d="M0 210 H1200" />
                   <path d="M300 0 V340" />
                   <path d="M820 0 V340" />

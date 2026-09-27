@@ -4,6 +4,7 @@ import { db, schema } from "@/db";
 import { AdminForm, Card, ConfirmSubmit, Field, PageTitle, SubmitButton } from "@/components/admin/ui";
 import { inputCls } from "@/components/admin/styles";
 import { CopyButton } from "@/components/admin/CopyButton";
+import { isImage } from "@/lib/admin-data";
 import { deleteMedia, updateMediaAlt, uploadMedia } from "../../_actions/media";
 
 export const metadata = { title: "رسانه‌ها" };
@@ -13,6 +14,7 @@ export default async function MediaAdmin() {
   const items = await db
     .select({ id: schema.media.id, filename: schema.media.filename, alt: schema.media.alt, size: schema.media.size, mime: schema.media.mime })
     .from(schema.media)
+    .where(isImage)
     .orderBy(desc(schema.media.createdAt));
 
   return (

@@ -8,12 +8,13 @@ import { ReportFinder, type FinderCategory, type FinderReport } from "@/componen
    serves, with search and an audience filter (ReportFinder). No report
    count in the copy (docs/content-strategy.md §L4). */
 
-export default function Reports({ lead, categories, reports, panelUrl }: {
+export default function Reports({ lead, categories, reports, panelUrl, hasCatalog }: {
   lead: string;
   /** only categories that have at least one published report */
   categories: FinderCategory[];
   reports: FinderReport[];
   panelUrl: string;
+  hasCatalog: boolean;
 }) {
   return (
     <>
@@ -57,7 +58,7 @@ export default function Reports({ lead, categories, reports, panelUrl }: {
         </div>
       </section>
 
-      <PanelCta title="گزارش‌ها را روی دادهٔ مجموعهٔ خودتان ببینید." panelUrl={panelUrl} />
+      <PanelCta title="گزارش‌ها را روی دادهٔ مجموعهٔ خودتان ببینید." panelUrl={panelUrl} catalog={hasCatalog} />
     </>
   );
 }

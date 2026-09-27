@@ -5,7 +5,7 @@ import { db, schema } from "@/db";
 import type { ArticleSection, ChartStyle, ReportSection, SiteSettings } from "@/db/schema";
 import { DEFAULT_SETTINGS } from "@/content/defaults";
 import {
-  CROSS_LINKS, DEFAULT_NAV, isExternalHref, slugOf,
+  CATALOG_PATH, CROSS_LINKS, DEFAULT_NAV, isExternalHref, slugOf,
   type LandingNode, type NavGroupView, type NavItemView, type NavSectionView,
 } from "@/content/navigation";
 import { SECTIONS, SECTION_BY_KEY } from "@/content/sections";
@@ -30,6 +30,7 @@ export const TAGS = {
   nav: "cms:nav",
   content: "cms:content",
   reports: "cms:reports",
+  catalogs: "cms:catalogs",
 } as const;
 
 const HOUR = 3600;
@@ -346,7 +347,12 @@ const getStoredNavigation = unstable_cache(
 /** the menu, with a "reports" section filled from the report catalogue:
     one block per category, its first few published reports in order */
 export async function getNavigation(): Promise<NavSectionView[]> {
-  const sections = await getStoredNavigation();
+  const [stored, catalogs] = await Promise.all([getStoredNavigation(), getCatalogs()]);
+  /* the catalogue item ships with its page: no published catalogue, no link
+     — and the landing index, footer and sitemap all read this menu */
+  const sections = catalogs.length
+    ? stored
+    : stored.map((s) => ({ ...s, items: s.items.filter((i) => i.href !== CATALOG_PATH) }));
   if (!sections.some((s) => s.kind === "reports")) return sections;
 
   const { categories, reports } = await getReportCatalogue();
@@ -653,3 +659,62 @@ export async function getReportAnyStatus(slug: string): Promise<ReportView | nul
     .limit(1);
   return row ? toReportView(row.r, row.c) : null;
 }
+
+/* ── Product catalogues ── */
+
+export type CatalogView = {
+  id: number;
+  title: string;
+  description: string;
+  highlights: string[];
+  edition: string;
+  pages: number | null;
+  fileUrl: string;
+  fileName: string;
+  /** "PDF" — from the stored type, never from the file name */
+  format: string;
+  /** "۴٫۲ مگابایت" */
+  size: string;
+  coverUrl: string | null;
+  coverAlt: string;
+  /** Persian display date of the last edit */
+  updated: string;
+};
+
+const fileSize = (bytes: number) =>
+  bytes < 1024 * 1024
+    ? `${new Intl.NumberFormat("fa-IR").format(Math.max(1, Math.round(bytes / 1024)))} کیلوبایت`
+    : `${new Intl.NumberFormat("fa-IR", { maximumFractionDigits: 1 }).format(bytes / (1024 * 1024))} مگابایت`;
+
+/** published catalogues in display order; file bytes are never read here */
+export const getCatalogs = unstable_cache(
+  async (): Promise<CatalogView[]> => {
+    const c = schema.catalogs, f = schema.media;
+    const rows = await orDefault(() => db
+      .select({
+        c, fileName: f.filename, mime: f.mime, size: f.size,
+        coverAlt: sql<string | null>`(select ${f.alt} from ${f} where ${f.id} = ${c.coverMediaId})`,
+      })
+      .from(c)
+      .innerJoin(f, eq(c.fileId, f.id))
+      .where(eq(c.isPublished, true))
+      .orderBy(asc(c.sortOrder), asc(c.id)), () => []);
+    return rows.map(({ c: r, ...m }) => ({
+      id: r.id,
+      title: r.title,
+      description: r.description,
+      highlights: r.highlights,
+      edition: r.edition,
+      pages: r.pages,
+      fileUrl: `/media/${r.fileId}`,
+      fileName: m.fileName,
+      format: m.mime === "application/pdf" ? "PDF" : m.mime.split("/").pop()!.toUpperCase(),
+      size: fileSize(m.size),
+      coverUrl: mediaUrl(r.coverMediaId),
+      coverAlt: m.coverAlt || `جلد ${r.title}`,
+      updated: formatJalali(r.updatedAt),
+    }));
+  },
+  ["catalogs"],
+  { tags: [TAGS.catalogs], revalidate: HOUR },
+);

@@ -97,6 +97,10 @@ export const slugOf = (href: string) => href.replace(/^\//, "");
 export const NAV_CONTACT = { title: 'تماس با ما', href: '/contact' } as const;
 export const NAV_CTA_LABEL = 'ورود به سامانه';
 
+/** the catalogue page (a real route, CMS-managed under Admin → کاتالوگ‌ها);
+    every link to it disappears while no catalogue is published */
+export const CATALOG_PATH = "/resources/catalog";
+
 /* ── Factory default menu (seed + empty-table fallback) ─────────── */
 
 export type DefaultNavItem = {
@@ -202,6 +206,8 @@ export const DEFAULT_NAV: DefaultNavSection[] = [
     lens: "content",
     items: [
       { label: "مقالات", href: "/articles", description: "تحلیل‌های تخصصی مدیریت انرژی", icon: "doc" },
+      /* hidden by getNavigation() while no catalogue is published */
+      { label: "کاتالوگ محصول", href: CATALOG_PATH, description: "دانلود نسخهٔ PDF معرفی سامانه", icon: "download" },
       /* ships inactive: the route exists so the first real case study has
          a home, but an empty «نتایج واقعی» page is a promise with nothing
          behind it (docs/content-audit.md §Navigation Audit). */

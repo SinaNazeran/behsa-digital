@@ -152,42 +152,28 @@ export const clients = pgTable("clients", {
   updatedAt: updatedAt(),
 });
 
-/* ── Leads (demo / contact requests) ─────────────────────────────
-   The site previously had no form at all: every primary CTA pointed at
-   the customer panel, which a prospect cannot use. Submissions are
-   persisted first and notified second — an SMTP failure must not lose a
-   qualified lead. `contractedPowerBand` is the qualifier, not decoration:
-   it is what separates a lead from a browser. */
+/* ── Product catalogues (/resources/catalog) ─────────────────────
+   The file is a `media` row like any image, so one backup still covers
+   everything. The catalogue owns it: `restrict` keeps a file from being
+   deleted underneath a published page, and a file no catalogue points
+   at any more is swept by the collections action. */
 
-export const CONTRACTED_POWER_BANDS = ["<150", "150-500", "500-1000", ">1000", "unknown"] as const;
-export type ContractedPowerBand = (typeof CONTRACTED_POWER_BANDS)[number];
-
-export const ORGANIZATION_TYPES = [
-  "heavy-industry", "holding", "consultant", "retailer", "power-plant", "organization", "other",
-] as const;
-export type OrganizationType = (typeof ORGANIZATION_TYPES)[number];
-
-export const LEAD_STATUSES = ["new", "contacted", "qualified", "closed"] as const;
-export type LeadStatus = (typeof LEAD_STATUSES)[number];
-
-export const leads = pgTable("leads", {
+export const catalogs = pgTable("catalogs", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 120 }).notNull(),
-  organization: varchar("organization", { length: 160 }).notNull(),
-  role: varchar("role", { length: 120 }).notNull().default(""),
-  phone: varchar("phone", { length: 32 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull().default(""),
-  contractedPowerBand: varchar("contracted_power_band", { length: 16 })
-    .$type<ContractedPowerBand>().notNull().default("unknown"),
-  organizationType: varchar("organization_type", { length: 24 })
-    .$type<OrganizationType>().notNull().default("other"),
-  subject: varchar("subject", { length: 160 }).notNull().default(""),
-  message: text("message").notNull().default(""),
-  /** the page the request came from — tells sales what they were reading */
-  sourcePath: varchar("source_path", { length: 255 }).notNull().default(""),
-  status: varchar("status", { length: 16 }).$type<LeadStatus>().notNull().default("new"),
+  title: varchar("title", { length: 160 }).notNull(),
+  description: text("description").notNull().default(""),
+  /** «در این کاتالوگ» — one line each */
+  highlights: jsonb("highlights").$type<string[]>().notNull().default([]),
+  /** e.g. «ویرایش ۱۴۰۵»; empty = not shown */
+  edition: varchar("edition", { length: 80 }).notNull().default(""),
+  pages: integer("pages"),
+  fileId: uuid("file_id").notNull().references(() => media.id, { onDelete: "restrict" }),
+  coverMediaId: uuid("cover_media_id").references(() => media.id, { onDelete: "set null" }),
+  sortOrder: integer("sort_order").notNull().default(0),
+  isPublished: boolean("is_published").notNull().default(true),
   createdAt: createdAt(),
-}, (t) => [index("leads_status_idx").on(t.status, t.createdAt)]);
+  updatedAt: updatedAt(),
+});
 
 /* ── Site-wide settings & per-page SEO ──────────────────────────── */
 

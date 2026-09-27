@@ -25,6 +25,8 @@ export type ButtonProps = {
   href?: string;
   target?: string;
   rel?: string;
+  /** a file link: the browser saves it instead of navigating */
+  download?: boolean;
   type?: "button" | "submit";
   onClick?: () => void;
   disabled?: boolean;
@@ -70,7 +72,7 @@ const SIZES: Record<ButtonSize, string> = {
 };
 
 export function Button({
-  variant = "primary", size = "md", href, target, rel, type = "button", onClick, disabled = false,
+  variant = "primary", size = "md", href, target, rel, download, type = "button", onClick, disabled = false,
   icon, className, ariaLabel, children,
 }: ButtonProps) {
   const classes = cn(
@@ -99,6 +101,7 @@ export function Button({
         href={href}
         target={target}
         rel={rel ?? (target === "_blank" ? "noopener noreferrer" : undefined)}
+        download={download ? "" : undefined}
         aria-label={ariaLabel}
         aria-disabled={disabled || undefined}
         tabIndex={disabled ? -1 : undefined}

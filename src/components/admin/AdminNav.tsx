@@ -4,10 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { faNum } from "@/lib/format";
 
 const GROUPS: { title: string; items: { href: string; label: string; adminOnly?: boolean }[] }[] = [
-  { title: "", items: [{ href: "/admin", label: "داشبورد" }, { href: "/admin/leads", label: "درخواست‌ها" }] },
+  { title: "", items: [{ href: "/admin", label: "داشبورد" }] },
   {
     title: "صفحه اصلی و منو",
     items: [
@@ -23,6 +22,7 @@ const GROUPS: { title: string; items: { href: string; label: string; adminOnly?:
       { href: "/admin/report-categories", label: "دسته‌بندی گزارش‌ها" },
       { href: "/admin/articles", label: "مقالات" },
       { href: "/admin/categories", label: "دسته‌بندی مقالات" },
+      { href: "/admin/catalogs", label: "کاتالوگ‌ها" },
       { href: "/admin/faqs", label: "پرسش‌های متداول" },
       { href: "/admin/testimonials", label: "نظرات مشتریان" },
       { href: "/admin/clients", label: "مشتریان" },
@@ -40,7 +40,7 @@ const GROUPS: { title: string; items: { href: string; label: string; adminOnly?:
   },
 ];
 
-export function AdminNav({ role, newLeads = 0 }: { role: "admin" | "editor"; newLeads?: number }) {
+export function AdminNav({ role }: { role: "admin" | "editor" }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const active = (href: string) =>
@@ -75,11 +75,6 @@ export function AdminNav({ role, newLeads = 0 }: { role: "admin" | "editor"; new
                     )}
                   >
                     {i.label}
-                    {i.href === "/admin/leads" && newLeads > 0 && (
-                      <span className="rounded-full bg-primary px-2 py-0.5 text-[11.5px] font-bold text-on-primary fa-num">
-                        {faNum(newLeads)}<span className="sr-only"> درخواست جدید</span>
-                      </span>
-                    )}
                   </Link>
                 </li>
               ))}

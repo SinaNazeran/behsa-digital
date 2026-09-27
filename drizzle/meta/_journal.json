@@ -57,6 +57,20 @@
       "when": 1790490326237,
       "tag": "0007_article_previous_slugs",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790497438915,
+      "tag": "0008_catalogs",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790504997369,
+      "tag": "0009_drop_leads",
+      "breakpoints": true
     }
   ]
 }

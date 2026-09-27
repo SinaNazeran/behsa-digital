@@ -333,14 +333,17 @@ export function PageHero({ crumb, title, lead, eyebrow, tone = "content", childr
    The "more in this section" rail that landing and report pages both
    carry: the page's tone for the card, boxed icons as in the mega menu,
    the tone for hover and the closing link. */
-export function SideNav({ title, items, more, tone = "tone-blue" }: {
+export function SideNav({ title, items, more, tone = "tone-blue", sticky = true }: {
   title: string;
   items: { key: string | number; href: string; label: string; icon?: IconName }[];
   more: { href: string; label: string };
   tone?: string;
+  /** false when a wrapper sticks the whole rail: a sticky inside a sticky
+      slides within it once the rail meets the end of its column */
+  sticky?: boolean;
 }) {
   return (
-    <div className={cn(tone, "kpi-card p-6 lg:sticky lg:top-32")}>
+    <div className={cn(tone, "kpi-card p-6", sticky && "lg:sticky lg:top-32")}>
       <p className="flex items-center gap-2.5 font-display font-bold text-[15px] text-ink">
         <span className="h-4 w-1 rounded-full bg-(--tone-500)" />
         {title}

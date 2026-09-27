@@ -1,6 +1,6 @@
 import Reports from "@/views/Reports";
 import { JsonLd, breadcrumbLd } from "@/components/seo/JsonLd";
-import { getNavigation, getReportCatalogue, getSettings } from "@/lib/cms";
+import { getCatalogs, getNavigation, getReportCatalogue, getSettings } from "@/lib/cms";
 import { buildMetadata, SITE_URL } from "@/lib/seo";
 
 const FALLBACK_LEAD = "گزارش‌ها بر اساس تصمیمی که باید گرفته شود دسته‌بندی شده‌اند، نه بر اساس نوع نمودار.";
@@ -16,7 +16,7 @@ export async function generateMetadata() {
 }
 
 export default async function ReportsPage() {
-  const [{ categories, reports }, settings, text] = await Promise.all([getReportCatalogue(), getSettings(), lead()]);
+  const [{ categories, reports }, settings, text, catalogs] = await Promise.all([getReportCatalogue(), getSettings(), lead(), getCatalogs()]);
   /* cards need a handful of fields — report bodies never reach the browser */
   const cards = reports.map((r) => ({
     id: r.id, href: r.href, label: r.label, question: r.question, icon: r.icon, categoryId: r.category.id,
@@ -27,7 +27,7 @@ export default async function ReportsPage() {
   return (
     <>
       <JsonLd data={breadcrumbLd(SITE_URL, [{ label: "خانه", path: "/" }, { label: "گزارش‌ها", path: "/reports" }])} />
-      <Reports lead={text} categories={used} reports={cards} panelUrl={settings.panelUrl} />
+      <Reports lead={text} categories={used} reports={cards} panelUrl={settings.panelUrl} hasCatalog={catalogs.length > 0} />
     </>
   );
 }

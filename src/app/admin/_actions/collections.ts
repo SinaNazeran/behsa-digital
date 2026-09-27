@@ -1,18 +1,19 @@
 "use server";
 
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq, lt, notExists } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { moveInPlace } from "@/lib/utils";
 import { requireUser } from "@/lib/auth";
 import type { ActionState } from "@/components/admin/ui";
-import { bool, done, fail, int, refresh, str } from "./helpers";
+import { bool, done, fail, int, refresh, str, uuidOrNull } from "./helpers";
 
-/* FAQ, testimonials and client names share one ordered-list pattern. */
+/* FAQ, testimonials, client names and catalogues share one ordered-list pattern. */
 
 const TABLES = {
   faqs: schema.faqs,
   testimonials: schema.testimonials,
   clients: schema.clients,
+  catalogs: schema.catalogs,
 } as const;
 type Kind = keyof typeof TABLES;
 
@@ -21,8 +22,29 @@ function kindOf(fd: FormData): Kind | null {
   return k in TABLES ? (k as Kind) : null;
 }
 
-function readValues(kind: Kind, fd: FormData): { values?: Record<string, unknown>; error?: string } {
+async function readValues(kind: Kind, fd: FormData): Promise<{ values?: Record<string, unknown>; error?: string }> {
   const isPublished = bool(fd, "isPublished");
+  if (kind === "catalogs") {
+    const title = str(fd, "title", 160);
+    const fileId = uuidOrNull(fd, "fileId");
+    if (!title) return { error: "عنوان کاتالوگ الزامی است." };
+    if (!fileId) return { error: "فایل کاتالوگ را بارگذاری کنید." };
+    const [file] = await db.select({ mime: schema.media.mime }).from(schema.media).where(eq(schema.media.id, fileId)).limit(1);
+    if (file?.mime !== "application/pdf") return { error: "فایل کاتالوگ پیدا نشد؛ دوباره بارگذاری کنید." };
+    const pages = int(fd, "pages");
+    return {
+      values: {
+        title,
+        description: str(fd, "description", 1000),
+        highlights: str(fd, "highlights", 3000).split("\n").map((l) => l.trim()).filter(Boolean).slice(0, 12),
+        edition: str(fd, "edition", 80),
+        pages: pages > 0 ? pages : null,
+        fileId,
+        coverMediaId: uuidOrNull(fd, "coverMediaId"),
+        isPublished,
+      },
+    };
+  }
   if (kind === "faqs") {
     const question = str(fd, "question", 500);
     const answer = str(fd, "answer", 5000);
@@ -44,7 +66,7 @@ export async function saveItem(_prev: ActionState, fd: FormData): Promise<Action
   await requireUser();
   const kind = kindOf(fd);
   if (!kind) return fail("نوع محتوا نامعتبر است.");
-  const { values, error } = readValues(kind, fd);
+  const { values, error } = await readValues(kind, fd);
   if (error || !values) return fail(error ?? "خطا");
   const table = TABLES[kind];
   const id = int(fd, "id");
@@ -56,6 +78,7 @@ export async function saveItem(_prev: ActionState, fd: FormData): Promise<Action
     const next = rows.reduce((m, r) => Math.max(m, r.s), -1) + 1;
     await db.insert(table).values({ ...values, sortOrder: next } as never);
   }
+  if (kind === "catalogs") await sweepCatalogFiles();
   refresh(kind);
   return done(id > 0 ? "ذخیره شد." : "اضافه شد.");
 }
@@ -67,8 +90,21 @@ export async function deleteItem(_prev: ActionState, fd: FormData): Promise<Acti
   if (!kind || !(id > 0)) return fail("درخواست نامعتبر است.");
   const table = TABLES[kind];
   await db.delete(table).where(eq(table.id, id));
+  if (kind === "catalogs") await sweepCatalogFiles();
   refresh(kind);
   return done("حذف شد.");
+}
+
+/* Catalogue files no catalogue points at: replaced, deleted, or uploaded
+   into a form that was never saved. A day's grace spares an upload
+   another editor is about to save. */
+function sweepCatalogFiles() {
+  const m = schema.media, c = schema.catalogs;
+  return db.delete(m).where(and(
+    eq(m.mime, "application/pdf"),
+    lt(m.createdAt, new Date(Date.now() - 24 * 60 * 60 * 1000)),
+    notExists(db.select({ id: c.id }).from(c).where(eq(c.fileId, m.id))),
+  ));
 }
 
 /** swap position with the previous/next item */

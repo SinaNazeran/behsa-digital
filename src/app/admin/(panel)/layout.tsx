@@ -1,13 +1,11 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { AdminNav } from "@/components/admin/AdminNav";
-import { countNewLeads } from "@/lib/admin-data";
 import { btnCls } from "@/components/admin/styles";
 import { logoutAction } from "../_actions/auth";
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
-  const newLeads = await countNewLeads();
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
@@ -28,7 +26,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       </header>
       <div className="mx-auto grid max-w-[1320px] gap-6 px-4 py-6 md:px-6 lg:grid-cols-[230px_1fr]">
         <aside className="lg:sticky lg:top-20 lg:self-start">
-          <AdminNav role={user.role} newLeads={newLeads} />
+          <AdminNav role={user.role} />
         </aside>
         <main className="min-w-0">{children}</main>
       </div>

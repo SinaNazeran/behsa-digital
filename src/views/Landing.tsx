@@ -7,6 +7,10 @@ import { cn } from "@/utils/cn";
 import { CapabilitiesOverview } from "@/components/capabilities/CapabilitiesOverview";
 import { CapabilityFeatureList } from "@/components/capabilities/CapabilityFeatureList";
 import { SmartLink } from "@/components/SmartLink";
+import { CatalogTeaser } from "@/views/Catalog";
+import { CatalogNudge } from "@/components/CatalogNudge";
+import { CATALOG_PATH } from "@/content/navigation";
+import type { CatalogView } from "@/lib/cms";
 
 /* Data-driven landing template — every nav slug resolves here.
    The `lens` field switches the messaging tone so capability /
@@ -88,7 +92,7 @@ function RelatedLinks({ links }: { links: { slug: string; title: string; href: s
   );
 }
 
-export default function Landing({ node, crumbs, siblings, linked, panelUrl }: {
+export default function Landing({ node, crumbs, siblings, linked, panelUrl, catalog }: {
   node: LandingNode;
   /** built once by the route, shared with the BreadcrumbList JSON-LD */
   crumbs: { label: string; path?: string }[];
@@ -97,6 +101,8 @@ export default function Landing({ node, crumbs, siblings, linked, panelUrl }: {
   /** capability ⇄ solution cross-links that resolved to a live page */
   linked: { slug: string; title: string; href: string }[];
   panelUrl: string;
+  /** the main published catalogue, or null */
+  catalog: CatalogView | null;
 }) {
   const badge = LENS_BADGE[node.lens];
   const capability = capabilityBySlug(node.slug);
@@ -104,6 +110,7 @@ export default function Landing({ node, crumbs, siblings, linked, panelUrl }: {
   /* the stage only means something on capability pages — every solution
      and industry page sits at "outcome", which would say nothing */
   const stage = node.lens === "feature" && capability ? capability.narrativeStage : undefined;
+  const productCatalog = node.section.slug === "product" ? catalog : null;
 
   return (
     <>
@@ -173,33 +180,49 @@ export default function Landing({ node, crumbs, siblings, linked, panelUrl }: {
 
           </div>
 
-          {/* sibling rail */}
-          {siblings.length > 0 && (
+          {/* sibling rail — plus, on the product pages, the catalogue: the
+              take-away version of what is being read here, for the colleague
+              who decides. One sticky wrapper, so the two never overlap. */}
+          {(siblings.length > 0 || productCatalog) && (
             <aside className="lg:col-span-4">
-              <SideNav
-                title={`سایر موارد ${node.section.title}`}
-                items={siblings.map((x) => ({ key: x.id, href: x.href, label: x.title, icon: x.icon }))}
-                more={{ href: node.section.href, label: `همهٔ ${node.section.title}` }}
-                tone={LENS_TONE[node.lens]}
-              />
+              <div className="space-y-5 lg:sticky lg:top-32">
+                {siblings.length > 0 && (
+                  <SideNav
+                    title={`سایر موارد ${node.section.title}`}
+                    items={siblings.map((x) => ({ key: x.id, href: x.href, label: x.title, icon: x.icon }))}
+                    more={{ href: node.section.href, label: `همهٔ ${node.section.title}` }}
+                    tone={LENS_TONE[node.lens]}
+                    sticky={false}
+                  />
+                )}
+                {productCatalog && <CatalogTeaser catalog={productCatalog} />}
+              </div>
             </aside>
           )}
         </div>
       </section>
 
-      <PanelCta title={`*${node.title}* را روی دادهٔ مجموعهٔ خودتان ببینید.`} panelUrl={panelUrl} />
+      <PanelCta title={`*${node.title}* را روی دادهٔ مجموعهٔ خودتان ببینید.`} panelUrl={panelUrl} catalog={catalog !== null} />
     </>
   );
 }
 
-/** closing banner — the site has a single call to action, the panel */
-export function PanelCta({ title, panelUrl }: { title: string; panelUrl: string }) {
+/** closing banner — the site has a single call to action, the panel;
+    the catalogue is offered under it as a quiet link, never a third button */
+export function PanelCta({ title, panelUrl, catalog }: { title: string; panelUrl: string; catalog: boolean }) {
   return (
     <CtaBanner title={title} lead="گزارش‌ها را با دادهٔ مصرف مجموعهٔ خودتان در سامانه ببینید.">
-      <Btn href={panelUrl} target="_blank" size="lg" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">
-        ورود به سامانه
-      </Btn>
-      <Btn href="/contact" size="lg" variant="dark">تماس با ما</Btn>
+      {/* one column: the nudge sits centred under the pair it belongs to,
+          instead of trailing off the end of the row */}
+      <div className="flex w-full flex-col gap-3 sm:w-auto">
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <Btn href={panelUrl} target="_blank" size="lg" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">
+            ورود به سامانه
+          </Btn>
+          <Btn href="/contact" size="lg" variant="dark">تماس با ما</Btn>
+        </div>
+        {catalog && <CatalogNudge href={CATALOG_PATH} />}
+      </div>
     </CtaBanner>
   );
 }

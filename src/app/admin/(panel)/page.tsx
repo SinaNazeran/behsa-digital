@@ -13,7 +13,6 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const [c, recent, { error }] = await Promise.all([dashboardCounts(), listArticles(), searchParams]);
 
   const tiles = [
-    { label: "درخواست جدید", value: c.newLeads, href: "/admin/leads?status=new", urgent: c.newLeads > 0 },
     { label: "گزارش منتشرشده", value: c.reports, href: "/admin/reports?status=published" },
     { label: "گزارش پیش‌نویس", value: c.reportDrafts, href: "/admin/reports?status=draft" },
     { label: "مقاله منتشرشده", value: c.published, href: "/admin/articles?status=published" },
@@ -62,7 +61,6 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
 
       <Card title="راهنمای سریع" className="mt-6">
         <ul className="list-disc space-y-1.5 pr-5 text-[13.5px] leading-7 text-ink2">
-          <li>درخواست‌های فرم «تماس با ما» در «درخواست‌ها» جمع می‌شوند. تعداد درخواست‌های بررسی‌نشده کنار همین گزینه در منو نمایش داده می‌شود؛ با تغییر «وضعیت»، درخواست از صف «جدید» خارج می‌شود.</li>
           <li>هر گزارش سامانه یک صفحه دارد: «گزارش‌ها» ← «گزارش جدید». دسته‌ها و رنگ هر دسته در «دسته‌بندی گزارش‌ها» تنظیم می‌شوند.</li>
           <li>برای تغییر متن‌ها و کارت‌های صفحه اصلی: «بخش‌های صفحه اصلی». هر بخش را می‌توانید پنهان کنید، عنوانش را عوض کنید یا کارت‌هایش را اضافه/حذف/جابه‌جا کنید.</li>
           <li>ویدئو، تصویر، عنوان و دکمه‌های ابتدای صفحه اصلی در «بخش هیرو» تنظیم می‌شوند. اگر ویدئو خاموش باشد یا پخش نشود، تصویر پس‌زمینه نمایش داده می‌شود.</li>

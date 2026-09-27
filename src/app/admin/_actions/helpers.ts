@@ -17,6 +17,10 @@ export const uuidOrNull = (fd: FormData, key: string) => {
   return /^[0-9a-f-]{36}$/i.test(v) ? v : null;
 };
 
+/** a stored file name: letters, digits, dot, dash — the extension survives */
+export const safeName = (name: string, fallback = "image") =>
+  name.normalize("NFKC").replace(/[^\p{L}\p{N}._-]+/gu, "-").replace(/-+/g, "-").slice(0, 120) || fallback;
+
 export const fail = (message: string, errors?: Record<string, string>): ActionState => ({ ok: false, message, errors });
 export const done = (message = "ذخیره شد."): ActionState => ({ ok: true, message });
 

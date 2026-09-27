@@ -10,13 +10,14 @@ import type { ReportView } from "@/lib/cms";
    Admin → گزارش‌ها; the order of blocks here is not editable on purpose,
    so fifty reports still read as one catalogue. */
 
-export default function ReportDetail({ report, related, pages, panelUrl }: {
+export default function ReportDetail({ report, related, pages, panelUrl, hasCatalog }: {
   report: ReportView;
   /** hand-picked related reports, or same-category ones when none were picked */
   related: ReportView[];
   /** solution / capability / industry pages that resolved to a live page */
   pages: { href: string; label: string }[];
   panelUrl: string;
+  hasCatalog: boolean;
 }) {
   /* the report wears its category's colour, as on the catalogue page */
   const tone = report.category.toneClass;
@@ -118,7 +119,7 @@ export default function ReportDetail({ report, related, pages, panelUrl }: {
         </div>
       </section>
 
-      <PanelCta title={`*${report.label}* را روی دادهٔ مجموعهٔ خودتان ببینید.`} panelUrl={panelUrl} />
+      <PanelCta title={`*${report.label}* را روی دادهٔ مجموعهٔ خودتان ببینید.`} panelUrl={panelUrl} catalog={hasCatalog} />
     </>
   );
 }

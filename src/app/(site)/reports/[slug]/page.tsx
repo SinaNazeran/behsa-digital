@@ -3,7 +3,7 @@ import { notFound, permanentRedirect, redirect } from "next/navigation";
 import ReportDetail from "@/views/ReportDetail";
 import { JsonLd, breadcrumbLd } from "@/components/seo/JsonLd";
 import { getCurrentUser } from "@/lib/auth";
-import { getLandingIndex, getReportAnyStatus, getReportCatalogue, getSettings } from "@/lib/cms";
+import { getCatalogs, getLandingIndex, getReportAnyStatus, getReportCatalogue, getSettings } from "@/lib/cms";
 import { pageKind } from "@/content/reports";
 import { buildMetadata, SITE_URL } from "@/lib/seo";
 
@@ -44,7 +44,7 @@ export default async function ReportPage({ params }: Props) {
     notFound();
   }
 
-  const [{ reports }, index, settings] = await Promise.all([getReportCatalogue(), getLandingIndex(), getSettings()]);
+  const [{ reports }, index, settings, catalogs] = await Promise.all([getReportCatalogue(), getLandingIndex(), getSettings(), getCatalogs()]);
   const others = reports.filter((r) => r.id !== report.id);
   const picked = report.relatedReportIds.map((id) => others.find((r) => r.id === id)).filter((r) => r !== undefined);
   const related = picked.length ? picked : others.filter((r) => r.category.id === report.category.id).slice(0, 5);
@@ -69,7 +69,7 @@ export default async function ReportPage({ params }: Props) {
           { label: report.label, path: report.href },
         ])}
       />
-      <ReportDetail report={report} related={related} pages={pages} panelUrl={settings.panelUrl} />
+      <ReportDetail report={report} related={related} pages={pages} panelUrl={settings.panelUrl} hasCatalog={catalogs.length > 0} />
     </>
   );
 }

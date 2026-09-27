@@ -9,6 +9,7 @@ import { ArticleCard, type ArticleCardProps } from "@/components/ArticleCard";
 import { faNum } from "@/content/data";
 import { SmartLink } from "@/components/SmartLink";
 import { AccentText } from "@/components/AccentText";
+import { CatalogNudge } from "@/components/CatalogNudge";
 import { TONES, categoryToneClass } from "@/components/tones";
 import type { ContentMap, SectionView } from "@/lib/cms";
 
@@ -45,6 +46,8 @@ export type HomeProps = {
   panelUrl: string;
   /** report href → its category's tone class */
   reportTones: Record<string, string>;
+  /** the catalogue page, while one is published */
+  catalogHref: string | null;
 };
 
 const EMPTY_SECTION: SectionView = {
@@ -61,7 +64,7 @@ const ordinal = (i: number) => faNum(i + 1);
 const SNAP_ROW = "-mx-5 flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-px-5 px-5 pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0";
 const SNAP_ITEM = "h-full w-[82%] shrink-0 snap-start sm:w-auto";
 
-export default function Home({ articles, testimonials, faqs, content, panelUrl, reportTones }: HomeProps) {
+export default function Home({ articles, testimonials, faqs, content, panelUrl, reportTones, catalogHref }: HomeProps) {
   const [tab, setTab] = useState(0);
   const [faq, setFaq] = useState(0);
   const s = (key: string): SectionView => content[key] ?? EMPTY_SECTION;
@@ -720,6 +723,9 @@ export default function Home({ articles, testimonials, faqs, content, panelUrl, 
                   })}
                 </div>
               )}
+              {/* for whoever read this far but is not ready for the panel:
+                  a quiet link, so the one call to action stays one */}
+              {catalogHref && <CatalogNudge href={catalogHref} className="mt-5" />}
             </div>
           </Reveal>
         </div>

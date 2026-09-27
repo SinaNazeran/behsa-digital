@@ -4,7 +4,7 @@ import { eq, sql } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { requireUser } from "@/lib/auth";
 import type { ActionState } from "@/components/admin/ui";
-import { done, fail, refresh, str, uuidOrNull } from "./helpers";
+import { done, fail, refresh, safeName, str, uuidOrNull } from "./helpers";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -19,9 +19,6 @@ function sniff(b: Buffer): string | null {
   if (b.subarray(4, 12).toString("ascii") === "ftypavif") return "image/avif";
   return null;
 }
-
-const safeName = (name: string) =>
-  name.normalize("NFKC").replace(/[^\p{L}\p{N}._-]+/gu, "-").replace(/-+/g, "-").slice(0, 120) || "image";
 
 /** validate and store one image; the only path bytes take into the library */
 async function storeImage(file: File, alt: string): Promise<{ id: string; filename: string } | { error: string }> {
@@ -89,6 +86,6 @@ export async function deleteMedia(_prev: ActionState, fd: FormData): Promise<Act
   /* the row's media_id columns are set to NULL by the FK — every cache that
      may hold the old /media/<id> URL has to expire with it, otherwise a
      deleted image keeps being rendered until the tag times out */
-  refresh("articles", "settings", "seo", "content", "reports");
+  refresh("articles", "settings", "seo", "content", "reports", "catalogs");
   return done("تصویر حذف شد.");
 }

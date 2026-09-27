@@ -32,6 +32,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       ETag: etag,
       "X-Content-Type-Options": "nosniff",
       "Content-Disposition": `inline; filename*=UTF-8''${encodeURIComponent(row.filename)}`,
+      /* a catalogue PDF ranks through its page (/resources/catalog), which
+         has the menu and the way to contact us; the bare file has neither */
+      ...(row.mime.startsWith("image/") ? {} : { "X-Robots-Tag": "noindex" }),
     },
   });
 }

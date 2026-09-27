@@ -7,9 +7,12 @@ import { pageKind } from "@/content/reports";
 
 /* Uncached reads for the admin panel (always fresh). */
 
+/* catalogue files live in the same table but belong to Admin → کاتالوگ‌ها */
+export const isImage = sql`${schema.media.mime} like 'image/%'`;
+
 export const listMediaOptions = () =>
   db.select({ id: schema.media.id, filename: schema.media.filename, alt: schema.media.alt })
-    .from(schema.media).orderBy(desc(schema.media.createdAt));
+    .from(schema.media).where(isImage).orderBy(desc(schema.media.createdAt));
 
 export const listCategories = () =>
   db.select().from(schema.categories).orderBy(asc(schema.categories.sortOrder), asc(schema.categories.id));
@@ -30,28 +33,22 @@ export async function listArticles(status?: "draft" | "published") {
 export async function dashboardCounts() {
   const count = (t: typeof schema.faqs | typeof schema.testimonials | typeof schema.clients | typeof schema.media | typeof schema.categories) =>
     db.select({ n: sql<number>`count(*)::int` }).from(t).then((r) => r[0].n);
-  const [statuses, reportStatuses, newLeads, faqs, testimonials, clients, media] = await Promise.all([
+  const [statuses, reportStatuses, faqs, testimonials, clients, media] = await Promise.all([
     db.select({ status: schema.articles.status, n: sql<number>`count(*)::int` }).from(schema.articles).groupBy(schema.articles.status),
     db.select({ status: schema.reports.status, n: sql<number>`count(*)::int` }).from(schema.reports).groupBy(schema.reports.status),
-    countNewLeads(),
-    count(schema.faqs), count(schema.testimonials), count(schema.clients), count(schema.media),
+    count(schema.faqs), count(schema.testimonials), count(schema.clients),
+    /* the «تصویر» tile: catalogue PDFs share the table but are not images */
+    db.select({ n: sql<number>`count(*)::int` }).from(schema.media).where(isImage).then((r) => r[0].n),
   ]);
   return {
     published: statuses.find((s) => s.status === "published")?.n ?? 0,
     drafts: statuses.find((s) => s.status === "draft")?.n ?? 0,
     reports: reportStatuses.find((s) => s.status === "published")?.n ?? 0,
     reportDrafts: reportStatuses.find((s) => s.status === "draft")?.n ?? 0,
-    newLeads, faqs, testimonials, clients, media,
+    faqs, testimonials, clients, media,
   };
 }
 
-/** leads nobody has picked up yet — the panel's work queue */
-export const countNewLeads = () =>
-  db.select({ n: sql<number>`count(*)::int` }).from(schema.leads).where(eq(schema.leads.status, "new")).then((r) => r[0].n);
-
-/** lead count per status, for the filter tabs */
-export const leadStatusCounts = () =>
-  db.select({ status: schema.leads.status, n: sql<number>`count(*)::int` }).from(schema.leads).groupBy(schema.leads.status);
 
 /* ── Navigation & sections (admin views are always uncached) ── */
 

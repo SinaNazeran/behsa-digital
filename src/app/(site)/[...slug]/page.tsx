@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Landing from "@/views/Landing";
 import { JsonLd, breadcrumbLd } from "@/components/seo/JsonLd";
-import { getLandingIndex, getReportCatalogue, getSettings } from "@/lib/cms";
+import { getCatalogs, getLandingIndex, getReportCatalogue, getSettings } from "@/lib/cms";
 import { buildMetadata, SITE_URL } from "@/lib/seo";
 
 /* Data-driven landing pages for every navigation node
@@ -32,7 +32,7 @@ export default async function LandingPage({ params }: Props) {
   const crumbs = [{ label: "خانه", path: "/" }, { label: node.section.title, path: `/${node.section.slug}` }];
   if (node.slug !== node.section.slug) crumbs.push({ label: node.title, path: `/${node.slug}` });
 
-  const [index, settings, { reports }] = await Promise.all([getLandingIndex(), getSettings(), getReportCatalogue()]);
+  const [index, settings, { reports }, [catalog]] = await Promise.all([getLandingIndex(), getSettings(), getReportCatalogue(), getCatalogs()]);
   const siblings = (index[node.section.slug]?.children ?? [])
     .filter((c) => c.href !== node.href)
     .slice(0, 4)
@@ -51,7 +51,7 @@ export default async function LandingPage({ params }: Props) {
   return (
     <>
       <JsonLd data={breadcrumbLd(SITE_URL, crumbs)} />
-      <Landing node={node} crumbs={crumbs} siblings={siblings} linked={linked} panelUrl={settings.panelUrl} />
+      <Landing node={node} crumbs={crumbs} siblings={siblings} linked={linked} panelUrl={settings.panelUrl} catalog={catalog ?? null} />
     </>
   );
 }

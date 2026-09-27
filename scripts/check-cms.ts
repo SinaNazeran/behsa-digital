@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { isSafeHref } from "../src/lib/links";
 import { plainText } from "../src/components/AccentText";
 import { SECTIONS, SECTION_BY_KEY } from "../src/content/sections";
-import { DEFAULT_NAV, isExternalHref, slugOf, sectionKeyForRoute, type NavSectionView } from "../src/content/navigation";
+import { CATALOG_PATH, DEFAULT_NAV, isExternalHref, slugOf, sectionKeyForRoute, type NavSectionView } from "../src/content/navigation";
 import { capabilityBySlug } from "../src/content/capabilities";
 import { CUSTOMERS } from "../src/content/customers";
 import { REPORT_AUDIENCES, audienceLabels, matchesQuery, searchText } from "../src/content/reports";
@@ -89,7 +89,7 @@ ok(sectionKeyForRoute("/nope", sections) === null, "unknown route highlights no 
    pages the content audit found. Routes with a hand-written page
    component, and section roots that render their own children grid,
    are listed as exceptions. */
-const ROUTE_PAGES = new Set(["/articles", "/about", "/contact", "/product/platform"]);
+const ROUTE_PAGES = new Set(["/articles", "/about", "/contact", "/product/platform", CATALOG_PATH]);
 /* report pages live in the database; links to them must match what the seed imports */
 const SEEDED_REPORTS = new Set(REPORT_PAGES.map((p) => p.href));
 /* the report menu is built from the catalogue, so its factory section holds no items */

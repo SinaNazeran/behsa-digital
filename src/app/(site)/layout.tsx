@@ -2,7 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/layout";
 import { CardSpotlight } from "@/components/CardSpotlight";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getNavigation, getSettings } from "@/lib/cms";
+import { getCatalogs, getNavigation, getSettings } from "@/lib/cms";
 import { SITE_URL } from "@/lib/seo";
 import { COMPANY_NAME } from "@/content/defaults";
 
@@ -11,12 +11,12 @@ import { COMPANY_NAME } from "@/content/defaults";
    _actions/helpers.ts), so edits stay instant; the hour is only a backstop.
    Rendering per request cost ~55ms of CPU and, worse, sent
    `Cache-Control: private, no-store`, which put every page view through
-   the origin. Routes that read cookies or searchParams (/contact,
-   /articles/[slug]) still opt themselves out and render dynamically. */
+   the origin. Routes that read cookies or searchParams (/articles/[slug])
+   still opt themselves out and render dynamically. */
 export const revalidate = 3600;
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [settings, sections] = await Promise.all([getSettings(), getNavigation()]);
+  const [settings, sections, catalogs] = await Promise.all([getSettings(), getNavigation(), getCatalogs()]);
 
   const organization = {
     "@context": "https://schema.org",
@@ -67,7 +67,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <main id="main" tabIndex={-1} className="flex-1 outline-none">
           {children}
         </main>
-        <Footer settings={settings} sections={sections} />
+        <Footer settings={settings} sections={sections} hasCatalog={catalogs.length > 0} />
         <CardSpotlight />
       </div>
     </>

@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next";
-import { getAllPageSeo, getLandingIndex, getPublishedArticles, getReportCatalogue } from "@/lib/cms";
+import { getAllPageSeo, getCatalogs, getLandingIndex, getPublishedArticles, getReportCatalogue } from "@/lib/cms";
+import { CATALOG_PATH } from "@/content/navigation";
 import { SITE_NOINDEX, SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (SITE_NOINDEX) return [];
-  const [articles, seo, landings, { reports }] = await Promise.all([getPublishedArticles(), getAllPageSeo(), getLandingIndex(), getReportCatalogue()]);
+  const [articles, seo, landings, { reports }, catalogs] = await Promise.all([getPublishedArticles(), getAllPageSeo(), getLandingIndex(), getReportCatalogue(), getCatalogs()]);
   const hidden = new Set(seo.filter((p) => p.noindex).map((p) => p.path));
   const lastArticle = articles[0]?.updatedAt ? new Date(articles[0].updatedAt) : undefined;
 
@@ -16,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/about`, changeFrequency: "yearly", priority: 0.5 },
     { url: `${SITE_URL}/contact`, changeFrequency: "yearly", priority: 0.6 },
     { url: `${SITE_URL}/reports`, changeFrequency: "weekly", priority: 0.8 },
+    ...(catalogs.length ? [{ url: `${SITE_URL}${CATALOG_PATH}`, changeFrequency: "monthly" as const, priority: 0.6 }] : []),
   ];
 
   /* menu targets that are real routes already listed in `core` */

@@ -3,7 +3,7 @@ import { BehsaLogo } from "./BehsaLogo";
 import { Btn } from "./ui";
 import { faNum } from "@/lib/format";
 import type { SiteSettings } from "@/db/schema";
-import { NAV_CONTACT, NAV_CTA_LABEL, type NavSectionView } from "@/content/navigation";
+import { CATALOG_PATH, NAV_CONTACT, NAV_CTA_LABEL, type NavSectionView } from "@/content/navigation";
 import { SmartLink } from "@/components/SmartLink";
 import { COMPANY_NAME } from "@/content/defaults";
 
@@ -27,7 +27,7 @@ const HEADING = "flex items-center gap-2.5 font-display font-bold text-[15px] te
 const Dot = () => <span className="h-1 w-1 rounded-full bg-orange-300/60 group-hover:w-2.5 group-hover:bg-orange-300 transition-all duration-300 ease-fluid" />;
 const Bar = () => <span className="h-4 w-1 rounded-full bg-orange-400" />;
 
-export function Footer({ settings, sections }: { settings: SiteSettings; sections: NavSectionView[] }) {
+export function Footer({ settings, sections, hasCatalog }: { settings: SiteSettings; sections: NavSectionView[]; hasCatalog: boolean }) {
   const year = new Intl.DateTimeFormat("en-u-ca-persian", { year: "numeric", timeZone: "Asia/Tehran" }).format(new Date()).replace(/\D/g, "");
   return (
     <footer className="on-brand relative overflow-hidden bg-gradient-to-b from-blue-700 to-blue-800 text-blue-100">
@@ -109,6 +109,7 @@ export function Footer({ settings, sections }: { settings: SiteSettings; section
                 ...(sections.find((s) => s.groups)?.groups ?? []).map((g) => ({ l: g.title, p: g.href })),
                 { l: "الزامات قانونی تأمین برق", p: "/solutions/article-16" },
                 { l: "مقالات و تحلیل‌های انرژی", p: "/articles" },
+                ...(hasCatalog ? [{ l: "دانلود کاتالوگ محصول", p: CATALOG_PATH }] : []),
               ].map((n) => (
                 <li key={n.l}>
                   <SmartLink href={n.p} className={LINK}>

@@ -1,5 +1,5 @@
 import "server-only";
-import { getArticleBySlug, getLandingIndex, getRenamedArticleSlug, getReportAnyStatus, getReportCatalogue } from "@/lib/cms";
+import { getArticleBySlug, getCatalogs, getLandingIndex, getRenamedArticleSlug, getReportAnyStatus, getReportCatalogue } from "@/lib/cms";
 
 /* Does a public URL resolve to something — a page or a redirect?
 
@@ -39,6 +39,10 @@ export async function publicPathExists(pathname: string): Promise<boolean> {
     if (reports.some((r) => r.slug === second || r.previousSlugs.includes(second))) return true;
     return (await getReportAnyStatus(second)) !== null;
   }
+
+  /* app/(site)/resources/catalog — live while a catalogue is published,
+     whatever the menu says */
+  if (parts.join("/") === "resources/catalog") return (await getCatalogs()).length > 0;
 
   /* the static routes own their paths outright */
   if (parts.length === 1 && ["about", "contact", "articles", "reports"].includes(first)) return true;

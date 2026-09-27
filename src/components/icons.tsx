@@ -71,6 +71,7 @@ const P: Record<string, ReactNode> = {
     </g>
   ),
   doc: (<><path d="M6 2.5h9L19 6.5v15H6v-19Z" /><path d="M14.5 2.5v4.5H19" /><path d="M9 12h6M9 15.5h6" /></>),
+  download: (<><path d="M12 3.5v12" /><path d="m7 11 5 5 5-5" /><path d="M4.5 20.5h15" /></>),
   send: <path d="m3.5 11 17-7.5L14 20.5l-3-6.5-7.5-3Z M11 14l9.5-10.5" />,
   play: <path d="M8.5 5.5v13l10.5-6.5L8.5 5.5Z" />,
   pause: <path d="M9 5.5v13M15 5.5v13" />,
