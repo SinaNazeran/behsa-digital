@@ -5,6 +5,7 @@ import { faNum } from "@/lib/format";
 import type { SiteSettings } from "@/db/schema";
 import { NAV_CONTACT, NAV_CTA_LABEL, type NavSectionView } from "@/content/navigation";
 import { SmartLink } from "@/components/SmartLink";
+import { COMPANY_NAME } from "@/content/defaults";
 
 /* ── Footer — 4-column RTL grid ──
    Deep brand blue (blue-700 → blue-800): the heaviest brand tone on the
@@ -135,9 +136,12 @@ export function Footer({ settings, sections }: { settings: SiteSettings; section
                 <span className="tone-orange kpi-icon h-7 w-7 rounded-sm!"><Icon name="clock" size={14} /></span>
                 <span>{settings.workingHours}</span>
               </li>
-              <li className="flex items-center gap-3">
-                <span className="tone-orange kpi-icon h-7 w-7 rounded-sm!"><Icon name="pin" size={14} /></span>
-                <span>{settings.address}</span>
+              <li className="flex items-start gap-3">
+                <span className="tone-orange kpi-icon h-7 w-7 shrink-0 rounded-sm!"><Icon name="pin" size={14} /></span>
+                <span className="pt-1">
+                  <span className="block font-bold">شرکت {COMPANY_NAME}</span>
+                  {settings.address}
+                </span>
               </li>
             </ul>
             <Btn href={settings.panelUrl} target="_blank" size="md" className="mt-6 w-full" icon="login" ariaLabel={`${NAV_CTA_LABEL} (باز شدن در پنجره جدید)`}>{NAV_CTA_LABEL}</Btn>

@@ -76,8 +76,16 @@ export async function saveArticle(_prev: ActionState, fd: FormData): Promise<Act
   try {
     await db.transaction(async (tx) => {
       if (id > 0) {
-        const res = await tx.update(schema.articles).set(values).where(eq(schema.articles.id, id)).returning({ id: schema.articles.id });
-        if (!res.length) throw new Error("NOT_FOUND");
+        const [old] = await tx.select().from(schema.articles).where(eq(schema.articles.id, id)).limit(1);
+        if (!old) throw new Error("NOT_FOUND");
+        /* a slug that was ever live keeps working: its old address redirects.
+           A draft or a not-yet-due scheduled post was never public, so its
+           slug is not kept. */
+        const wasLive = old.status === "published" && old.publishedAt !== null && old.publishedAt <= new Date();
+        const previousSlugs = old.slug !== values.slug && wasLive
+          ? [...new Set([...old.previousSlugs, old.slug])].filter((s) => s !== values.slug)
+          : old.previousSlugs.filter((s) => s !== values.slug);
+        await tx.update(schema.articles).set({ ...values, previousSlugs }).where(eq(schema.articles.id, id));
       } else {
         const [row] = await tx.insert(schema.articles).values(values).returning({ id: schema.articles.id });
         savedId = row.id;

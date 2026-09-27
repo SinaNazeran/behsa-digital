@@ -12,6 +12,7 @@ import { CAPABILITY_CATEGORIES, CONTENT_PAGES } from "@/content/capabilities";
 import type { ActionState } from "@/components/admin/ui";
 import { bool, done, fail, int, isUniqueViolation, refresh, str, uuidOrNull } from "./helpers";
 import { isCategoryTone, nextCategoryTone } from "@/components/tones";
+import { isIconName } from "@/components/icons";
 
 const sectionsSchema = z
   .array(z.object({
@@ -77,7 +78,7 @@ function readReport(fd: FormData) {
       lead,
       categoryId,
       audiences,
-      icon: str(fd, "icon", 40),
+      icon: isIconName(str(fd, "icon", 40)) ? str(fd, "icon", 40) : "",
       sections,
       gallery,
       relatedReportIds,
@@ -168,7 +169,7 @@ export async function saveReportCategory(_prev: ActionState, fd: FormData): Prom
     name,
     slug,
     question: str(fd, "question", 255),
-    icon: str(fd, "icon", 40),
+    icon: isIconName(str(fd, "icon", 40)) ? str(fd, "icon", 40) : "",
     tone,
     sortOrder: Number.isFinite(sortOrder) ? sortOrder : 0,
   };

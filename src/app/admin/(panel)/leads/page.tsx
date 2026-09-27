@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import { desc } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { PageTitle } from "@/components/admin/ui";
@@ -40,6 +41,7 @@ const STATUS_CLS: Record<LeadStatus, string> = {
 };
 
 export default async function LeadsAdmin() {
+  await requireUser();
   const rows = await db.select().from(schema.leads).orderBy(desc(schema.leads.createdAt)).limit(200);
 
   return (

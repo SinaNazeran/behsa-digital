@@ -17,7 +17,13 @@ import { db, schema } from "@/db";
 
 export const SESSION_COOKIE = "behsa_session";
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
-const MAX_FAILS = 5;
+/* Three separate limits per window. The pair limit is the tight one; the
+   per-email limit is deliberately high so that a stranger typing wrong
+   passwords cannot lock a real admin out, yet a distributed guess at one
+   account is still capped. */
+const MAX_FAILS = 5;        /* one email from one IP */
+const MAX_IP_FAILS = 20;    /* one IP across every email */
+const MAX_EMAIL_FAILS = 50; /* one email across every IP */
 const FAIL_WINDOW_MS = 15 * 60 * 1000;
 
 export type CurrentUser = { id: number; email: string; name: string; role: "admin" | "editor" };
@@ -26,7 +32,9 @@ const hashToken = (token: string) => createHash("sha256").update(token).digest("
 
 async function clientInfo() {
   const h = await headers();
-  const ip = (h.get("x-forwarded-for")?.split(",")[0] ?? h.get("x-real-ip") ?? "").trim().slice(0, 64) || null;
+  /* the first X-Forwarded-For entry is whatever the client sent; x-real-ip
+     and the last entry are the ones our own reverse proxy writes */
+  const ip = (h.get("x-real-ip") ?? h.get("x-forwarded-for")?.split(",").pop() ?? "").trim().slice(0, 64) || null;
   return { ip, userAgent: h.get("user-agent")?.slice(0, 500) ?? null };
 }
 
@@ -49,15 +57,16 @@ export async function login(emailRaw: string, password: string): Promise<LoginRe
   const { ip, userAgent } = await clientInfo();
   const since = new Date(Date.now() - FAIL_WINDOW_MS);
 
-  const [{ fails }] = await db
-    .select({ fails: sql<number>`count(*)::int` })
-    .from(schema.loginAttempts)
-    .where(and(
-      eq(schema.loginAttempts.success, false),
-      gt(schema.loginAttempts.createdAt, since),
-      ip ? sql`(${schema.loginAttempts.email} = ${email} OR ${schema.loginAttempts.ip} = ${ip})` : eq(schema.loginAttempts.email, email),
-    ));
-  if (fails >= MAX_FAILS) {
+  const a = schema.loginAttempts;
+  const [fails] = await db
+    .select({
+      pair: sql<number>`count(*) filter (where ${a.email} = ${email} and ${a.ip} is not distinct from ${ip})::int`,
+      byIp: sql<number>`count(*) filter (where ${ip}::varchar is not null and ${a.ip} = ${ip})::int`,
+      byEmail: sql<number>`count(*) filter (where ${a.email} = ${email})::int`,
+    })
+    .from(a)
+    .where(and(eq(a.success, false), gt(a.createdAt, since)));
+  if (fails.pair >= MAX_FAILS || fails.byIp >= MAX_IP_FAILS || fails.byEmail >= MAX_EMAIL_FAILS) {
     return { ok: false, error: "تعداد تلاش‌های ناموفق زیاد است. ۱۵ دقیقه بعد دوباره تلاش کنید." };
   }
 

@@ -98,6 +98,8 @@ export type ChartStyle = "line" | "bars" | "donut" | "area";
 export const articles = pgTable("articles", {
   id: serial("id").primaryKey(),
   slug: varchar("slug", { length: 160 }).notNull().unique(),
+  /** slugs this article was public under before — they 308 to the current one */
+  previousSlugs: jsonb("previous_slugs").$type<string[]>().notNull().default([]),
   title: varchar("title", { length: 255 }).notNull(),
   excerpt: text("excerpt").notNull().default(""),
   body: jsonb("body").$type<ArticleSection[]>().notNull().default([]),

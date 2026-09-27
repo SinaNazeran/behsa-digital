@@ -1,0 +1,1 @@
+ALTER TABLE "articles" ADD COLUMN "previous_slugs" jsonb DEFAULT '[]'::jsonb NOT NULL;

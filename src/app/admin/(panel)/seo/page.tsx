@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 
 import { AdminForm, Card, CountedInput, Field, PageTitle, SubmitButton, Toggle } from "@/components/admin/ui";
@@ -17,6 +18,7 @@ const CORE = [
 ];
 
 export default async function SeoAdmin({ searchParams }: { searchParams: Promise<{ path?: string }> }) {
+  await requireUser();
   const [{ path }, overrides, media, landings] = await Promise.all([
     searchParams, getAllPageSeo(), listMediaOptions(), getLandingIndex(),
   ]);

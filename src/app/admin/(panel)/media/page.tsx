@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import { desc } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { AdminForm, Card, ConfirmSubmit, Field, PageTitle, SubmitButton } from "@/components/admin/ui";
@@ -8,6 +9,7 @@ import { deleteMedia, updateMediaAlt, uploadMedia } from "../../_actions/media";
 export const metadata = { title: "رسانه‌ها" };
 
 export default async function MediaAdmin() {
+  await requireUser();
   const items = await db
     .select({ id: schema.media.id, filename: schema.media.filename, alt: schema.media.alt, size: schema.media.size, mime: schema.media.mime })
     .from(schema.media)

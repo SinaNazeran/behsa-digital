@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import { NavigationManager } from "@/components/admin/NavigationManager";
 import { PageTitle } from "@/components/admin/ui";
 import { listNavItems } from "@/lib/admin-data";
@@ -5,6 +6,7 @@ import { listNavItems } from "@/lib/admin-data";
 export const metadata = { title: "منوی سایت" };
 
 export default async function NavigationAdmin() {
+  await requireUser();
   const rows = await listNavItems();
   return (
     <>

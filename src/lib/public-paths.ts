@@ -1,5 +1,5 @@
 import "server-only";
-import { getArticleBySlug, getLandingIndex, getReportAnyStatus, getReportCatalogue } from "@/lib/cms";
+import { getArticleBySlug, getLandingIndex, getRenamedArticleSlug, getReportAnyStatus, getReportCatalogue } from "@/lib/cms";
 
 /* Does a public URL resolve to something — a page or a redirect?
 
@@ -26,9 +26,11 @@ export async function publicPathExists(pathname: string): Promise<boolean> {
 
   const [first, second] = parts;
 
-  /* app/(site)/articles/[slug] — published articles only; drafts are the
-     draft-mode path, which the proxy never checks */
-  if (first === "articles" && parts.length === 2) return (await getArticleBySlug(second)) !== null;
+  /* app/(site)/articles/[slug] — published or renamed (permanent redirect);
+     drafts are the draft-mode path, which the proxy never checks */
+  if (first === "articles" && parts.length === 2) {
+    return (await getArticleBySlug(second)) !== null || (await getRenamedArticleSlug(second)) !== null;
+  }
 
   /* app/(site)/reports/[slug] — live, renamed (permanent redirect) or
      unpublished (redirect to the catalogue) all resolve */

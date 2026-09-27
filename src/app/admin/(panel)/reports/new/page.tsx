@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 import { ReportEditor } from "@/components/admin/ReportEditor";
 import { Card, PageTitle } from "@/components/admin/ui";
@@ -8,6 +9,7 @@ import { saveReport } from "../../../_actions/reports";
 export const metadata = { title: "گزارش جدید" };
 
 export default async function NewReport() {
+  await requireUser();
   const [categories, media, reports] = await Promise.all([listReportCategories(), listMediaOptions(), listReports()]);
 
   if (categories.length === 0) {

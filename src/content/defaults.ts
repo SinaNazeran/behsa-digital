@@ -1,5 +1,8 @@
 import type { SiteSettings } from "@/db/schema";
 
+/* The legal company behind the product — shown beside the address and on the map. */
+export const COMPANY_NAME = "بهینه‌سازان توس";
+
 /* Fallback values — used by the seed and whenever a settings field is empty. */
 export const DEFAULT_SETTINGS: SiteSettings = {
   siteName: "بهسا دیجیتال",

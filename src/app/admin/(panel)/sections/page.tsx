@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 import { PageTitle } from "@/components/admin/ui";
 import { sectionSummaries } from "@/lib/admin-data";
@@ -5,6 +6,7 @@ import { sectionSummaries } from "@/lib/admin-data";
 export const metadata = { title: "بخش‌های صفحه اصلی" };
 
 export default async function SectionsAdmin() {
+  await requireUser();
   const rows = await sectionSummaries();
   return (
     <>

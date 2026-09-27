@@ -1,6 +1,6 @@
 "use server";
 
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { requireUser } from "@/lib/auth";
 import { isIconName } from "@/components/icons";
@@ -93,8 +93,10 @@ export async function saveSectionItem(_prev: ActionState, fd: FormData): Promise
 
   const id = int(fd, "id");
   if (id > 0) {
+    /* scoped to the section: this section's field set never lands on another's item */
     const res = await db.update(schema.contentItems).set(values)
-      .where(eq(schema.contentItems.id, id)).returning({ id: schema.contentItems.id });
+      .where(and(eq(schema.contentItems.id, id), eq(schema.contentItems.sectionKey, def.key)))
+      .returning({ id: schema.contentItems.id });
     if (!res.length) return fail("این مورد دیگر وجود ندارد.");
   } else {
     await ensureSection(def.key);

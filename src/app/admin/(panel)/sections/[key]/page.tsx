@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SectionEditor } from "@/components/admin/SectionEditor";
@@ -14,6 +15,7 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function SectionAdmin({ params }: Props) {
+  await requireUser();
   const { key } = await params;
   const def = SECTION_BY_KEY[key];
   if (!def) notFound();

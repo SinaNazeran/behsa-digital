@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 import { listArticles } from "@/lib/admin-data";
 import { Card, PageTitle } from "@/components/admin/ui";
@@ -8,6 +9,7 @@ import { cn } from "@/lib/utils";
 export const metadata = { title: "مقالات" };
 
 export default async function ArticlesAdmin({ searchParams }: { searchParams: Promise<{ status?: string; deleted?: string }> }) {
+  await requireUser();
   const { status, deleted } = await searchParams;
   const filter = status === "draft" || status === "published" ? status : undefined;
   const rows = await listArticles(filter);

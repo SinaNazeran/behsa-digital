@@ -1,8 +1,8 @@
 import { draftMode } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import ArticleDetail from "@/views/ArticleDetail";
 import { JsonLd, breadcrumbLd } from "@/components/seo/JsonLd";
-import { getArticleBySlug, getArticleForPreview, getPublishedArticles, getSettings, toCardView } from "@/lib/cms";
+import { getArticleBySlug, getArticleForPreview, getPublishedArticles, getRenamedArticleSlug, getSettings, toCardView } from "@/lib/cms";
 import { getCurrentUser } from "@/lib/auth";
 import { absoluteUrl, buildMetadata, DEFAULT_OG_IMAGE, SITE_URL } from "@/lib/seo";
 
@@ -37,7 +37,12 @@ export async function generateMetadata({ params }: Props) {
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
   const { article, preview } = await loadArticle(slug);
-  if (!article) notFound();
+  if (!article) {
+    /* a renamed article keeps its old address alive */
+    const renamed = await getRenamedArticleSlug(slug);
+    if (renamed) permanentRedirect(`/articles/${renamed}`);
+    notFound();
+  }
 
   const [all, settings] = await Promise.all([getPublishedArticles(), getSettings()]);
   const others = all.filter((a) => a.slug !== article.slug);

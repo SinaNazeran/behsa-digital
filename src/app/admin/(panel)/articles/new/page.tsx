@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import { ArticleEditor } from "@/components/admin/ArticleEditor";
 import { PageTitle } from "@/components/admin/ui";
 import { listCategories, listMediaOptions } from "@/lib/admin-data";
@@ -8,6 +9,7 @@ import { saveArticle } from "../../../_actions/articles";
 export const metadata = { title: "مقاله جدید" };
 
 export default async function NewArticle() {
+  await requireUser();
   const [categories, media] = await Promise.all([listCategories(), listMediaOptions()]);
   const [date, time] = toJalaliInput(new Date());
   return (

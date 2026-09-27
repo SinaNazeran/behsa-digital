@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import { AdminForm, Card, Field, PageTitle, SubmitButton } from "@/components/admin/ui";
 import { inputCls } from "@/components/admin/styles";
 import { MediaPicker } from "@/components/admin/MediaPicker";
@@ -8,6 +9,7 @@ import { saveSettings } from "../../_actions/settings";
 export const metadata = { title: "تنظیمات سایت" };
 
 export default async function SettingsAdmin() {
+  await requireUser();
   const [s, media] = await Promise.all([getSettings(), listMediaOptions()]);
   const text = (name: keyof typeof s, label: string, opts: { ltr?: boolean; hint?: string; multiline?: boolean } = {}) => (
     <Field label={label} htmlFor={name} hint={opts.hint}>

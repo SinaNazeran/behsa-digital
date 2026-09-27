@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, startTransition, useActionState, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, startTransition, useActionState, useContext, useEffect, useState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { cn } from "@/lib/utils";
 import { btnCls, inputCls } from "./styles";
@@ -38,13 +38,15 @@ export function AdminForm({ action, children, className, resetOnSuccess = false,
   action: FormAction; children: ReactNode; className?: string; resetOnSuccess?: boolean; id?: string;
 }) {
   const [state, formAction, pending] = useActionState(action, null);
-  const ref = useRef<HTMLFormElement>(null);
+  /* remount rather than form.reset(): reset() leaves the state of controlled
+     pickers (image, icon) behind, so the next item silently reused them */
+  const [generation, setGeneration] = useState(0);
   useEffect(() => {
-    if (state?.ok && resetOnSuccess) ref.current?.reset();
+    if (state?.ok && resetOnSuccess) setGeneration((g) => g + 1);
   }, [state, resetOnSuccess]);
   return (
     <form
-      ref={ref}
+      key={generation}
       id={id}
       className={className}
       noValidate

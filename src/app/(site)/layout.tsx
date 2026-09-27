@@ -4,6 +4,7 @@ import { CardSpotlight } from "@/components/CardSpotlight";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getNavigation, getSettings } from "@/lib/cms";
 import { SITE_URL } from "@/lib/seo";
+import { COMPANY_NAME } from "@/content/defaults";
 
 /* Public pages are prerendered and revalidated on a one-hour floor. The
    admin already expires them on every edit (updateTag + revalidatePath in
@@ -35,6 +36,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       addressCountry: "IR",
     },
     sameAs: [settings.baleUrl].filter(Boolean),
+    parentOrganization: { "@type": "Organization", name: COMPANY_NAME },
   };
   const website = {
     "@context": "https://schema.org",

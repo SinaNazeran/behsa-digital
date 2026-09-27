@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 import { listReportCategories } from "@/lib/admin-data";
 import { AdminForm, Card, ConfirmSubmit, Field, PageTitle, SubmitButton } from "@/components/admin/ui";
@@ -9,6 +10,7 @@ import { deleteReportCategory, saveReportCategory } from "../../_actions/reports
 export const metadata = { title: "دسته‌بندی گزارش‌ها" };
 
 export default async function ReportCategoriesAdmin() {
+  await requireUser();
   const rows = await listReportCategories();
   /* which other category wears each colour, so the picker can say so */
   const takenBy = (id: number) => Object.fromEntries(rows.filter(({ c }) => c.id !== id && c.tone).map(({ c }) => [c.tone, c.name]));

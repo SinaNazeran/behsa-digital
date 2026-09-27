@@ -1,10 +1,10 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { requireUser } from "@/lib/auth";
 import type { ActionState } from "@/components/admin/ui";
-import { done, fail, refresh, str } from "./helpers";
+import { done, fail, refresh, str, uuidOrNull } from "./helpers";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -46,7 +46,8 @@ export async function uploadMedia(_prev: ActionState, fd: FormData): Promise<Act
 
 export async function updateMediaAlt(_prev: ActionState, fd: FormData): Promise<ActionState> {
   await requireUser();
-  const id = str(fd, "id", 64);
+  const id = uuidOrNull(fd, "id");
+  if (!id) return fail("شناسه نامعتبر است.");
   await db.update(schema.media).set({ alt: str(fd, "alt", 255) }).where(eq(schema.media.id, id));
   refresh("articles");
   return done("متن جایگزین ذخیره شد.");
@@ -54,11 +55,17 @@ export async function updateMediaAlt(_prev: ActionState, fd: FormData): Promise<
 
 export async function deleteMedia(_prev: ActionState, fd: FormData): Promise<ActionState> {
   await requireUser();
-  const id = str(fd, "id", 64);
+  const id = uuidOrNull(fd, "id");
+  if (!id) return fail("شناسه نامعتبر است.");
+  /* report galleries are jsonb, so no FK nulls them out — refuse instead
+     of leaving a broken image on a public page */
+  const [used] = await db.select({ title: schema.reports.title }).from(schema.reports)
+    .where(sql`${schema.reports.gallery} @> ${JSON.stringify([{ mediaId: id }])}::jsonb`).limit(1);
+  if (used) return fail(`این تصویر در گالری گزارش «${used.title}» استفاده شده است؛ ابتدا آن را از گالری بردارید.`);
   await db.delete(schema.media).where(eq(schema.media.id, id));
   /* the row's media_id columns are set to NULL by the FK — every cache that
      may hold the old /media/<id> URL has to expire with it, otherwise a
      deleted image keeps being rendered until the tag times out */
-  refresh("articles", "settings", "seo", "content");
+  refresh("articles", "settings", "seo", "content", "reports");
   return done("تصویر حذف شد.");
 }

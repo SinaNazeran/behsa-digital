@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { cn } from "@/utils/cn";
 import { Icon } from "@/components/icons";
-import { Reveal, Btn, Badge, PageHero } from "@/components/ui";
+import { Reveal, Btn, Badge, PageHero, CtaBanner } from "@/components/ui";
 import { Thumb } from "@/components/charts";
 import { faNum } from "@/lib/format";
 import type { ArticleCardView } from "@/lib/cms";
@@ -14,7 +14,7 @@ import { SmartLink } from "@/components/SmartLink";
 
 const PAGE_SIZE = 6;
 
-export default function Articles({ articles, categories }: { articles: ListArticle[]; categories: string[] }) {
+export default function Articles({ articles, categories, panelUrl }: { articles: ListArticle[]; categories: string[]; panelUrl: string }) {
   const ARTICLES = articles;
   const ARTICLE_CATS = ["همه", ...categories];
   const [cat, setCat] = useState("همه");
@@ -171,26 +171,12 @@ export default function Articles({ articles, categories }: { articles: ListArtic
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="relative overflow-hidden border-t border-line bg-surface text-ink">
-        <div className="absolute inset-0 grid-light grid-fade" />
-        <div className="relative mx-auto max-w-[1200px] px-5 md:px-8 py-16 text-center">
-          <Reveal>
-            <h2 className="font-display font-black text-[24px] md:text-[32px] leading-[1.45]">خواندن کافی نیست؛ <span className="text-orange-700">عمل کنید.</span></h2>
-            <p className="mt-4 text-[14.5px] leading-8 text-ink2 max-w-lg mx-auto">همین مفاهیم را در سامانه بهسا تجربه کنید.</p>
-            <Btn
-              href="https://panel.behsa-digital.ir/login"
-              target="_blank"
-              size="lg"
-              icon="login"
-              className="mt-7"
-              ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)"
-            >
-              ورود به سامانه
-            </Btn>
-          </Reveal>
-        </div>
-      </section>
+      {/* ── CTA — the site's one closing banner, as on every other page ── */}
+      <CtaBanner title="خواندن کافی نیست؛ *عمل کنید.*" lead="همین مفاهیم را در سامانه بهسا تجربه کنید.">
+        <Btn href={panelUrl} target="_blank" size="lg" icon="login" ariaLabel="ورود به سامانه بهسا دیجیتال (باز شدن در پنجره جدید)">
+          ورود به سامانه
+        </Btn>
+      </CtaBanner>
     </>
   );
 }

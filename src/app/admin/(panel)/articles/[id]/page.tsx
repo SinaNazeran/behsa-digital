@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
@@ -13,6 +14,7 @@ import { deleteArticle, saveArticle } from "../../../_actions/articles";
 export const metadata = { title: "ویرایش مقاله" };
 
 export default async function EditArticle({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
+  await requireUser();
   const { id } = await params;
   const { created } = await searchParams;
   const numId = Number(id);

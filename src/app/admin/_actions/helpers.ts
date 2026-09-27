@@ -22,13 +22,14 @@ export const done = (message = "ذخیره شد."): ActionState => ({ ok: true, 
 export const isUniqueViolation = (e: unknown): boolean =>
   typeof e === "object" && e !== null && ("code" in e ? (e as { code?: string }).code === "23505" : "cause" in e && isUniqueViolation((e as { cause?: unknown }).cause));
 
-/** expire public caches immediately and refresh admin screens */
+/** expire public caches immediately and refresh admin screens;
+    with no tags only the panel refreshes — the public site is untouched */
 export function refresh(...tags: (keyof typeof TAGS)[]) {
   for (const t of tags) {
     try { updateTag(TAGS[t]); } catch {}
   }
   try { revalidatePath("/admin", "layout"); } catch {}
-  try { revalidatePath("/", "layout"); } catch {}
+  if (tags.length) try { revalidatePath("/", "layout"); } catch {}
 }
 
 /** "1404/08/18" or "۱۴۰۴/۰۸/۱۸" (+ optional "HH:MM") → Date in Tehran time */
@@ -36,8 +37,11 @@ export function parseJalaliInput(dateRaw: string, timeRaw = ""): Date | null {
   const m = toLatinDigits(dateRaw).trim().match(/^(\d{4})[/\-.](\d{1,2})[/\-.](\d{1,2})$/);
   if (!m) return null;
   const [jy, jm, jd] = [Number(m[1]), Number(m[2]), Number(m[3])];
-  if (jm < 1 || jm > 12 || jd < 1 || jd > 31) return null;
+  /* months 1–6 have 31 days, 7–11 have 30, Esfand 29 (30 in a leap year):
+     a day past the month's end is rejected, never silently rolled over */
+  if (jm < 1 || jm > 12 || jd < 1 || jd > (jm <= 6 ? 31 : 30)) return null;
   const [gy, gm, gd] = jalaliToGregorian(jy, jm, jd);
+  if (jm === 12 && jd === 30 && jalaliToGregorian(jy + 1, 1, 1).join() === [gy, gm, gd].join()) return null;
   const t = toLatinDigits(timeRaw).trim().match(/^(\d{1,2}):(\d{2})$/);
   const hh = t ? Math.min(23, Number(t[1])) : 9;
   const mm = t ? Math.min(59, Number(t[2])) : 0;

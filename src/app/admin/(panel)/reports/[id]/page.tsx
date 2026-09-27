@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
@@ -12,6 +13,7 @@ import { deleteReport, saveReport } from "../../../_actions/reports";
 export const metadata = { title: "ویرایش گزارش" };
 
 export default async function EditReport({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ created?: string }> }) {
+  await requireUser();
   const { id } = await params;
   const { created } = await searchParams;
   const numId = Number(id);

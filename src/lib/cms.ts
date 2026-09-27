@@ -175,6 +175,20 @@ export const getArticleBySlug = unstable_cache(
   { tags: [TAGS.articles, TAGS.categories], revalidate: HOUR },
 );
 
+/** the current slug of a live article that was once published under `slug` */
+export const getRenamedArticleSlug = unstable_cache(
+  async (slug: string): Promise<string | null> => {
+    const [row] = await db
+      .select({ slug: schema.articles.slug })
+      .from(schema.articles)
+      .where(and(publishedWhere(), sql`${schema.articles.previousSlugs} @> ${JSON.stringify([slug])}::jsonb`))
+      .limit(1);
+    return row?.slug ?? null;
+  },
+  ["renamed-article-slug"],
+  { tags: [TAGS.articles], revalidate: HOUR },
+);
+
 /** uncached, ignores status — only for authenticated draft preview */
 export async function getArticleForPreview(slug: string): Promise<ArticleView | null> {
   const [row] = await db
@@ -282,13 +296,15 @@ function defaultNavigation(): NavSectionView[] {
 
 const getStoredNavigation = unstable_cache(
   async (): Promise<NavSectionView[]> => {
-    const rows = await orDefault(() => db
+    const all = await orDefault(() => db
       .select()
       .from(schema.navItems)
-      .where(eq(schema.navItems.isActive, true))
       .orderBy(asc(schema.navItems.sortOrder), asc(schema.navItems.id)), () => []);
+    /* only an empty table means "never seeded": an editor who hid every
+       section gets an empty menu, not the factory one back */
+    if (all.length === 0) return defaultNavigation();
+    const rows = all.filter((r) => r.isActive);
     const tops = rows.filter((r) => r.parentId === null);
-    if (tops.length === 0) return defaultNavigation();
 
     return tops.map((s) => ({
       id: s.id,

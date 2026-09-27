@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import { sql } from "drizzle-orm";
 import { db, schema } from "@/db";
 import { AdminForm, Card, ConfirmSubmit, Field, PageTitle, SubmitButton } from "@/components/admin/ui";
@@ -7,6 +8,7 @@ import { deleteCategory, saveCategory } from "../../_actions/articles";
 export const metadata = { title: "دسته‌بندی مقالات" };
 
 export default async function CategoriesAdmin() {
+  await requireUser();
   const rows = await db
     .select({ c: schema.categories, n: sql<number>`(select count(*)::int from ${schema.articles} where ${schema.articles.categoryId} = ${schema.categories.id})` })
     .from(schema.categories)

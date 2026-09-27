@@ -54,6 +54,18 @@ export function SectionEditor({ def, section, items, media }: {
   media: MediaOption[];
 }) {
   const h = def.header;
+  /* every section can go back to its factory content, items or not */
+  const resetCard = (
+    <Card title="بازگشت به محتوای پیش‌فرض">
+      <p className="mb-3 text-[13px] leading-7 text-ink2">
+        همهٔ تغییرات این بخش حذف و متن‌ها و موارد اولیهٔ سایت جایگزین می‌شوند.
+      </p>
+      <AdminForm action={resetSection}>
+        <input type="hidden" name="key" value={def.key} />
+        <ConfirmSubmit label="بازگردانی پیش‌فرض" confirmLabel="بله، بازگردان" />
+      </AdminForm>
+    </Card>
+  );
   return (
     <div className="space-y-6">
       <AdminForm action={saveSection} className="space-y-6">
@@ -188,18 +200,11 @@ export function SectionEditor({ def, section, items, media }: {
                 <div><SubmitButton>افزودن</SubmitButton></div>
               </AdminForm>
             </Card>
-            <Card title="بازگشت به محتوای پیش‌فرض">
-              <p className="mb-3 text-[13px] leading-7 text-ink2">
-                همهٔ تغییرات این بخش حذف و متن‌ها و موارد اولیهٔ سایت جایگزین می‌شوند.
-              </p>
-              <AdminForm action={resetSection}>
-                <input type="hidden" name="key" value={def.key} />
-                <ConfirmSubmit label="بازگردانی پیش‌فرض" confirmLabel="بله، بازگردان" />
-              </AdminForm>
-            </Card>
+            {resetCard}
           </div>
         </div>
       )}
+      {!def.items && <div className="max-w-lg">{resetCard}</div>}
     </div>
   );
 }

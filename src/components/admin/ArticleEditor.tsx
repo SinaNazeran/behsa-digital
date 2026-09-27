@@ -89,7 +89,7 @@ export function ArticleEditor({
               <Field
                 label="نامک (آدرس صفحه)"
                 htmlFor="slug"
-                hint={<>فقط حروف کوچک انگلیسی، عدد و خط تیره. آدرس نهایی: <span dir="ltr" className="font-mono">{siteUrl}/articles/{slug || "…"}</span>. پس از انتشار تغییر ندهید؛ لینک‌های قبلی خراب می‌شوند.</>}
+                hint={<>فقط حروف کوچک انگلیسی، عدد و خط تیره. آدرس نهایی: <span dir="ltr" className="font-mono">{siteUrl}/articles/{slug || "…"}</span>. اگر پس از انتشار تغییرش دهید، آدرس قبلی به آدرس جدید منتقل (ریدایرکت) می‌شود.</>}
               >
                 <div className="flex gap-2">
                   <input id="slug" name="slug" value={slug} onChange={(e) => setSlug(e.target.value.toLowerCase())} dir="ltr" className={cn(inputCls, "font-mono")} placeholder="demand-penalty" required />

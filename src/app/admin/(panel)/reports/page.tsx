@@ -1,3 +1,4 @@
+import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 import { listReports } from "@/lib/admin-data";
 import { Card, PageTitle } from "@/components/admin/ui";
@@ -9,6 +10,7 @@ import { REPORT_MENU_LIMIT } from "@/content/reports";
 export const metadata = { title: "گزارش‌ها" };
 
 export default async function ReportsAdmin({ searchParams }: { searchParams: Promise<{ status?: string; deleted?: string }> }) {
+  await requireUser();
   const { status, deleted } = await searchParams;
   const filter = status === "draft" || status === "published" ? status : undefined;
   const all = await listReports();

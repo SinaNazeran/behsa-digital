@@ -3,6 +3,7 @@ import { Reveal, PageHero } from "@/components/ui";
 import { LeadForm } from "@/components/LeadForm";
 import type { SiteSettings } from "@/db/schema";
 import { SmartLink } from "@/components/SmartLink";
+import { COMPANY_NAME } from "@/content/defaults";
 
 export default function Contact({ settings, subject = "" }: { settings: SiteSettings; subject?: string }) {
   return (
@@ -111,7 +112,8 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                     <span className="text-[12px] font-bold text-(--tone-700) bg-(--tone-50) ring-1 ring-inset ring-(--tone-200) px-3 py-1 rounded-full">کارخانه و دفتر مرکزی</span>
                   </div>
                   <span className="block text-[13px] font-bold text-ink3">آدرس رسمی</span>
-                  <p className="mt-2 text-[15.5px] font-bold text-ink leading-8">
+                  <p className="mt-2 text-[16px] font-extrabold text-(--tone-700)">شرکت {COMPANY_NAME}</p>
+                  <p className="mt-1 text-[15.5px] font-bold text-ink leading-8">
                     {settings.address}
                   </p>
                 </div>
@@ -222,7 +224,7 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
         <div className="relative mx-auto max-w-[1200px] px-5 md:px-8">
           <Reveal>
             <div className="relative overflow-hidden rounded-lg border border-line shadow-card">
-              <svg viewBox="0 0 1200 340" className="w-full h-auto block bg-neutral-100" role="img" aria-label="موقعیت شرکت بهسا دیجیتال روی نقشه شهرک صنعتی توس">
+              <svg viewBox="0 0 1200 340" className="w-full h-auto block bg-neutral-100" role="img" aria-label={`موقعیت شرکت ${COMPANY_NAME}، سازندهٔ بهسا دیجیتال، در شهرک صنعتی توس`}>
                 <g stroke="#D3DAE2" strokeWidth="1.5">
                   {Array.from({ length: 24 }, (_, i) => <line key={`v${i}`} x1={i * 52} y1="0" x2={i * 52} y2="340" />)}
                   {Array.from({ length: 8 }, (_, i) => <line key={`h${i}`} x1="0" y1={i * 48} x2="1200" y2={i * 48} />)}
@@ -255,13 +257,13 @@ export default function Contact({ settings, subject = "" }: { settings: SiteSett
                   <circle cx="0" cy="-6" r="8" fill="#fff" />
                 </g>
                 <g transform="translate(600 62)">
-                  <rect x="-140" y="-26" width="280" height="40" rx="10" fill="#0062BD" />
-                  <text x="0" y="0" textAnchor="middle" fontSize="14" fill="#fff" fontFamily="Vazirmatn" fontWeight="700">بهسا دیجیتال — شهرک صنعتی توس، پلاک ۳۷۰</text>
+                  <rect x="-180" y="-26" width="360" height="40" rx="10" fill="#0062BD" />
+                  <text x="0" y="0" textAnchor="middle" fontSize="14" fill="#fff" fontFamily="Vazirmatn" fontWeight="700">{COMPANY_NAME} (بهسا دیجیتال) — پلاک ۳۷۰</text>
                 </g>
               </svg>
               <div className="absolute bottom-4 right-4 flex items-center gap-2 rounded-control bg-surface/95 border border-line px-4 py-2.5 text-[12.5px] font-bold text-ink shadow-card">
                 <Icon name="pin" size={15} className="text-orange-700" />
-                مشهد، شهرک صنعتی توس، فاز یک
+                شرکت {COMPANY_NAME} · مشهد، شهرک صنعتی توس، فاز یک
               </div>
             </div>
           </Reveal>
