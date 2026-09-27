@@ -1,6 +1,7 @@
 /* Idempotent seed: imports the content that was hardcoded in the Vite app.
-   Existing rows (matched by slug / key) are left untouched, so it is safe
-   to re-run after editors have changed content. */
+   Every collection is filled only while its table is empty (sections: per
+   missing key), so it is safe to re-run after editors have changed
+   content — nothing they deleted or renamed is brought back. */
 import { eq, sql } from "drizzle-orm";
 import { connect } from "./_db";
 import { ARTICLE_CATS, ARTICLES, FAQ_ITEMS } from "./seed-data";
@@ -28,16 +29,20 @@ await db.transaction(async (tx) => {
   /* settings */
   await tx.insert(schema.siteSettings).values({ key: "site", value: DEFAULT_SETTINGS }).onConflictDoNothing();
 
-  /* categories */
-  const cats = ARTICLE_CATS.filter((c) => c !== "همه");
-  await tx.insert(schema.categories)
-    .values(cats.map((name, i) => ({ name, slug: CAT_SLUGS[name] ?? `category-${i + 1}`, sortOrder: i })))
-    .onConflictDoNothing();
+  /* categories and articles — only into empty tables. Matching by slug
+     would resurrect what an editor deleted, and re-create a renamed
+     article under its old slug, shadowing that slug's redirect. */
+  const [{ n: articleCatCount }] = await tx.select({ n: sql<number>`count(*)::int` }).from(schema.categories);
+  if (articleCatCount === 0) {
+    const cats = ARTICLE_CATS.filter((c) => c !== "همه");
+    await tx.insert(schema.categories)
+      .values(cats.map((name, i) => ({ name, slug: CAT_SLUGS[name] ?? `category-${i + 1}`, sortOrder: i })));
+  }
   const catRows = await tx.select().from(schema.categories);
   const catId = (name: string) => catRows.find((c) => c.name === name)?.id ?? null;
 
-  /* articles */
-  await tx.insert(schema.articles).values(ARTICLES.map((a, i) => ({
+  const [{ n: articleCount }] = await tx.select({ n: sql<number>`count(*)::int` }).from(schema.articles);
+  if (articleCount === 0) await tx.insert(schema.articles).values(ARTICLES.map((a, i) => ({
     slug: a.slug,
     title: a.title,
     excerpt: a.excerpt,
@@ -48,7 +53,7 @@ await db.transaction(async (tx) => {
     status: "published" as const,
     featured: i === 0,
     publishedAt: parseJalaliLabel(a.date) ?? new Date(),
-  }))).onConflictDoNothing();
+  })));
 
   /* ordered collections — only when empty */
   const [{ n: faqCount }] = await tx.select({ n: sql<number>`count(*)::int` }).from(schema.faqs);

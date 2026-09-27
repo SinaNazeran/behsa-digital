@@ -1,5 +1,5 @@
-import { AdminForm, Card, ConfirmSubmit, Field, SubmitButton, Toggle } from "@/components/admin/ui";
-import { btnCls, inputCls } from "@/components/admin/styles";
+import { AdminForm, Card, ConfirmSubmit, Field, MoveControls, SubmitButton, Toggle } from "@/components/admin/ui";
+import { inputCls } from "@/components/admin/styles";
 import { deleteItem, moveItem, saveItem } from "@/app/admin/_actions/collections";
 
 type Kind = "faqs" | "testimonials" | "clients";
@@ -38,23 +38,7 @@ export function CollectionManager({ kind, items, addTitle }: { kind: Kind; items
               <div className="mb-3 flex items-center gap-2">
                 <span className="rounded-full bg-bg px-2.5 py-0.5 text-[12px] font-bold text-ink3">{(i + 1).toLocaleString("fa-IR")}</span>
                 {!item.isPublished && <span className="rounded-full bg-warnbg px-2.5 py-0.5 text-[12px] font-bold text-warn">پنهان</span>}
-                <span className="mr-auto flex gap-1">
-                  {(["up", "down"] as const).map((dir) => (
-                    <AdminForm key={dir} action={moveItem}>
-                      <input type="hidden" name="kind" value={kind} />
-                      <input type="hidden" name="id" value={item.id} />
-                      <input type="hidden" name="dir" value={dir} />
-                      <button
-                        type="submit"
-                        disabled={(dir === "up" && i === 0) || (dir === "down" && i === items.length - 1)}
-                        className={btnCls("ghost")}
-                        aria-label={dir === "up" ? "انتقال به بالا" : "انتقال به پایین"}
-                      >
-                        {dir === "up" ? "↑" : "↓"}
-                      </button>
-                    </AdminForm>
-                  ))}
-                </span>
+                <MoveControls key={i} action={moveItem} fields={{ kind, id: item.id }} index={i} count={items.length} />
               </div>
               <AdminForm action={saveItem} className="space-y-3">
                 <input type="hidden" name="kind" value={kind} />

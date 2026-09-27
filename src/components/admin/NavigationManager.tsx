@@ -1,5 +1,5 @@
-import { AdminForm, Card, ConfirmSubmit, Field, SubmitButton, Toggle } from "@/components/admin/ui";
-import { btnCls, inputCls } from "@/components/admin/styles";
+import { AdminForm, Card, ConfirmSubmit, Field, MoveControls, SubmitButton, Toggle } from "@/components/admin/ui";
+import { inputCls } from "@/components/admin/styles";
 import { IconPicker } from "@/components/admin/IconPicker";
 import { deleteNavItem, moveNavItem, saveNavItem, seedDefaultNav } from "@/app/admin/_actions/navigation";
 import type { navItems as navItemsTable } from "@/db/schema";
@@ -21,25 +21,7 @@ const LENS_LABELS: { value: string; label: string }[] = [
 ];
 
 function MoveButtons({ id, parentId, index, count }: { id: number; parentId: number | null; index: number; count: number }) {
-  return (
-    <span className="mr-auto flex gap-1">
-      {(["up", "down"] as const).map((dir) => (
-        <AdminForm key={dir} action={moveNavItem}>
-          <input type="hidden" name="id" value={id} />
-          <input type="hidden" name="parentId" value={parentId ?? 0} />
-          <input type="hidden" name="dir" value={dir} />
-          <button
-            type="submit"
-            disabled={(dir === "up" && index === 0) || (dir === "down" && index === count - 1)}
-            className={btnCls("ghost")}
-            aria-label={dir === "up" ? "انتقال به بالا" : "انتقال به پایین"}
-          >
-            {dir === "up" ? "↑" : "↓"}
-          </button>
-        </AdminForm>
-      ))}
-    </span>
-  );
+  return <MoveControls key={index} action={moveNavItem} fields={{ id, parentId: parentId ?? 0 }} index={index} count={count} />;
 }
 
 function LinkFields({ item, withIcon = true }: { item?: NavRow; withIcon?: boolean }) {

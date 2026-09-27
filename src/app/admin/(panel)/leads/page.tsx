@@ -1,10 +1,14 @@
 import { requireUser } from "@/lib/auth";
-import { desc } from "drizzle-orm";
+import Link from "next/link";
+import { desc, eq } from "drizzle-orm";
 import { db, schema } from "@/db";
-import { PageTitle } from "@/components/admin/ui";
+import { AutoSubmitSelect, PageTitle } from "@/components/admin/ui";
+import { leadStatusCounts } from "@/lib/admin-data";
+import { faNum } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import { formatJalali } from "@/lib/format";
 import { setLeadStatus } from "../../_actions/leads";
-import type { ContractedPowerBand, LeadStatus, OrganizationType } from "@/db/schema";
+import { LEAD_STATUSES, type ContractedPowerBand, type LeadStatus, type OrganizationType } from "@/db/schema";
 
 export const metadata = { title: "درخواست‌ها" };
 
@@ -40,9 +44,21 @@ const STATUS_CLS: Record<LeadStatus, string> = {
   closed: "bg-neutral-100 text-neutral-500 border-neutral-200",
 };
 
-export default async function LeadsAdmin() {
+export default async function LeadsAdmin({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
   await requireUser();
-  const rows = await db.select().from(schema.leads).orderBy(desc(schema.leads.createdAt)).limit(200);
+  const { status } = await searchParams;
+  const filter = LEAD_STATUSES.find((s) => s === status);
+  const [rows, counts] = await Promise.all([
+    db.select().from(schema.leads)
+      .where(filter ? eq(schema.leads.status, filter) : undefined)
+      .orderBy(desc(schema.leads.createdAt)).limit(200),
+    leadStatusCounts(),
+  ]);
+  const countOf = (s: LeadStatus) => counts.find((c) => c.status === s)?.n ?? 0;
+  const tabs = [
+    { label: "همه", href: "/admin/leads", n: counts.reduce((sum, c) => sum + c.n, 0), on: !filter },
+    ...LEAD_STATUSES.map((s) => ({ label: STATUS[s], href: `/admin/leads?status=${s}`, n: countOf(s), on: filter === s })),
+  ];
 
   return (
     <>
@@ -51,9 +67,22 @@ export default async function LeadsAdmin() {
         lead="درخواست‌های ثبت‌شده از فرم «تماس با ما». قدرت قراردادی، معیار اولویت‌بندی است."
       />
 
+      <nav aria-label="فیلتر وضعیت" className="mb-4 flex flex-wrap gap-2">
+        {tabs.map((t) => (
+          <Link
+            key={t.href}
+            href={t.href}
+            aria-current={t.on ? "page" : undefined}
+            className={cn("rounded-[8px] px-3 py-1.5 text-[13px] font-bold", t.on ? "bg-primary text-white" : "bg-surface text-ink2 hover:text-orange-700")}
+          >
+            {t.label} <span className="fa-num opacity-80">({faNum(t.n)})</span>
+          </Link>
+        ))}
+      </nav>
+
       {rows.length === 0 ? (
         <div className="rounded-[10px] border border-dashed border-line bg-surface p-10 text-center text-[13.5px] text-ink2">
-          هنوز درخواستی ثبت نشده است.
+          {filter ? "درخواستی با این وضعیت وجود ندارد." : "هنوز درخواستی ثبت نشده است."}
         </div>
       ) : (
         <div className="space-y-3">
@@ -88,19 +117,17 @@ export default async function LeadsAdmin() {
               <form action={setLeadStatus} className="mt-4 flex items-center gap-2 border-t border-linesoft pt-3">
                 <input type="hidden" name="id" value={l.id} />
                 <label htmlFor={`status-${l.id}`} className="text-[12px] font-bold text-ink3">وضعیت</label>
-                <select
+                <AutoSubmitSelect
                   id={`status-${l.id}`}
                   name="status"
                   defaultValue={l.status}
-                  className="rounded-[8px] border border-line bg-bg px-3 py-1.5 text-[12.5px] text-ink"
+                  className="rounded-[8px] border border-line bg-bg px-3 py-1.5 text-[12.5px] text-ink disabled:opacity-60"
                 >
                   {(Object.keys(STATUS) as LeadStatus[]).map((k) => (
                     <option key={k} value={k}>{STATUS[k]}</option>
                   ))}
-                </select>
-                <button type="submit" className="rounded-[8px] border border-line bg-bg px-3 py-1.5 text-[12.5px] font-bold text-ink hover:border-primary/40 hover:text-orange-700">
-                  ذخیره
-                </button>
+                </AutoSubmitSelect>
+                <span className="text-[11.5px] text-ink3">با انتخاب، ذخیره می‌شود</span>
               </form>
             </article>
           ))}

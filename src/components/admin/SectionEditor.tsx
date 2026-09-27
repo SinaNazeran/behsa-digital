@@ -1,4 +1,4 @@
-import { AdminForm, Card, ConfirmSubmit, Field, SubmitButton, Toggle } from "@/components/admin/ui";
+import { AdminForm, Card, ConfirmSubmit, Field, MoveControls, SubmitButton, Toggle } from "@/components/admin/ui";
 import { btnCls, inputCls } from "@/components/admin/styles";
 import { IconPicker } from "@/components/admin/IconPicker";
 import { MediaPicker, type MediaOption } from "@/components/admin/MediaPicker";
@@ -134,7 +134,11 @@ export function SectionEditor({ def, section, items, media }: {
           </Card>
         )}
 
-        <SubmitButton>ذخیره متن‌ها</SubmitButton>
+        <div className="flex flex-wrap items-center gap-2">
+          <SubmitButton>ذخیره متن‌ها</SubmitButton>
+          {/* sections go live on save: one click to check the result in context */}
+          <a href="/" target="_blank" rel="noopener" className={btnCls("secondary")}>مشاهده در سایت ↗</a>
+        </div>
       </AdminForm>
 
       {def.items && (
@@ -148,23 +152,7 @@ export function SectionEditor({ def, section, items, media }: {
                     <div className="mb-3 flex items-center gap-2">
                       <span className="rounded-full bg-bg px-2.5 py-0.5 text-[12px] font-bold text-ink3">{(i + 1).toLocaleString("fa-IR")}</span>
                       {!item.isActive && <span className="rounded-full bg-warnbg px-2.5 py-0.5 text-[12px] font-bold text-warn">پنهان</span>}
-                      <span className="mr-auto flex gap-1">
-                        {(["up", "down"] as const).map((dir) => (
-                          <AdminForm key={dir} action={moveSectionItem}>
-                            <input type="hidden" name="key" value={def.key} />
-                            <input type="hidden" name="id" value={item.id} />
-                            <input type="hidden" name="dir" value={dir} />
-                            <button
-                              type="submit"
-                              disabled={(dir === "up" && i === 0) || (dir === "down" && i === items.length - 1)}
-                              className={btnCls("ghost")}
-                              aria-label={dir === "up" ? "انتقال به بالا" : "انتقال به پایین"}
-                            >
-                              {dir === "up" ? "↑" : "↓"}
-                            </button>
-                          </AdminForm>
-                        ))}
-                      </span>
+                      <MoveControls key={i} action={moveSectionItem} fields={{ key: def.key, id: item.id }} index={i} count={items.length} />
                     </div>
                     <AdminForm action={saveSectionItem} className="space-y-3">
                       <input type="hidden" name="key" value={def.key} />

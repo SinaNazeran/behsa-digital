@@ -3,7 +3,12 @@
    `npm run db:seed` only inserts rows that are missing, so on an existing
    install it cannot remove the fabricated content the content audit found,
    and cannot replace a menu that was stored before the new IA existed.
-   This script does both. Safe to re-run.
+   This script does both.
+
+   NOT safe to re-run once editors use the CMS: every run rebuilds the
+   whole menu (step 5) and resets the bands in REWRITTEN_SECTIONS (step
+   4b), discarding their hand edits. It therefore refuses to run without
+   an explicit --overwrite flag.
 
    What it does:
      1. deletes the two invented testimonials and the ten invented client
@@ -15,7 +20,7 @@
         «گزارش‌ها», and corrects copy pointing at removed routes
      5. rebuilds the navigation tree to the approved IA
 
-   Run:  npm run db:apply-content
+   Run:  npm run db:apply-content -- --overwrite
 */
 import { eq, inArray } from "drizzle-orm";
 import { connect } from "./_db";
@@ -57,6 +62,16 @@ const OLD_FAQ_QUESTIONS = [
   "آیا نصب سخت‌افزار لازم است؟",
   "چه خروجی‌هایی از سامانه دریافت می‌کنیم؟",
 ];
+
+if (!process.argv.includes("--overwrite")) {
+  console.error([
+    "✖ refused: this script overwrites editor work.",
+    "  Every run deletes and rebuilds the whole site menu and resets these",
+    `  homepage bands to factory copy: ${REWRITTEN_SECTIONS.join(", ")}.`,
+    "  If that is really intended:  npm run db:apply-content -- --overwrite",
+  ].join("\n"));
+  process.exit(1);
+}
 
 const { client, db, schema } = connect();
 const log = (s: string) => console.log(`  ${s}`);

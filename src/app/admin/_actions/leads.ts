@@ -23,5 +23,6 @@ export async function setLeadStatus(formData: FormData): Promise<void> {
     .set({ status: status as LeadStatus })
     .where(eq(schema.leads.id, id));
 
-  revalidatePath("/admin/leads");
+  /* the whole panel: the new-lead badge and the dashboard count move too */
+  revalidatePath("/admin", "layout");
 }

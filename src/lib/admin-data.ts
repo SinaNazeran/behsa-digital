@@ -30,16 +30,28 @@ export async function listArticles(status?: "draft" | "published") {
 export async function dashboardCounts() {
   const count = (t: typeof schema.faqs | typeof schema.testimonials | typeof schema.clients | typeof schema.media | typeof schema.categories) =>
     db.select({ n: sql<number>`count(*)::int` }).from(t).then((r) => r[0].n);
-  const [statuses, faqs, testimonials, clients, media] = await Promise.all([
+  const [statuses, reportStatuses, newLeads, faqs, testimonials, clients, media] = await Promise.all([
     db.select({ status: schema.articles.status, n: sql<number>`count(*)::int` }).from(schema.articles).groupBy(schema.articles.status),
+    db.select({ status: schema.reports.status, n: sql<number>`count(*)::int` }).from(schema.reports).groupBy(schema.reports.status),
+    countNewLeads(),
     count(schema.faqs), count(schema.testimonials), count(schema.clients), count(schema.media),
   ]);
   return {
     published: statuses.find((s) => s.status === "published")?.n ?? 0,
     drafts: statuses.find((s) => s.status === "draft")?.n ?? 0,
-    faqs, testimonials, clients, media,
+    reports: reportStatuses.find((s) => s.status === "published")?.n ?? 0,
+    reportDrafts: reportStatuses.find((s) => s.status === "draft")?.n ?? 0,
+    newLeads, faqs, testimonials, clients, media,
   };
 }
+
+/** leads nobody has picked up yet — the panel's work queue */
+export const countNewLeads = () =>
+  db.select({ n: sql<number>`count(*)::int` }).from(schema.leads).where(eq(schema.leads.status, "new")).then((r) => r[0].n);
+
+/** lead count per status, for the filter tabs */
+export const leadStatusCounts = () =>
+  db.select({ status: schema.leads.status, n: sql<number>`count(*)::int` }).from(schema.leads).groupBy(schema.leads.status);
 
 /* ── Navigation & sections (admin views are always uncached) ── */
 

@@ -2,6 +2,7 @@
 
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { db, schema } from "@/db";
+import { moveInPlace } from "@/lib/utils";
 import { NAV_LENSES, type NavKind, type NavLens } from "@/db/schema";
 import { requireUser } from "@/lib/auth";
 import { isIconName } from "@/components/icons";
@@ -89,7 +90,8 @@ export async function moveNavItem(_prev: ActionState, fd: FormData): Promise<Act
   const id = int(fd, "id");
   const parentRaw = int(fd, "parentId");
   const parentId = parentRaw > 0 ? parentRaw : null;
-  const dir = str(fd, "dir") === "up" ? -1 : 1;
+  const dir = str(fd, "dir");
+  const to = int(fd, "to");
   if (!(id > 0)) return fail("شناسه نامعتبر است.");
 
   await db.transaction(async (tx) => {
@@ -97,9 +99,8 @@ export async function moveNavItem(_prev: ActionState, fd: FormData): Promise<Act
       .where(parentId === null ? isNull(schema.navItems.parentId) : eq(schema.navItems.parentId, parentId))
       .orderBy(asc(schema.navItems.sortOrder), asc(schema.navItems.id));
     const i = rows.findIndex((r) => r.id === id);
-    const j = i + dir;
-    if (i < 0 || j < 0 || j >= rows.length) return;
-    [rows[i], rows[j]] = [rows[j], rows[i]];
+    /* one step (↑/↓ buttons) or straight to a 1-based position (the select) */
+    if (!moveInPlace(rows, i, dir ? i + (dir === "up" ? -1 : 1) : to - 1)) return;
     for (let k = 0; k < rows.length; k++) await tx.update(schema.navItems).set({ sortOrder: k }).where(eq(schema.navItems.id, rows[k].id));
   });
   refresh("nav");

@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/auth";
 import { Card, PageTitle } from "@/components/admin/ui";
 import { btnCls } from "@/components/admin/styles";
 import { faNum, formatJalali } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 export const metadata = { title: "داشبورد" };
 
@@ -12,6 +13,9 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const [c, recent, { error }] = await Promise.all([dashboardCounts(), listArticles(), searchParams]);
 
   const tiles = [
+    { label: "درخواست جدید", value: c.newLeads, href: "/admin/leads?status=new", urgent: c.newLeads > 0 },
+    { label: "گزارش منتشرشده", value: c.reports, href: "/admin/reports?status=published" },
+    { label: "گزارش پیش‌نویس", value: c.reportDrafts, href: "/admin/reports?status=draft" },
     { label: "مقاله منتشرشده", value: c.published, href: "/admin/articles?status=published" },
     { label: "پیش‌نویس", value: c.drafts, href: "/admin/articles?status=draft" },
     { label: "پرسش متداول", value: c.faqs, href: "/admin/faqs" },
@@ -32,9 +36,9 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
           دسترسی به آن بخش فقط برای مدیر کل امکان‌پذیر است.
         </p>
       )}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         {tiles.map((t) => (
-          <Link key={t.label} href={t.href} className="rounded-[12px] border border-line bg-surface p-4 transition-colors hover:border-primary/40">
+          <Link key={t.label} href={t.href} className={cn("rounded-[12px] border bg-surface p-4 transition-colors hover:border-primary/40", "urgent" in t && t.urgent ? "border-primary/50 bg-primary-soft" : "border-line")}>
             <p className="font-display text-[26px] font-black text-ink fa-num">{faNum(t.value)}</p>
             <p className="text-[12.5px] font-semibold text-ink2">{t.label}</p>
           </Link>
@@ -58,6 +62,8 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
 
       <Card title="راهنمای سریع" className="mt-6">
         <ul className="list-disc space-y-1.5 pr-5 text-[13.5px] leading-7 text-ink2">
+          <li>درخواست‌های فرم «تماس با ما» در «درخواست‌ها» جمع می‌شوند. تعداد درخواست‌های بررسی‌نشده کنار همین گزینه در منو نمایش داده می‌شود؛ با تغییر «وضعیت»، درخواست از صف «جدید» خارج می‌شود.</li>
+          <li>هر گزارش سامانه یک صفحه دارد: «گزارش‌ها» ← «گزارش جدید». دسته‌ها و رنگ هر دسته در «دسته‌بندی گزارش‌ها» تنظیم می‌شوند.</li>
           <li>برای تغییر متن‌ها و کارت‌های صفحه اصلی: «بخش‌های صفحه اصلی». هر بخش را می‌توانید پنهان کنید، عنوانش را عوض کنید یا کارت‌هایش را اضافه/حذف/جابه‌جا کنید.</li>
           <li>ویدئو، تصویر، عنوان و دکمه‌های ابتدای صفحه اصلی در «بخش هیرو» تنظیم می‌شوند. اگر ویدئو خاموش باشد یا پخش نشود، تصویر پس‌زمینه نمایش داده می‌شود.</li>
           <li>سرفصل‌ها و زیرمنوهای نوار بالای سایت در «منوی سایت» مدیریت می‌شوند؛ همان ترتیب در نسخهٔ موبایل هم اعمال می‌شود.</li>

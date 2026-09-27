@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
    that marks where the control is, so it needs 3:1 (WCAG 1.4.11). The
    decorative card border sits at 1.41:1 and does not qualify. */
 export const inputCls =
-  "w-full rounded-[8px] border border-control bg-surface px-3.5 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ink3 focus:border-focus focus:ring-2 focus:ring-focus/25 disabled:bg-bg";
+  "w-full rounded-[8px] border border-control bg-surface px-3.5 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ink3 focus:border-focus focus:ring-2 focus:ring-focus/25 disabled:bg-bg aria-invalid:border-err aria-invalid:focus:ring-err/25";
 
 export function btnCls(variant: "primary" | "secondary" | "danger" | "ghost" = "primary") {
   return cn(

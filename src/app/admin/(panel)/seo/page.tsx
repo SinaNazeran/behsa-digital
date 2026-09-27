@@ -1,7 +1,8 @@
 import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 
-import { AdminForm, Card, CountedInput, Field, PageTitle, SubmitButton, Toggle } from "@/components/admin/ui";
+import { AdminForm, Card, CountedInput, Field, PageTitle, SearchBox, SubmitButton, Toggle } from "@/components/admin/ui";
+import { matchesQuery, searchText } from "@/content/reports";
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import { listMediaOptions } from "@/lib/admin-data";
 import { getAllPageSeo, getLandingIndex } from "@/lib/cms";
@@ -17,9 +18,9 @@ const CORE = [
   { path: "/contact", title: "تماس با ما" },
 ];
 
-export default async function SeoAdmin({ searchParams }: { searchParams: Promise<{ path?: string }> }) {
+export default async function SeoAdmin({ searchParams }: { searchParams: Promise<{ path?: string; q?: string }> }) {
   await requireUser();
-  const [{ path }, overrides, media, landings] = await Promise.all([
+  const [{ path, q = "" }, overrides, media, landings] = await Promise.all([
     searchParams, getAllPageSeo(), listMediaOptions(), getLandingIndex(),
   ]);
   const corePaths = new Set(CORE.map((c) => c.path));
@@ -30,6 +31,10 @@ export default async function SeoAdmin({ searchParams }: { searchParams: Promise
       .map((n) => ({ path: n.href, title: `${n.section.title} › ${n.title}` })),
   ];
   const current = pages.find((p) => p.path === path) ?? pages[0];
+  const query = q.trim();
+  /* the open page stays open even when the search hides it from the list */
+  const listed = query ? pages.filter((p) => matchesQuery(searchText([p.title, p.path]), query)) : pages;
+  const qs = query ? `&q=${encodeURIComponent(query)}` : "";
   const o = overrides.find((x) => x.path === current.path);
   const has = new Set(overrides.map((x) => x.path));
 
@@ -38,11 +43,15 @@ export default async function SeoAdmin({ searchParams }: { searchParams: Promise
       <PageTitle title="سئوی صفحات" lead="برای هر صفحه می‌توانید عنوان و توضیحاتی که گوگل نمایش می‌دهد را تغییر دهید. سئوی مقالات داخل ویرایشگر همان مقاله است." />
       <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
         <Card className="max-h-[70vh] overflow-y-auto p-2 md:p-2">
+          <div className="p-1 pb-2">
+            <SearchBox action="/admin/seo" q={query} keep={{ path: current.path }} label="جستجو در صفحه‌ها" placeholder="نام یا آدرس صفحه…" />
+          </div>
+          {listed.length === 0 && <p className="px-3 py-4 text-[13px] text-ink2">صفحه‌ای با «{query}» یافت نشد.</p>}
           <ul>
-            {pages.map((p) => (
+            {listed.map((p) => (
               <li key={p.path}>
                 <Link
-                  href={`/admin/seo?path=${encodeURIComponent(p.path)}`}
+                  href={`/admin/seo?path=${encodeURIComponent(p.path)}${qs}`}
                   className={cn("flex items-center gap-2 rounded-[8px] px-3 py-2 text-[13px]", p.path === current.path ? "bg-primary-soft font-bold text-orange-700" : "text-ink2 hover:bg-bg")}
                 >
                   <span className="min-w-0 flex-1 truncate">{p.title}</span>

@@ -2,6 +2,7 @@
 
 import { asc, eq } from "drizzle-orm";
 import { db, schema } from "@/db";
+import { moveInPlace } from "@/lib/utils";
 import { requireUser } from "@/lib/auth";
 import type { ActionState } from "@/components/admin/ui";
 import { bool, done, fail, int, refresh, str } from "./helpers";
@@ -75,16 +76,16 @@ export async function moveItem(_prev: ActionState, fd: FormData): Promise<Action
   await requireUser();
   const kind = kindOf(fd);
   const id = int(fd, "id");
-  const dir = str(fd, "dir") === "up" ? -1 : 1;
+  const dir = str(fd, "dir");
+  const to = int(fd, "to");
   if (!kind || !(id > 0)) return fail("درخواست نامعتبر است.");
   const table = TABLES[kind];
 
   await db.transaction(async (tx) => {
     const rows = await tx.select({ id: table.id }).from(table).orderBy(asc(table.sortOrder), asc(table.id));
     const i = rows.findIndex((r) => r.id === id);
-    const j = i + dir;
-    if (i < 0 || j < 0 || j >= rows.length) return;
-    [rows[i], rows[j]] = [rows[j], rows[i]];
+    /* one step (↑/↓ buttons) or straight to a 1-based position (the select) */
+    if (!moveInPlace(rows, i, dir ? i + (dir === "up" ? -1 : 1) : to - 1)) return;
     /* renumber densely so ordering is always stable */
     for (let k = 0; k < rows.length; k++) await tx.update(table).set({ sortOrder: k }).where(eq(table.id, rows[k].id));
   });

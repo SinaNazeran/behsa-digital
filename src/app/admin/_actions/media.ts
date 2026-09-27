@@ -23,6 +23,32 @@ function sniff(b: Buffer): string | null {
 const safeName = (name: string) =>
   name.normalize("NFKC").replace(/[^\p{L}\p{N}._-]+/gu, "-").replace(/-+/g, "-").slice(0, 120) || "image";
 
+/** validate and store one image; the only path bytes take into the library */
+async function storeImage(file: File, alt: string): Promise<{ id: string; filename: string } | { error: string }> {
+  if (file.size > MAX_BYTES) return { error: "بیش از ۵ مگابایت" };
+  const data = Buffer.from(await file.arrayBuffer());
+  const mime = sniff(data);
+  if (!mime) return { error: "فرمت مجاز: JPG، PNG، WebP، GIF، AVIF" };
+  const [row] = await db.insert(schema.media).values({ filename: safeName(file.name), mime, size: data.length, alt, data })
+    .returning({ id: schema.media.id, filename: schema.media.filename });
+  return row;
+}
+
+export type PickerUpload = { ok: true; id: string; filename: string; alt: string } | { ok: false; message: string };
+
+/** one image uploaded from inside a MediaPicker, so an editor never has to
+    leave a half-written form for the media library */
+export async function uploadPickerImage(fd: FormData): Promise<PickerUpload> {
+  await requireUser();
+  const file = fd.get("file");
+  if (!(file instanceof File) || file.size === 0) return { ok: false, message: "فایلی انتخاب نشده است." };
+  const alt = str(fd, "alt", 255);
+  const res = await storeImage(file, alt);
+  if ("error" in res) return { ok: false, message: `${file.name}: ${res.error}` };
+  refresh();
+  return { ok: true, id: res.id, filename: res.filename, alt };
+}
+
 export async function uploadMedia(_prev: ActionState, fd: FormData): Promise<ActionState> {
   await requireUser();
   const files = fd.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
@@ -32,12 +58,9 @@ export async function uploadMedia(_prev: ActionState, fd: FormData): Promise<Act
   const rejected: string[] = [];
   let saved = 0;
   for (const file of files.slice(0, 10)) {
-    if (file.size > MAX_BYTES) { rejected.push(`${file.name} (بیش از ۵ مگابایت)`); continue; }
-    const data = Buffer.from(await file.arrayBuffer());
-    const mime = sniff(data);
-    if (!mime) { rejected.push(`${file.name} (فرمت مجاز: JPG، PNG، WebP، GIF، AVIF)`); continue; }
-    await db.insert(schema.media).values({ filename: safeName(file.name), mime, size: data.length, alt, data });
-    saved++;
+    const res = await storeImage(file, alt);
+    if ("error" in res) rejected.push(`${file.name} (${res.error})`);
+    else saved++;
   }
   refresh();
   if (!saved) return fail(`هیچ فایلی ذخیره نشد: ${rejected.join("، ")}`);

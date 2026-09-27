@@ -1,22 +1,28 @@
 import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 import { listArticles } from "@/lib/admin-data";
-import { Card, PageTitle } from "@/components/admin/ui";
+import { Card, PageTitle, SearchBox } from "@/components/admin/ui";
+import { matchesQuery, searchText } from "@/content/reports";
 import { btnCls } from "@/components/admin/styles";
 import { formatJalali } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 export const metadata = { title: "مقالات" };
 
-export default async function ArticlesAdmin({ searchParams }: { searchParams: Promise<{ status?: string; deleted?: string }> }) {
+export default async function ArticlesAdmin({ searchParams }: { searchParams: Promise<{ status?: string; deleted?: string; q?: string }> }) {
   await requireUser();
-  const { status, deleted } = await searchParams;
+  const { status, deleted, q = "" } = await searchParams;
   const filter = status === "draft" || status === "published" ? status : undefined;
-  const rows = await listArticles(filter);
+  const query = q.trim();
+  /* filtered here, not in SQL: the same Persian folding (ي/ی, ك/ک, digits)
+     the public report search uses, and the list is tens of rows */
+  const rows = (await listArticles(filter))
+    .filter((a) => !query || matchesQuery(searchText([a.title, a.slug, a.category ?? ""]), query));
+  const withQ = (href: string) => (query ? `${href}${href.includes("?") ? "&" : "?"}q=${encodeURIComponent(query)}` : href);
   const tabs = [
-    { label: "همه", href: "/admin/articles", on: !filter },
-    { label: "منتشرشده", href: "/admin/articles?status=published", on: filter === "published" },
-    { label: "پیش‌نویس", href: "/admin/articles?status=draft", on: filter === "draft" },
+    { label: "همه", href: withQ("/admin/articles"), on: !filter },
+    { label: "منتشرشده", href: withQ("/admin/articles?status=published"), on: filter === "published" },
+    { label: "پیش‌نویس", href: withQ("/admin/articles?status=draft"), on: filter === "draft" },
   ];
 
   return (
@@ -24,6 +30,9 @@ export default async function ArticlesAdmin({ searchParams }: { searchParams: Pr
       <PageTitle title="مقالات" actions={<Link href="/admin/articles/new" className={btnCls("primary")}>+ مقاله جدید</Link>} />
       {deleted && <p role="status" className="mb-4 rounded-[8px] border border-accent/30 bg-accent-soft px-4 py-2.5 text-[13.5px] font-semibold text-ok">مقاله حذف شد.</p>}
       <Card>
+        <div className="mb-4">
+          <SearchBox action="/admin/articles" q={query} keep={{ status: filter }} label="جستجو در مقالات" placeholder="جستجو در عنوان، نامک یا دسته…" />
+        </div>
         <div className="mb-4 flex gap-2">
           {tabs.map((t) => (
             <Link key={t.label} href={t.href} className={cn("rounded-[8px] px-3 py-1.5 text-[13px] font-bold", t.on ? "bg-primary text-white" : "bg-bg text-ink2 hover:text-orange-700")}>
@@ -64,7 +73,7 @@ export default async function ArticlesAdmin({ searchParams }: { searchParams: Pr
                 </tr>
               ))}
               {rows.length === 0 && (
-                <tr><td colSpan={5} className="py-8 text-center text-ink2">مقاله‌ای یافت نشد.</td></tr>
+                <tr><td colSpan={5} className="py-8 text-center text-ink2">{query ? `مقاله‌ای با «${query}» یافت نشد.` : "مقاله‌ای یافت نشد."}</td></tr>
               )}
             </tbody>
           </table>

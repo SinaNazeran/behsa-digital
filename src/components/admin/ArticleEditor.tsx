@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ArticleSection } from "@/db/schema";
 import { cn } from "@/lib/utils";
+import { formatJalali, parseJalaliInput } from "@/lib/format";
 import { AdminForm, Card, ConfirmSubmit, CountedInput, Field, SubmitButton, Toggle, btnCls, inputCls, type FormAction } from "./ui";
 import { MediaPicker, type MediaOption } from "./MediaPicker";
 
@@ -56,6 +57,10 @@ export function ArticleEditor({
   const [seoTitle, setSeoTitle] = useState(initial.seoTitle);
   const [seoDesc, setSeoDesc] = useState(initial.seoDescription);
   const [excerpt, setExcerpt] = useState(initial.excerpt);
+  const [date, setDate] = useState(initial.publishedDate);
+  const [time, setTime] = useState(initial.publishedTime);
+  /* the same parser the server uses, so what the editor reads here is what gets saved */
+  const when = date.trim() ? parseJalaliInput(date, time) : null;
 
   const update = (key: number, patch: Partial<EditorSection>) =>
     setSections((ss) => ss.map((s) => (s.key === key ? { ...s, ...patch } : s)));
@@ -177,13 +182,25 @@ export function ArticleEditor({
                   <option value="published">منتشرشده</option>
                 </select>
               </Field>
-              <div className="grid grid-cols-[1fr_90px] gap-2">
-                <Field label="تاریخ انتشار (شمسی)" htmlFor="publishedDate" hint="مثال: ۱۴۰۴/۰۸/۱۸ — تاریخ آینده یعنی انتشار زمان‌بندی‌شده.">
-                  <input id="publishedDate" name="publishedDate" defaultValue={initial.publishedDate} dir="ltr" placeholder="1404/08/18" className={cn(inputCls, "fa-num")} />
-                </Field>
-                <Field label="ساعت" htmlFor="publishedTime">
-                  <input id="publishedTime" name="publishedTime" defaultValue={initial.publishedTime} dir="ltr" placeholder="09:00" className={inputCls} />
-                </Field>
+              <div>
+                <div className="grid grid-cols-[1fr_90px] gap-2">
+                  <Field label="تاریخ انتشار (شمسی)" htmlFor="publishedDate">
+                    <input id="publishedDate" name="publishedDate" value={date} onChange={(e) => setDate(e.target.value)} inputMode="numeric" autoComplete="off" spellCheck={false} dir="ltr" placeholder="1404/08/18" className={cn(inputCls, "fa-num")} />
+                  </Field>
+                  <Field label="ساعت" htmlFor="publishedTime">
+                    <input id="publishedTime" name="publishedTime" value={time} onChange={(e) => setTime(e.target.value)} inputMode="numeric" autoComplete="off" spellCheck={false} dir="ltr" placeholder="09:00" className={inputCls} />
+                  </Field>
+                </div>
+                <p aria-live="polite" className={cn("mt-1.5 text-[12px] leading-5", date.trim() && !when ? "font-semibold text-err" : "text-ink3")}>
+                  {!date.trim()
+                    ? "خالی = زمان ذخیره، هنگام انتشار."
+                    : !when
+                      ? "تاریخ نامعتبر است؛ به شکل ۱۴۰۴/۰۸/۱۸ وارد کنید."
+                      : <>
+                          {formatJalali(when)}، ساعت {new Intl.DateTimeFormat("fa-IR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "Asia/Tehran" }).format(when)}
+                          {when.getTime() > Date.now() && <span className="font-semibold text-orange-700"> — زمان‌بندی‌شده؛ تا آن زمان روی سایت دیده نمی‌شود</span>}
+                        </>}
+                </p>
               </div>
               <Toggle name="featured" defaultChecked={initial.featured} label="مقاله ویژه (بالای صفحه مقالات)" />
               <div className="flex flex-wrap gap-2 border-t border-linesoft pt-4">

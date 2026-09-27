@@ -12,6 +12,8 @@ import { REPORT_AUDIENCES, audienceLabels, matchesQuery, searchText } from "../s
 import { REPORT_AUDIENCE, REPORT_CATEGORIES, REPORT_MENU, REPORT_PAGES } from "./seed-reports";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { parseJalaliInput } from "../src/lib/format";
+import { moveInPlace } from "../src/lib/utils";
 
 let checks = 0;
 const ok = (cond: unknown, msg: string) => { assert.ok(cond, msg); checks++; };
@@ -132,5 +134,21 @@ ok(matchesQuery(hay, "ضريب"), "search folds Arabic yeh");
 ok(matchesQuery(hay, "91") && matchesQuery(hay, "۹۱"), "search folds Persian digits");
 ok(matchesQuery(hay, "  "), "an empty query matches everything");
 ok(!matchesQuery(hay, "کنتور خورشیدی"), "every word of the query must match");
+
+/* ── reordering: one step or straight to a position, never out of range ── */
+{
+  const m = (from: number, to: number) => { const a = [1, 2, 3, 4, 5]; return moveInPlace(a, from, to) ? a.join("") : "unchanged"; };
+  ok(m(0, 1) === "21345", "one step down swaps neighbours");
+  ok(m(4, 0) === "51234", "last item moved to the top");
+  ok(m(1, 3) === "13425", "moved down past two items");
+  ok(m(0, -1) === "unchanged" && m(4, 5) === "unchanged" && m(2, 2) === "unchanged", "out of range or same place is a no-op");
+}
+
+/* ── Jalali publish date: past-the-month days are rejected, never rolled over ── */
+ok(parseJalaliInput("1404/07/31") === null, "Mehr has 30 days");
+ok(parseJalaliInput("1404/12/30") === null, "1404 is not a leap year");
+ok(parseJalaliInput("1403/12/30") !== null, "1403 is a leap year");
+ok(parseJalaliInput("1404/06/31") !== null, "Shahrivar has 31 days");
+ok(parseJalaliInput("۱۴۰۴/۰۸/۱۸", "09:00")?.toISOString() === "2025-11-09T05:30:00.000Z", "Persian digits, Tehran time");
 
 console.log(`✔ ${checks} CMS content-model checks passed`);

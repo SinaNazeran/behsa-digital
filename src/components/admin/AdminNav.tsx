@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { faNum } from "@/lib/format";
 
 const GROUPS: { title: string; items: { href: string; label: string; adminOnly?: boolean }[] }[] = [
   { title: "", items: [{ href: "/admin", label: "داشبورد" }, { href: "/admin/leads", label: "درخواست‌ها" }] },
@@ -39,7 +40,7 @@ const GROUPS: { title: string; items: { href: string; label: string; adminOnly?:
   },
 ];
 
-export function AdminNav({ role }: { role: "admin" | "editor" }) {
+export function AdminNav({ role, newLeads = 0 }: { role: "admin" | "editor"; newLeads?: number }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const active = (href: string) =>
@@ -69,11 +70,16 @@ export function AdminNav({ role }: { role: "admin" | "editor" }) {
                     onClick={() => setOpen(false)}
                     aria-current={active(i.href) ? "page" : undefined}
                     className={cn(
-                      "block rounded-[8px] px-3 py-2 text-[13.5px] font-semibold transition-colors",
+                      "flex items-center justify-between gap-2 rounded-[8px] px-3 py-2 text-[13.5px] font-semibold transition-colors",
                       active(i.href) ? "bg-primary-soft text-orange-700" : "text-ink2 hover:bg-bg hover:text-ink",
                     )}
                   >
                     {i.label}
+                    {i.href === "/admin/leads" && newLeads > 0 && (
+                      <span className="rounded-full bg-primary px-2 py-0.5 text-[11.5px] font-bold text-on-primary fa-num">
+                        {faNum(newLeads)}<span className="sr-only"> درخواست جدید</span>
+                      </span>
+                    )}
                   </Link>
                 </li>
               ))}

@@ -2,6 +2,7 @@
 
 import { and, asc, eq } from "drizzle-orm";
 import { db, schema } from "@/db";
+import { moveInPlace } from "@/lib/utils";
 import { requireUser } from "@/lib/auth";
 import { isIconName } from "@/components/icons";
 import { SECTION_BY_KEY, type ItemFieldName, type SectionDef } from "@/content/sections";
@@ -122,7 +123,8 @@ export async function moveSectionItem(_prev: ActionState, fd: FormData): Promise
   await requireUser();
   const def = defOf(fd);
   const id = int(fd, "id");
-  const dir = str(fd, "dir") === "up" ? -1 : 1;
+  const dir = str(fd, "dir");
+  const to = int(fd, "to");
   if (!def || !(id > 0)) return fail("درخواست نامعتبر است.");
 
   await db.transaction(async (tx) => {
@@ -130,9 +132,8 @@ export async function moveSectionItem(_prev: ActionState, fd: FormData): Promise
       .where(eq(schema.contentItems.sectionKey, def.key))
       .orderBy(asc(schema.contentItems.sortOrder), asc(schema.contentItems.id));
     const i = rows.findIndex((r) => r.id === id);
-    const j = i + dir;
-    if (i < 0 || j < 0 || j >= rows.length) return;
-    [rows[i], rows[j]] = [rows[j], rows[i]];
+    /* one step (↑/↓ buttons) or straight to a 1-based position (the select) */
+    if (!moveInPlace(rows, i, dir ? i + (dir === "up" ? -1 : 1) : to - 1)) return;
     for (let k = 0; k < rows.length; k++) {
       await tx.update(schema.contentItems).set({ sortOrder: k }).where(eq(schema.contentItems.id, rows[k].id));
     }

@@ -1,17 +1,17 @@
 import { requireUser } from "@/lib/auth";
 import Link from "next/link";
 import { listReports } from "@/lib/admin-data";
-import { Card, PageTitle } from "@/components/admin/ui";
+import { Card, PageTitle, SearchBox } from "@/components/admin/ui";
 import { btnCls } from "@/components/admin/styles";
 import { formatJalali } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { REPORT_MENU_LIMIT } from "@/content/reports";
+import { REPORT_MENU_LIMIT, matchesQuery, searchText } from "@/content/reports";
 
 export const metadata = { title: "گزارش‌ها" };
 
-export default async function ReportsAdmin({ searchParams }: { searchParams: Promise<{ status?: string; deleted?: string }> }) {
+export default async function ReportsAdmin({ searchParams }: { searchParams: Promise<{ status?: string; deleted?: string; q?: string }> }) {
   await requireUser();
-  const { status, deleted } = await searchParams;
+  const { status, deleted, q = "" } = await searchParams;
   const filter = status === "draft" || status === "published" ? status : undefined;
   const all = await listReports();
   /* the same rule the header menu applies: first published reports of each category */
@@ -23,11 +23,17 @@ export default async function ReportsAdmin({ searchParams }: { searchParams: Pro
     perCategory.set(r.categoryId, n);
     if (n <= REPORT_MENU_LIMIT) inMenu.add(r.id);
   }
-  const rows = all.filter((r) => !filter || r.status === filter);
+  /* the «در منو» badges above are computed from the full list, so a search
+     never changes which reports read as in the menu */
+  const query = q.trim();
+  const rows = all
+    .filter((r) => !filter || r.status === filter)
+    .filter((r) => !query || matchesQuery(searchText([r.title, r.menuTitle, r.slug, r.category]), query));
+  const withQ = (href: string) => (query ? `${href}${href.includes("?") ? "&" : "?"}q=${encodeURIComponent(query)}` : href);
   const tabs = [
-    { label: "همه", href: "/admin/reports", on: !filter },
-    { label: "منتشرشده", href: "/admin/reports?status=published", on: filter === "published" },
-    { label: "پیش‌نویس", href: "/admin/reports?status=draft", on: filter === "draft" },
+    { label: "همه", href: withQ("/admin/reports"), on: !filter },
+    { label: "منتشرشده", href: withQ("/admin/reports?status=published"), on: filter === "published" },
+    { label: "پیش‌نویس", href: withQ("/admin/reports?status=draft"), on: filter === "draft" },
   ];
 
   return (
@@ -44,6 +50,9 @@ export default async function ReportsAdmin({ searchParams }: { searchParams: Pro
       />
       {deleted && <p role="status" className="mb-4 rounded-[8px] border border-accent/30 bg-accent-soft px-4 py-2.5 text-[13.5px] font-semibold text-ok">گزارش حذف شد.</p>}
       <Card>
+        <div className="mb-4">
+          <SearchBox action="/admin/reports" q={query} keep={{ status: filter }} label="جستجو در گزارش‌ها" placeholder="جستجو در نام، نامک یا دسته…" />
+        </div>
         <div className="mb-4 flex gap-2">
           {tabs.map((t) => (
             <Link key={t.label} href={t.href} className={cn("rounded-[8px] px-3 py-1.5 text-[13px] font-bold", t.on ? "bg-primary text-white" : "bg-bg text-ink2 hover:text-orange-700")}>
@@ -84,7 +93,7 @@ export default async function ReportsAdmin({ searchParams }: { searchParams: Pro
                 </tr>
               ))}
               {rows.length === 0 && (
-                <tr><td colSpan={5} className="py-8 text-center text-ink2">گزارشی یافت نشد.</td></tr>
+                <tr><td colSpan={5} className="py-8 text-center text-ink2">{query ? `گزارشی با «${query}» یافت نشد.` : "گزارشی یافت نشد."}</td></tr>
               )}
             </tbody>
           </table>

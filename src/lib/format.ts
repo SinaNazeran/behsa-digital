@@ -82,3 +82,20 @@ export function toJalaliInput(date: Date | string | null | undefined): [string, 
   const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
   return [`${get("year")}/${get("month")}/${get("day")}`, `${get("hour")}:${get("minute")}`];
 }
+
+/** shared by the server action and the editor's live check — "1404/08/18" or "۱۴۰۴/۰۸/۱۸" (+ optional "HH:MM") → Date in Tehran time */
+export function parseJalaliInput(dateRaw: string, timeRaw = ""): Date | null {
+  const m = toLatinDigits(dateRaw).trim().match(/^(\d{4})[/\-.](\d{1,2})[/\-.](\d{1,2})$/);
+  if (!m) return null;
+  const [jy, jm, jd] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  /* months 1–6 have 31 days, 7–11 have 30, Esfand 29 (30 in a leap year):
+     a day past the month's end is rejected, never silently rolled over */
+  if (jm < 1 || jm > 12 || jd < 1 || jd > (jm <= 6 ? 31 : 30)) return null;
+  const [gy, gm, gd] = jalaliToGregorian(jy, jm, jd);
+  if (jm === 12 && jd === 30 && jalaliToGregorian(jy + 1, 1, 1).join() === [gy, gm, gd].join()) return null;
+  const t = toLatinDigits(timeRaw).trim().match(/^(\d{1,2}):(\d{2})$/);
+  const hh = t ? Math.min(23, Number(t[1])) : 9;
+  const mm = t ? Math.min(59, Number(t[2])) : 0;
+  /* Iran has used a fixed UTC+03:30 offset since 2022 */
+  return new Date(Date.UTC(gy, gm - 1, gd, hh, mm) - 3.5 * 3600 * 1000);
+}
